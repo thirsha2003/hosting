@@ -1,0 +1,7 @@
+<IfModule authz_core_module>
+	Header set Access-Control-Allow-Origin "http://localhost:4100"
+</IfModule>
+<IfModule !authz_core_module>
+    Deny from all
+</IfModule>
+Header set Access-Control-Allow-Origin "http://localhost:4100"
