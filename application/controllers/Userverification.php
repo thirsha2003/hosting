@@ -913,13 +913,30 @@ public function verifyemail()
 									$this->db->insert("fp_lender_user_details", $lender_array);
 
 								}
+
+								$query = $this->db->get_where('fpa_users',array('email' => $params['data']['email']));
+											foreach ($query->result() as $row)
+											{		
+												$txnArr[] = array(
+													'email' => $row->email,
+													'name' =>  $row->name,
+													'id' =>  $row->id,
+													'slug' =>  $row->slug,
+													'now'=> date('Y-m-d H:i:s'),
+													'random_key' => bin2hex(random_bytes(11))
+												);
+											$userid = $row->id;
+											}
+											$token = $this->jwttoken->token($txnArr);
+											$this->db->where('id', $userid);
+											$this->db->update('fpa_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
 							
 								$sql = "UPDATE fp_login_history SET emailotp_status = 0, user_id ='".$u_id ."'"."WHERE ".$params['key'];
 								$this->db->query($sql);
 								//----------------------transaction complete----------------------------------//
 								$sql= "SELECT * FROM fpa_users WHERE id=".$u_id;
 
-							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
+							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
 							}else
 							{
 								$resp = array('status' => 201,'message' =>  'Something went wrong!','data' => $this->db->query($sql)->row());
@@ -989,6 +1006,23 @@ public function verifymobile()
 						//$count=1;// testing purpose
 						if($count>0)
 						{	
+
+							$query = $this->db->get_where('fpa_users',array('mobile' => $params['data']['mobile']));
+											foreach ($query->result() as $row)
+											{		
+												$txnArr[] = array(
+													'email' => $row->email,
+													'name' =>  $row->name,
+													'id' =>  $row->id,
+													'slug' =>  $row->slug,
+													'now'=> date('Y-m-d H:i:s'),
+													'random_key' => bin2hex(random_bytes(11))
+												);
+											$userid = $row->id;
+											}
+											$token = $this->jwttoken->token($txnArr);
+											$this->db->where('id', $userid);
+											$this->db->update('fpa_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
 							// OTP Verified
 								$sql1 ="UPDATE fpa_users SET is_mobile_verified = 1 "."WHERE mobile=".$mobile;
 								$sql2 = "UPDATE fp_login_history SET mobotp_status = 0 WHERE mobile=".$mobile; ;
@@ -1000,7 +1034,7 @@ public function verifymobile()
 						else
 						{
 							$respStatus=201;
-							$resp = array('status' => 201,'message' =>  'Success','data' => $this->db->query($sql)->row());
+							$resp = array('status' => 201,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
 							return json_output($respStatus,$resp);
 						}
 				}else

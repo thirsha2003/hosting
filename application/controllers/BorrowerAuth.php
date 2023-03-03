@@ -66,7 +66,8 @@ class BorrowerAuth extends CI_Controller {
 			$token = $this->ci->input->get_request_header('fintoken', TRUE);
 			if($token){
 				$curr = date('Y-m-d H:i:s');
-				$last_min = date('Y-m-d H:i:s', strtotime('-20 minutes'));
+				$last_min = date('Y-m-d H:i:s', strtotime('-30 minutes'));  // push to live  that time  uncommoad this line 
+				// $last_min = date('Y-m-d H:i:s', strtotime('-2 minutes'));
 				// echo $token;
 				$this->db->select();
 				$this->db->from('fpa_users');
