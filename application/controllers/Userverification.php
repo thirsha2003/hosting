@@ -27,8 +27,8 @@ class Userverification extends CI_Controller
 		parent::__construct();
 		$this->load->helper('json_output');
 		$this->load->library('encryption');
-		$this->load->library('borrowerauth');
-		//  $this->$probe42= new \App\ThirdParty\Probeapi;
+
+
 	}
 
 	public function withoutlogincheck(){
@@ -526,11 +526,26 @@ public function otpcheckforfinnupuser()
 										//$count=1; // Testing need to comment it
 										if($count>0)
 										{   
-											// $this->borrowerauth->createtoken(72);
-											// $this->createtoken(72);             
+											$query = $this->db->get_where('fpa_users',array('email' => $params['data']['email']));
+											foreach ($query->result() as $row)
+											{		
+												$txnArr[] = array(
+													'email' => $row->email,
+													'name' =>  $row->name,
+													'id' =>  $row->id,
+													'slug' =>  $row->slug,
+													'now'=> date('Y-m-d H:i:s'),
+													'random_key' => bin2hex(random_bytes(11))
+												);
+											$userid = $row->id;
+											}
+											$token = $this->jwttoken->token($txnArr);
+											$this->db->where('id', $userid);
+											$this->db->update('fpa_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
+             
 											$sql = "UPDATE fp_login_history SET emailotp_status = 0, mobotp_status =0 WHERE ".$params['key']." && email='".$params['data']['email'] ."'";
 											$respStatus=200;
-											$resp = array('status' => 200,'message' =>  'Login Success','data' => $this->db->query($sql));
+											$resp = array('status' => 200,'message' =>  'Login Success','data' => $this->db->query($sql),'fintoken'=>$token);
 										}else
 										{
 											$respStatus=201;

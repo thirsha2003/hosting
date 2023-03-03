@@ -17,51 +17,6 @@ class BorrowerAuth extends CI_Controller {
 		$this->ci->load->database();
 	}
 
-
-	public function check_token(){
-		$check_auth_user  = $this->login->check_auth_user();
-		if($check_auth_user){
-		$token   = $this->ci->input->get_request_header('token', TRUE);
-		$user_id   = $this->ci->input->get_request_header('user-id', TRUE);
-		$checkuser = array('id' => $user_id, 'token' => $token );
-		$this->db->where($checkuser);
-		$count = $this->db->count_all_results("fpa_users");
-		if($count ==  1){
-			return true;
-		}else{
-			return false;
-		}
-		}else{
-			return false;
-		}	
-	}
-
-	public function gettoken(){
-		$method = $_SERVER['REQUEST_METHOD'];
-				if($method != 'POST'){
-					json_output(400,array('status' => 400,'message' => 'Bad request.'));
-				}else{
-					$checkToken = $this->check_token();
-					// $checkToken = true;
-					if($checkToken){
-					$response['status']=200;
-					$respStatus = $response['status'];
-					$params = json_decode(file_get_contents('php://input'), TRUE);
-					
-
-						$auth_token = $this->finusercheck();
-						// echo $auth_token;
-
-
-					$resp = array('status' => 200,'message' =>  'Success','token' => $auth_token);
-					json_output($respStatus,$resp);
-				}else{
-					json_output(400,array('status' => 400,'message' => 'Bad request.'));
-				}
-				}
-			
-	}
-
 	public function createtoken($fpa_user_id = null){
 			$check_auth_user  = $this->login->check_auth_user();
 			if($check_auth_user){
@@ -100,9 +55,15 @@ class BorrowerAuth extends CI_Controller {
 	}
 
 	public function finusercheck(){
+		$method = $_SERVER['REQUEST_METHOD'];
+		if($method != 'POST'){
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		}else{
+
+	
 		$check_auth_user  = $this->login->check_auth_user();
 		if($check_auth_user){
-			$token = $this->ci->input->get_request_header('token', TRUE);
+			$token = $this->ci->input->get_request_header('fintoken', TRUE);
 			if($token){
 				$curr = date('Y-m-d H:i:s');
 				$last_min = date('Y-m-d H:i:s', strtotime('-20 minutes'));
@@ -130,18 +91,19 @@ class BorrowerAuth extends CI_Controller {
 						$this->db->where('id', $userid);
 						$this->db->update('fpa_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
 	
-						return $token;
+						
+						json_output(200,array('status' => 200,'token' => $token));
 				}else{
-					return false;
+					json_output(200,array('status' => 400,'message' => 'Bad request.'));
 				}
 		
 			}else{
-				return false;
+				json_output(200,array('status' => 400,'message' => 'Bad request.'));
 			}
 		}else{
-			return false;
+			json_output(200,array('status' => 400,'message' => 'Bad request.'));
 		}
 				
-	
+	}
 	}
 }
