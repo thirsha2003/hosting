@@ -62,14 +62,14 @@ class Admin_transation extends CI_Controller
 							$product_id = ($params['product_id']);
 				
 
-							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t1.task_assigned_to,t2.borrower_id, t4.image as lender_image,
+							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
                                   t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id
                                   from 
-                                  fpa_taskdetails t1, 
+                                  
                                   fp_borrower_loanrequests t3,
                                   fpa_loan_applications t2,
 								  fp_lender_master t4
-                                  Where t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t1.borrower_id = t2.borrower_id AND t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
+                                  Where t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
 
 								//   echo $sql;
 							
