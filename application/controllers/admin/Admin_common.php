@@ -2368,9 +2368,41 @@ public function borrowers_archievedprofiles()
 	 
 	}
 
-
-
-
-
+	public function loanrequestdelete()
+	{
+		$method = $_SERVER['REQUEST_METHOD'];
+		if($method =="POST")
+		{
+			$checkToken = $this->check_token();
+			if(True)
+			{
+				$response['status']=200;
+				$respStatus = $response['status'];
+				$params   = json_decode(file_get_contents('php://input'), TRUE);
+  
+				$selectkey   = isset($params['selectkey']) ? $params['selectkey'] : "*";
+				$where     = isset($params['where']) ? $params['where'] : "";  
+				$id  = ($params['id']);
+  
+				$sql = "UPDATE fp_borrower_loanrequests
+				SET  is_deleted='is deleted by admin'
+				WHERE fp_borrower_loanrequests.id=".$id ;
+				
+				
+				$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+				return json_output($respStatus,$resp);
+			}
+			else
+			{
+			  return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}
+		  
+		}
+		else
+		{
+			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		}
+	  
+	}
 
 } // -------------------------- end ---------------------
