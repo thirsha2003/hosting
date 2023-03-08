@@ -486,7 +486,7 @@ class Adminusers extends CI_Controller
 		}else{
 			
 
-			if($email == true && $otp== true){
+			if($email == true && $otp == true){
             //    echo "new";
 			
 				$curr = date('Y-m-d H:i:s');
@@ -497,11 +497,11 @@ class Adminusers extends CI_Controller
 				$this->db->where('email', $email);
 				$this->db->where('otp', $otp);
 				$this->db->where('is_active', 1);
-				$this->db->where('created_at >=', $last_min);
-				$this->db->where('created_at <=', $curr);
+				// $this->db->where('created_at >=', $last_min);
+				// $this->db->where('created_at <=', $curr);
 				$result = $this->db->get();
 
-				if($result->num_rows() == 1){
+				if($result->num_rows() >= 1){
 						$data['data']= 0;
 					$this->db->where('email', $email);
 					$this->db->where('otp', $otp);
@@ -514,7 +514,7 @@ class Adminusers extends CI_Controller
 				$this->db->where('email', $email);
 				$this->db->where('is_active', 1);
 				$this->db->where('created_at <=', $last_min);
-				$this->db->update('fp_adminotp',array("is_active" => 0)); 
+				$this->db->update('fp_adminotp',array("is_active" => 0));
 				json_output(200,array('status' => 400,'message' => "Try Again"));
 				}
 			}
@@ -542,7 +542,7 @@ class Adminusers extends CI_Controller
 			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 		else{
-			if($email == true && $password== true){
+			if($email == true && $password == true){
 
 				$curr = date('Y-m-d H:i:s');
 				$last_min = date('Y-m-d H:i:s', strtotime('-60 minutes'));
@@ -551,8 +551,8 @@ class Adminusers extends CI_Controller
 				$this->db->from('fp_adminotp');
 				$this->db->where('email', $email);
 				$this->db->where('is_active', 0);
-				$this->db->where('created_at >=', $last_min);
-				$this->db->where('created_at <=', $curr);
+				// $this->db->where('created_at >=', $last_min);
+				// $this->db->where('created_at <=', $curr);
 				$otpcheck = $this->db->get();
 
 				if($otpcheck->num_rows() >= 1){

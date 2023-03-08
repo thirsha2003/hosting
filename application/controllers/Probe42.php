@@ -59,13 +59,13 @@ public function probeapi()
 
 
                             // Getting the comapy details
-                            $companyDetails= $responseData['company'];
+                            $companyDetails = $responseData['company'];
                             // object for send to DB 
                             $borrowerbasedetails=[
                               'cin'=>$companyDetails['cin'],
                               'company_name'=>$companyDetails['legal_name'],
                               'classification'=>$companyDetails['classification'],
-                              'incorporation_date'=>$companyDetails['incorporation_date'],
+                              // 'incorporation_date'=>$companyDetails['incorporation_date'], 
                               'paid_up_capital'=>$companyDetails['paid_up_capital'],
                               'sum_of_charges'=> $companyDetails['sum_of_charges'],
                               'authorized_capital'=>$companyDetails['authorized_capital'],
@@ -93,38 +93,36 @@ public function probeapi()
                             $this->db->update('fp_borrower_user_details', $borrowerbasedetails);
                       // }
                             // else{
-                            
+
                             //   json_output(200, array('status' => 200 , 'message'=> 'ALREDAY  REGISTERED'));
-
                             // }
-
                             // ------------------ End of borroweruserdetails-----------------------------
                                $companydirectors = $responseData['authorized_signatories'];   
                                  foreach($companydirectors as $directors){
                                   // object for send to DB 
                                   $directorsdetails=[
                                     'type'=>1,
-                                    'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
-                                    'pan'=> $directors['pan'],
-                                    'din'=> $directors['din'],
-                                    'name'=> $directors['name'],
-                                    'designation_type'=> $directors['designation'],
-                                    'din_status'=> $directors['din_status'],
-                                    'gender'=> $directors['gender'],
-                                    'date_of_birth'=> $directors['date_of_birth'],
-                                    'age'=> $directors['age'],
-                                    'date_of_appointment'=> $directors['date_of_appointment'],
-                                    'date_of_appiontment_current'=> $directors['date_of_appointment_for_current_designation'],
-                                    'date_of_cessation'=> $directors['date_of_cessation'],
-                                    'nationality'=> $directors['nationality'],
-                                    'dsc_status'=> $directors['dsc_status'] ,
-                                    'dec_expiry_date'=> $directors['dsc_expiry_date'],
-                                    'father_name'=> $directors['father_name'],
-                                    'address_line1'=> $directors['address']['address_line1'],
-                                    'address_line2'=> $directors['address']['address_line2'],
-                                    'api_city'=> $directors['address']['city'],
-                                    'api_state'=> $directors['address']['state'],
-                                    'api_pincode'=> $directors['address']['pincode'],
+                                    'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : "",
+                                    'pan'=> isset($directors['pan'])? $directors['pan']:null,
+                                    'din'=> isset($directors['din'])? $directors['din']:null,
+                                    'name'=> isset($directors['name'])? $directors['name']:null,
+                                    'designation_type'=> isset($directors['designation'])? $directors['designation']:null,
+                                    'din_status'=> isset($directors['din_status'])? $directors['din_status']:null,
+                                    'gender'=> isset($directors['gender'])? $directors['gender']:null,
+                                    'date_of_birth'=> isset($directors['date_of_birth'])? $directors['date_of_birth']:null,
+                                    'age'=> isset($directors['age'])? $directors['age']:null,
+                                    'date_of_appointment'=> isset($directors['date_of_appointment'])? $directors['date_of_appointment']:null,
+                                    'date_of_appiontment_current'=> isset($directors['date_of_appointment_for_current_designation'])? $directors['date_of_appointment_for_current_designation']:null,
+                                    'date_of_cessation'=> isset($directors['date_of_cessation'])? $directors['date_of_cessation']:null,
+                                    'nationality'=> isset($directors['nationality'])? $directors['nationality']:null,
+                                    'dsc_status'=> isset($directors['dsc_status'] )? $directors['dsc_status']:null,
+                                    'dec_expiry_date'=> isset($directors['dsc_expiry_date'])? $directors['dsc_expiry_date']:null,
+                                    'father_name'=> isset($directors['father_name'])? $directors['father_name']:null,
+                                    'address_line1'=> isset($directors['address']['address_line1'])? $directors['address']['address_line1']:null,
+                                    'address_line2'=> isset($directors['address']['address_line2'])? $directors['address']['address_line2']:null,
+                                    'api_city'=> isset($directors['address']['city'])? $directors['address']['city']:null,
+                                    'api_state'=> isset($directors['address']['state'])? $directors['address']['state']:null,
+                                    'api_pincode'=> isset($directors['address']['pincode'])? $directors['address']['pincode']:null,
                                   ];                  
                                                       //  if(($params['borrowerid'])==0 && ($directorsdetails->pan==0 || $directorsdetails->din==0 )){
                                                         $this->db->insert('fp_director_details', $directorsdetails);
@@ -164,6 +162,9 @@ public function probeapi()
                                                     $result = json_decode($season_data, true);
                                                     $director_network = $result;
 
+																										// isset($director_network['data']['director']);
+																										$director_network['data']['director'] = isset($director_network['data']['director']) ?$director_network['data']['director'] : null;
+
                                                     foreach ($director_network['data']['director'] as $director_data_new ){
                                                       if($director_data_new['network']['companies'])
                                                       {
@@ -173,18 +174,18 @@ public function probeapi()
                                                         $director_company_details=[
                                                           'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                                            'director_id'=>$director_data->id,
-                                                           'cin'=>$director_company['cin'],
-                                                           'legal_name'=>$director_company['legal_name'],
-                                                           'company_status'=>$director_company['company_status'],
-                                                           'incorporation_date'=>$director_company['incorporation_date'],
-                                                           'paid_up_capital'=>$director_company['paid_up_capital'],
-                                                           'sum_of_charges'=>$director_company['sum_of_charges'],
-                                                           'city'=>$director_company['city'],
-                                                           'designation'=>$director_company['designation'],
-                                                           'date_of_appointment'=>$director_company['date_of_appointment'],
-                                                           'date_of_appointment_for_current_designation'=>$director_company['date_of_appointment_for_current_designation'],
-                                                           'date_of_cessation'=>$director_company['date_of_cessation'],
-                                                           'active_compliance'=>$director_company['active_compliance'],
+                                                           'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
+                                                           'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
+                                                           'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
+                                                          // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                                           'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
+                                                           'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
+                                                           'city'=>isset($director_company['city'])?$director_company['city']:null,
+                                                           'designation'=>isset($director_company['designation'])?$director_company['designation']:null,
+                                                           'date_of_appointment'=>isset($director_company['date_of_appointment'])?$director_company['date_of_appointment']:null,
+                                                           'date_of_appointment_for_current_designation'=>isset($director_company['date_of_appointment_for_current_designation'])?$director_company['date_of_appointment_for_current_designation']:null,
+                                                           'date_of_cessation'=>isset($director_company['date_of_cessation'])?$director_company['date_of_cessation']:null,
+                                                           'active_compliance'=>isset($director_company['active_compliance'])?$director_company['active_compliance']:null,
 
                                                         ]; 
                                                           //  if($director_company_details->director_id  and $director_company_details->cin ){
@@ -203,16 +204,16 @@ public function probeapi()
                                                         $director_llps_details=[
                                                           'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                                           'director_id'=>$director_data->id,
-                                                          'cin'=>$directorllps['llpin'],
-                                                          'legal_name'=>$directorllps['legal_name'],
-                                                          'company_status'=>$directorllps['status'],
-                                                          'incorporation_date'=>$directorllps['incorporation_date'],
-                                                          'sum_of_charges'=>$directorllps['sum_of_charges'],
-                                                          'city'=>$directorllps['city'],
-                                                          'designation'=>$directorllps['designation'],
-                                                          'date_of_appointment'=>$directorllps['date_of_appointment'],
-                                                          'date_of_appointment_for_current_designation'=>$directorllps['date_of_appointment_for_current_designation'],
-                                                          'date_of_cessation'=>$directorllps['date_of_cessation'], 
+                                                          'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
+                                                          'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
+                                                          'company_status'=>isset($directorllps['status'])?$directorllps['status']:null,
+                                                          // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                                          'sum_of_charges'=>isset($directorllps['sum_of_charges'])?$directorllps['sum_of_charges']:null,
+                                                          'city'=>isset($directorllps['city'])?$directorllps['city']:null,
+                                                          'designation'=>isset($directorllps['designation'])?$directorllps['designation']:null,
+                                                          'date_of_appointment'=>isset($directorllps['date_of_appointment'])?$directorllps['date_of_appointment']:null,
+                                                          'date_of_appointment_for_current_designation'=>isset($directorllps['date_of_appointment_for_current_designation'])?$directorllps['date_of_appointment_for_current_designation']:null,
+                                                          'date_of_cessation'=>isset($directorllps['date_of_cessation'])?$directorllps['date_of_cessation']:null,
                                                         ];
                                                         $this->db->insert('fp_director_network',  $director_llps_details);
                                                       }
@@ -253,18 +254,18 @@ public function probeapi()
                                                         $director_company_details=[
                                                           'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                                            'director_id'=>$director_data->id,
-                                                           'cin'=>$director_company['cin'],
-                                                           'legal_name'=>$director_company['legal_name'],
-                                                           'company_status'=>$director_company['company_status'],
-                                                           'incorporation_date'=>$director_company['incorporation_date'],
-                                                           'paid_up_capital'=>$director_company['paid_up_capital'],
-                                                           'sum_of_charges'=>$director_company['sum_of_charges'],
-                                                           'city'=>$director_company['city'],
-                                                           'designation'=>$director_company['designation'],
-                                                           'date_of_appointment'=>$director_company['date_of_appointment'],
-                                                           'date_of_appointment_for_current_designation'=>$director_company['date_of_appointment_for_current_designation'],
-                                                           'date_of_cessation'=>$director_company['date_of_cessation'],
-                                                           'active_compliance'=>$director_company['active_compliance'],
+                                                           'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
+                                                           'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
+                                                           'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
+                                                          // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                                           'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
+                                                           'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
+                                                           'city'=>isset($director_company['city'])?$director_company['city']:null,
+                                                           'designation'=>isset($director_company['designation'])?$director_company['designation']:null,
+                                                           'date_of_appointment'=>isset($director_company['date_of_appointment'])?$director_company['date_of_appointment']:null,
+                                                           'date_of_appointment_for_current_designation'=>isset($director_company['date_of_appointment_for_current_designation'])?$director_company['date_of_appointment_for_current_designation']:null,
+                                                           'date_of_cessation'=>isset($director_company['date_of_cessation'])?$director_company['date_of_cessation']:null,
+                                                           'active_compliance'=>isset($director_company['active_compliance'])?$director_company['active_compliance']:null,
 
                                                         ]; 
                                                         $this->db->insert('fp_director_network', $director_company_details);
@@ -276,17 +277,17 @@ public function probeapi()
                                                         $director_llps_details=[
                                                           'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                                           'director_id'=>$director_data->id,
-                                                          'cin'=>$directorllps['llpin'],
-                                                          'legal_name'=>$directorllps['legal_name'],
-                                                          'company_status'=>$directorllps['company_status'],
-                                                          'incorporation_date'=>$directorllps['incorporation_date'],
-                                                          'paid_up_capital'=>$directorllps['paid_up_capital'],
+                                                          'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
+                                                          'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
+                                                          'company_status'=>isset($directorllps['company_status'])?$directorllps['company_status']:null,
+                                                          // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                                          'paid_up_capital'=>isset($directorllps['paid_up_capital'])?$directorllps['paid_up_capital']:null,
                                                           'sum_of_charges'=>$directorllps['sum_of_charges'],
-                                                          'city'=>$directorllps['city'],
-                                                          'designation'=>$directorllps['designation'],
-                                                          'date_of_appointment'=>$directorllps['date_of_appointment'],
-                                                          'date_of_appointment_for_current_designation'=>$directorllps['date_of_appointment_for_current_designation'],
-                                                          'date_of_cessation'=>$directorllps['date_of_cessation'], 
+                                                          'city'=>isset($directorllps['city'])?$directorllps['city']:null,
+                                                          'designation'=>isset($directorllps['designation'])?$directorllps['designation']:null,
+                                                          'date_of_appointment'=>isset($directorllps['date_of_appointment'])?$directorllps['date_of_appointment']:null,
+                                                          'date_of_appointment_for_current_designation'=>isset($directorllps['date_of_appointment_for_current_designation'])?$directorllps['date_of_appointment_for_current_designation']:null,
+                                                          'date_of_cessation'=>isset($directorllps['date_of_cessation'])?$directorllps['date_of_cessation']:null, 
                                                         ];
                                                         $this->db->insert('fp_director_network',  $director_llps_details);
                                                       }
@@ -300,12 +301,12 @@ public function probeapi()
                               foreach($shareholder as $apishareholder)
                               {
                                 $shareholderdetails=[
-                                  'borrower_id'=> ($params['borrowerid']) ? $params['borrowerid'] : '',
-                                  'open_charges_id'=>$apishareholder['id'],
-                                  'date'=>$apishareholder['date'],
-                                  'holder_name'=>$apishareholder['holder_name'],
-                                  'amount'=>$apishreholder['amount'],
-                                  'type'=>$apishareholder['type'],
+                                  'borrower_id'=> isset($params['borrowerid']) ? $params['borrowerid'] : '',
+                                  'open_charges_id'=>isset($apishareholder['id'])?$apishareholder['id']:null,
+                                  'date'=>isset($apishareholder['date'])?$apishareholder['date']:null,
+                                  'holder_name'=>isset($apishareholder['holder_name'])?$apishareholder['holder_name']:null,
+                                  'amount'=>isset($apishreholder['amount'])?$apishreholder['amount']:null,
+                                  'type'=>isset($apishareholder['type'])?$apishareholder['type']:null,
   
                                 ];
                                $this->db->insert('fp_open_charges',$shareholderdetails);
@@ -341,26 +342,26 @@ public function probeapi()
                             $companydetails = $responseData['llp']; 
                             // object for  send to DB 
                             $borroweruserbasedetails=[
-                              'cin'=>$companydetails['llpin'],
-                              'company_name'=>$companydetails['legal_name'],
-                              'efiling_status'=>$companydetails['efiling_status'],
-                              'sum_of_charges'=>$companydetails['sum_of_charges'],
-                              'cirp_status'=>$companydetails['cirp_status'],
-                              'efiling_status'=>$companydetails['efiling_status'],
-                              'incorporation_date'=>$companydetails['incorporation_date'],
-                              'lei_number'=>$companydetails['lei']['number'],
-                              'lei_status'=>$companydetails['lei']['status'],
-                              'full_address'=>$companydetails['registered_address']['full_address'],
-                              'address_line1'=>$companydetails['registered_address']['address_line1'],
-                              'address_line2'=>$companydetails['registered_address']   ['address_line2'],
-                              'api_city'=>$companydetails['registered_address']['city'],
-                              'api_pincode'=>$companydetails['registered_address']['pincode'],
-                              'api_state'=>$companydetails['registered_address']['state'],
-                              'classification'=>$companydetails['classification'],
-                              'api_email'=>$companydetails['email'],
-                              'last_agm_date'=>$companydetails['last_financial_reporting_date'],
-                              'last_filing_date'=>$companydetails['last_annual_returns_filed_date'],
-                              'total_obligation_of_contributio'=>$companydetails['total_obligation_of_contribution'],
+                              'cin'=>isset($companydetails['llpin'])?$companydetails['llpin']:null,
+                              'company_name'=>isset($companydetails['legal_name'])?$companydetails['legal_name']:null,
+                              'efiling_status'=>isset($companydetails['efiling_status'])?$companydetails['efiling_status']:null,
+                              'sum_of_charges'=>isset($companydetails['sum_of_charges'])?$companydetails['sum_of_charges']:null,
+                              'cirp_status'=>isset($companydetails['cirp_status'])?$companydetails['cirp_status']:null,
+                              'efiling_status'=>isset($companydetails['efiling_status'])?$companydetails['efiling_status']:null,
+                              // // // 'incorporation_date'=>isset($companydetails['incorporation_date'])?$companydetails['incorporation_date']:null,
+                              'lei_number'=>isset($companydetails['lei']['number'])?$companydetails['lei']['number']:null,
+                              'lei_status'=>isset($companydetails['lei']['status'])?$companydetails['lei']['status']:null,
+                              'full_address'=>isset($companydetails['registered_address']['full_address'])?$companydetails['registered_address']['full_address']:null,
+                              'address_line1'=>isset($companydetails['registered_address']['address_line1'])?$companydetails['registered_address']['address_line1']:null,
+                              'address_line2'=>isset($companydetails['registered_address']   ['address_line2'])?$companydetails['registered_address']   ['address_line2']:null,
+                              'api_city'=>isset($companydetails['registered_address']['city'])?$companydetails['registered_address']['city']:null,
+                              'api_pincode'=>isset($companydetails['registered_address']['pincode'])?$companydetails['registered_address']['pincode']:null,
+                              'api_state'=>isset($companydetails['registered_address']['state'])?$companydetails['registered_address']['state']:null,
+                              'classification'=>isset($companydetails['classification'])?$companydetails['classification']:null,
+                              'api_email'=>isset($companydetails['email'])?$companydetails['email']:null,
+                              'last_agm_date'=>isset($companydetails['last_financial_reporting_date'])?$companydetails['last_financial_reporting_date']:null,
+                              'last_filing_date'=>isset($companydetails['last_annual_returns_filed_date'])?$companydetails['last_annual_returns_filed_date']:null,
+                              'total_obligation_of_contributio'=>isset($companydetails['total_obligation_of_contribution'])?$companydetails['total_obligation_of_contribution']:null,
                             ];
                               
                             // if(($params['borrowerid']) ? $params['borrowerid'] : '' &&  $borroweruserbasedetails['cin']==null){
@@ -384,26 +385,26 @@ public function probeapi()
                               $directordetails=[
                                 'type' =>1,
                                 'borrower_id'=>($params['borrowerid']) ? $params ['borrowerid'] : '',
-                                'pan'=> $directors['pan'],
-                                'din'=> $directors['din'],
-                                'name'=> $directors['name'],
-                                'designation_type'=>$directors['designation'],
-                                'din_status'=> $directors['din_status'],
-                                'gender'=> $directors['gender'],
-                                'date_of_birth'=> $directors['date_of_birth'],
-                                'age'=> $directors['age'],
-                                'date_of_appointment'=> $directors['date_of_appointment'],
-                                'date_of_appiontment_current'=>$directors['date_of_appointment_for_current_designation'],
-                                'date_of_cessation'=>$directors['date_of_cessation'],
-                                'nationality'=> $directors['nationality'],
-                                'dsc_status'=> $directors['dsc_status'],
-                                'dec_expiry_date'=> $directors['dsc_expiry_date'],
-                                'father_name'=> $directors['father_name'],
-                                'address_line1'=> $directors['address']['address_line1'],
-                                'address_line2'=> $directors['address']['address_line2'],
-                                'api_city' => $directors['address']['city'],
-                                'api_state'=> $directors['address']['state'],
-                                'api_pincode'=> $directors['address']['pincode'],
+                                'pan'=> isset($directors['pan'])?$directors['pan']:null,
+                                'din'=> isset($directors['din'])?$directors['din']:null,
+                                'name'=> isset($directors['name'])?$directors['name']:null,
+                                'designation_type'=>isset($directors['designation'])?$directors['designation']:null,
+                                'din_status'=> isset($directors['din_status'])?$directors['din_status']:null,
+                                'gender'=> isset($directors['gender'])?$directors['gender']:null,
+                                'date_of_birth'=> isset($directors['date_of_birth'])?$directors['date_of_birth']:null,
+                                'age'=> isset($directors['age'])?$directors['age']:null,
+                                'date_of_appointment'=> isset($directors['date_of_appointment'])?$directors['date_of_appointment']:null,
+                                'date_of_appiontment_current'=>isset($directors['date_of_appointment_for_current_designation'])?$directors['date_of_appointment_for_current_designation']:null,
+                                'date_of_cessation'=>isset($directors['date_of_cessation'])?$directors['date_of_cessation']:null,
+                                'nationality'=> isset($directors['nationality'])?$directors['nationality']:null,
+                                'dsc_status'=> isset($directors['dsc_status'])?$directors['dsc_status']:null,
+                                'dec_expiry_date'=> isset($directors['dsc_expiry_date'])?$directors['dsc_expiry_date']:null,
+                                'father_name'=> isset($directors['father_name'])?$directors['father_name']:null,
+                                'address_line1'=> isset($directors['address']['address_line1'])?$directors['address']['address_line1']:null,
+                                'address_line2'=> isset($directors['address']['address_line2'])?$directors['address']['address_line2']:null,
+                                'api_city' => isset($directors['address']['city'])?$directors['address']['city']:null,
+                                'api_state'=> isset($directors['address']['state'])?$directors['address']['state']:null,
+                                'api_pincode'=> isset($directors['address']['pincode'])?$directors['address']['pincode']:null,
                               ];
                               $this->db->insert('fp_director_details', $directordetails);
                               $fp_director = $this->db->insert_id();
@@ -443,18 +444,18 @@ public function probeapi()
                                   $director_company_details=[
                                     'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                      'director_id'=>$director_data->id,
-                                     'cin'=>$director_company['cin'],
-                                     'legal_name'=>$director_company['legal_name'],
-                                     'company_status'=>$director_company['company_status'],
-                                     'incorporation_date'=>$director_company['incorporation_date'],
-                                     'paid_up_capital'=>$director_company['paid_up_capital'],
-                                     'sum_of_charges'=>$director_company['sum_of_charges'],
-                                     'city'=>$director_company['city'],
-                                     'designation'=>$director_company['designation'],
-                                     'date_of_appointment'=>$director_company['date_of_appointment'],
-                                     'date_of_appointment_for_current_designation'=>$director_company['date_of_appointment_for_current_designation'],
-                                     'date_of_cessation'=>$director_company['date_of_cessation'],
-                                     'active_compliance'=>$director_company['active_compliance'],
+                                     'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
+                                     'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
+                                     'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
+                                    // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                     'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
+                                     'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
+                                     'city'=>isset($director_company['city'])?$director_company['city']:null,
+                                     'designation'=>isset($director_company['designation'])?$director_company['designation']:null,
+                                     'date_of_appointment'=>isset($director_company['date_of_appointment'])?$director_company['date_of_appointment']:null,
+                                     'date_of_appointment_for_current_designation'=>isset($director_company['date_of_appointment_for_current_designation'])?$director_company['date_of_appointment_for_current_designation']:null,
+                                     'date_of_cessation'=>isset($director_company['date_of_cessation'])?$director_company['date_of_cessation']:null,
+                                     'active_compliance'=>isset($director_company['active_compliance'])?$director_company['active_compliance']:null,
 
                                   ]; 
                                   $this->db->insert('fp_director_network', $director_company_details);
@@ -466,16 +467,16 @@ public function probeapi()
                                   $director_llps_details=[
                                     'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                     'director_id'=>$director_data->id,
-                                    'cin'=>$directorllps['llpin'],
-                                    'legal_name'=>$directorllps['legal_name'],
-                                    'company_status'=>$directorllps['status'],
-                                    'incorporation_date'=>$directorllps['incorporation_date'],
-                                    'sum_of_charges'=>$directorllps['sum_of_charges'],
-                                    'city'=>$directorllps['city'],
-                                    'designation'=>$directorllps['designation'],
-                                    'date_of_appointment'=>$directorllps['date_of_appointment'],
-                                    'date_of_appointment_for_current_designation'=>$directorllps['date_of_appointment_for_current_designation'],
-                                    'date_of_cessation'=>$directorllps['date_of_cessation'], 
+                                    'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
+                                    'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
+                                    'company_status'=>isset($directorllps['status'])?$directorllps['status']:null,
+                                    // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                    'sum_of_charges'=>isset($directorllps['sum_of_charges'])?$directorllps['sum_of_charges']:null,
+                                    'city'=>isset($directorllps['city'])?$directorllps['city']:null,
+                                    'designation'=>isset($directorllps['designation'])?$directorllps['designation']:null,
+                                    'date_of_appointment'=>isset($directorllps['date_of_appointment'])?$directorllps['date_of_appointment']:null,
+                                    'date_of_appointment_for_current_designation'=>isset($directorllps['date_of_appointment_for_current_designation'])?$directorllps['date_of_appointment_for_current_designation']:null,
+                                    'date_of_cessation'=>isset($directorllps['date_of_cessation'])?$directorllps['date_of_cessation']:null, 
                                   ];
                                   $this->db->insert('fp_director_network',  $director_llps_details);
                                 }
@@ -503,7 +504,7 @@ public function probeapi()
                               $result = json_decode($season_data, true);
                               $director_network = $result;
 
-                              foreach ($director_network['data']['director'] as $director_data_new ){
+                              foreach($director_network['data']['director'] as $director_data_new ){
                                 if($director_data_new['network']['companies'])
                                 {
                                 foreach ($director_data_new['network']['companies']  as $director_company )
@@ -512,18 +513,18 @@ public function probeapi()
                                   $director_company_details=[
                                     'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                      'director_id'=>$director_data->id,
-                                     'cin'=>$director_company['cin'],
-                                     'legal_name'=>$director_company['legal_name'],
-                                     'company_status'=>$director_company['company_status'],
-                                     'incorporation_date'=>$director_company['incorporation_date'],
-                                     'paid_up_capital'=>$director_company['paid_up_capital'],
-                                     'sum_of_charges'=>$director_company['sum_of_charges'],
-                                     'city'=>$director_company['city'],
-                                     'designation'=>$director_company['designation'],
-                                     'date_of_appointment'=>$director_company['date_of_appointment'],
-                                     'date_of_appointment_for_current_designation'=>$director_company['date_of_appointment_for_current_designation'],
-                                     'date_of_cessation'=>$director_company['date_of_cessation'],
-                                     'active_compliance'=>$director_company['active_compliance'],
+                                     'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
+                                     'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
+                                     'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
+                                    // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                     'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
+                                     'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
+                                     'city'=>isset($director_company['city'])?$director_company['city']:null,
+                                     'designation'=>isset($director_company['designation'])?$director_company['designation']:null,
+                                     'date_of_appointment'=>isset($director_company['date_of_appointment'])?$director_company['date_of_appointment']:null,
+                                     'date_of_appointment_for_current_designation'=>isset($director_company['date_of_appointment_for_current_designation'])?$director_company['date_of_appointment_for_current_designation']:null,
+                                     'date_of_cessation'=>isset($director_company['date_of_cessation'])?$director_company['date_of_cessation']:null,
+                                     'active_compliance'=>isset($director_company['active_compliance'])?$director_company['active_compliance']:null,
                                   ]; 
                                   $this->db->insert('fp_director_network', $director_company_details);
                                 } 
@@ -534,17 +535,17 @@ public function probeapi()
                                   $director_llps_details=[
                                     'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : '',
                                     'director_id'=>$director_data->id,
-                                    'cin'=>$directorllps['llpin'],
-                                    'legal_name'=>$directorllps['legal_name'],
-                                    'company_status'=>$directorllps['company_status'],
-                                    'incorporation_date'=>$directorllps['incorporation_date'],
-                                    'paid_up_capital'=>$directorllps['paid_up_capital'],
-                                    'sum_of_charges'=>$directorllps['sum_of_charges'],
-                                    'city'=>$directorllps['city'],
-                                    'designation'=>$directorllps['designation'],
-                                    'date_of_appointment'=>$directorllps['date_of_appointment'],
-                                    'date_of_appointment_for_current_designation'=>$directorllps['date_of_appointment_for_current_designation'],
-                                    'date_of_cessation'=>$directorllps['date_of_cessation'], 
+                                    'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
+                                    'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
+                                    'company_status'=>isset($directorllps['company_status'])?$directorllps['company_status']:null,
+                                    // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                    'paid_up_capital'=>isset($directorllps['paid_up_capital'])?$directorllps['paid_up_capital']:null,
+                                    'sum_of_charges'=>isset($directorllps['sum_of_charges'])?$directorllps['sum_of_charges']:null,
+                                    'city'=>isset($directorllps['city'])?$directorllps['city']:null,
+                                    'designation'=>isset($directorllps['designation'])?$directorllps['designation']:null,
+                                    'date_of_appointment'=>isset($directorllps['date_of_appointment'])?$directorllps['date_of_appointment']:null,
+                                    'date_of_appointment_for_current_designation'=>isset($directorllps['date_of_appointment_for_current_designation'])?$directorllps['date_of_appointment_for_current_designation']:null,
+                                    'date_of_cessation'=>isset($directorllps['date_of_cessation'])?$directorllps['date_of_cessation']:null, 
                                   ];
                                   $this->db->insert('fp_director_network',  $director_llps_details);
                                 }
@@ -559,10 +560,10 @@ public function probeapi()
                               $shareholderdetails=[
                                 'borrower_id'=> ($params['borrowerid']) ? $params      ['borrowerid'] : '',
                                 'open_charges_id'=>$apishareholder['id'],
-                                'date'=>$apishareholder['date'],
-                                'holder_name'=>$apishareholder['holder_name'],
-                                'amount'=>$apishreholder['amount'],
-                                'type'=>$apishareholder['type'],
+                                'date'=>isset($apishareholder['date'])?$apishareholder['date']:null,
+                                'holder_name'=>isset($apishareholder['holder_name'])?$apishareholder['holder_name']:null,
+                                'amount'=>isset($apishreholder['amount'])?$apishreholder['amount']:null,
+                                'type'=>isset($apishareholder['type'])?$apishareholder['type']:null,
 
                               ];
                              $this->db->insert('fp_open_charges',$shareholderdetails);

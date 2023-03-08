@@ -1837,6 +1837,41 @@ public function  addborroweruser()
 		}
 	}
 
+	public function pincodedata_search()
+    {
+      $method = $_SERVER['REQUEST_METHOD'];
+      if($method == 'POST')
+      {
+        
+        $response['status']=200;
+        $respStatus = $response['status'];
+        $params = json_decode(file_get_contents('php://input'), TRUE);
+          
+            $selectkey   = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+            $join     = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+            if($params['tableName']!=''){
+              
+              $sql = "SELECT " .$selectkey. " FROM ".$params['tableName']." ".$join." WHERE ".$where;
+            }
+            else
+            {
+              $sql = "SELECT l.id as locationid, l.name as locationname, l.city_id,
+              c.name as cityname,c.district_id, d.name as districtname,d.state_id,
+              s.name as statename FROM fp_location l,fp_city c,fp_district d,fp_state s
+              WHERE l.city_id=c.id AND c.district_id=d.id AND d.state_id=s.id AND l.pincode = ".$where;
+            }
+            
+            $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+            json_output($respStatus,$resp);
+        
+      }
+      else
+      {
+             json_output(400,array('status' => 400,'message' => 'Bad request.'));
+      }
+    }
+
 
 
 

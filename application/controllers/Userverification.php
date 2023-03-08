@@ -241,11 +241,11 @@ public function newusersignup()
 							$mOTP =0;
 
 							$slug_name  = $params['data']['slug'];
-       if($slug_name == '51532518181512'){
-        $slug = 'borrower';
-       }else if($slug_name == "815441521"){
-        $slug = 'lender';
-       }
+    					   if($slug_name == '51532518181512'){
+    					    $slug = 'borrower';
+    					   }else if($slug_name == "815441521"){
+    					    $slug = 'lender';
+    					   }
 
 							if($count==0)
 							{
