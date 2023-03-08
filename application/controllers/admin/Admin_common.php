@@ -125,7 +125,7 @@ class Admin_common extends CI_Controller
 				$email = $params['data']['email'];
 				$phone = $params['data']['mobile'];
 				$created_by =  $params['data']['created_by'];
-				$company_name = $params['data']['company_name'];
+				$company_name = isset($params['data']['company_name'])?$params['data']['company_name']:null;
 				$emailandmobileverified =1;
 				$add_user = $this->db->insert("fpa_users",array('name'=>$name,'email'=>$email, 'mobile'=>$phone ,'slug'=>'borrower', 'company_name'=>$company_name,'created_by'=>$created_by,'is_email_verified'=>$emailandmobileverified,'is_mobile_verified'=>$emailandmobileverified));
 				$id = $this->db->insert_id();
@@ -133,7 +133,7 @@ class Admin_common extends CI_Controller
 				
 				$add_borrower =$this->db->insert("fp_borrower_user_details", array('user_id'=>$id,'name'=>$name,'email'=>$email, 'phone'=>$phone,'company_name'=>$company_name));
 				if($add_user && $add_borrower){
-				json_output(200,array('status' => 200,'message' => 'successfully Added'));
+				json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$id));
 				}else{
 				json_output(200,array('status' => 400,'message' => 'Bad request.'));
 				}

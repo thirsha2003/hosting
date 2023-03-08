@@ -165,6 +165,7 @@ public function probeapi()
 																										// isset($director_network['data']['director']);
 																										$director_network['data']['director'] = isset($director_network['data']['director']) ?$director_network['data']['director'] : null;
 
+                                                    if($director_network['data']['director'] !=null){
                                                     foreach ($director_network['data']['director'] as $director_data_new ){
                                                       if($director_data_new['network']['companies'])
                                                       {
@@ -219,6 +220,7 @@ public function probeapi()
                                                       }
                                                     }
                                                   } 
+                                                }
 
                                                   }
                                                    if($director_data->pan==null){
