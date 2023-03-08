@@ -1037,12 +1037,11 @@ public function verifymobile()
 								$this->db->query($sql1);
 								$this->db->query($sql2);
 								//----------------------transaction complete----------------------------------//
-								
 						}
 						else
 						{
 							$respStatus=201;
-							$resp = array('status' => 201,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
+							$resp = array('status' => 201,'message' =>  'Success','data' =>"Try Again!");
 							return json_output($respStatus,$resp);
 						}
 				}else
