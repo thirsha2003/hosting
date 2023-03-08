@@ -853,9 +853,10 @@ public function  borrowerloanrequest()
 				
 							// try{ 
 
-								$sqls= "select 
+								$sqls= "SELECT  
 								t1.borrower_id, 
-								t2.name as borrowername, 
+								t2.name as borrowername,
+								t2.company_name as companyname, 
 								t1.id AS Loanrequest,
 								t1.product_slug, 
 								t1.roi_min,
