@@ -2384,11 +2384,13 @@ public function borrowers_archievedprofiles()
 				$id  = ($params['id']);
   
 				$sql = "UPDATE fp_borrower_loanrequests
-				SET  is_deleted='is deleted by admin'
-				WHERE fp_borrower_loanrequests.id=".$id ;
+				SET  is_deleted='yes'
+				WHERE fp_borrower_loanrequests.id = ".$id;
+
+				$query = $this->db->query($sql);
 				
 				
-				$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+				$resp = array('status' => 200,'message' =>  'Success','data' => 1 );
 				return json_output($respStatus,$resp);
 			}
 			else

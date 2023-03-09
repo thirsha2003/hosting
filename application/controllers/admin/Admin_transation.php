@@ -875,6 +875,7 @@ public function  borrowerloanrequest()
 								Where 
 								t3.slug = t1.product_slug and
 								t1.borrower_id = t2.user_id and 
+								t1.is_deleted = 'no' and
 								t1.product_slug= '".$slug."' and
 								t1.borrower_id= ".$id."
 								";
