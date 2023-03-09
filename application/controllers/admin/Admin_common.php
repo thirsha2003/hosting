@@ -538,8 +538,7 @@ class Admin_common extends CI_Controller
 				    
 				 $fpa_users = "UPDATE fpa_users SET status ='assigned' WHERE fpa_users.slug ='borrower' AND fpa_users.id=".$taskdata->borrower_id;
                  $fpa_user = $this->db->update('fpa_users',$fpa_users);
-				 echo $fpa_user ;
-				 echo "---------------";
+				
 				 
 				// $this->db->trans_complete();
 
@@ -2405,4 +2404,46 @@ public function borrowers_archievedprofiles()
 	  
 	}
 
+
+
+
+	public function updateborrower()
+			{
+				$method = $_SERVER['REQUEST_METHOD'];
+				if($method != 'POST'){
+				json_output(400,array('status' => 400,'message' => 'Bad request.'));
+				}else{
+				$checkToken = $this->check_token();
+				if(true){
+				$response['status']=200;
+				$respStatus = $response['status'];
+				$params = json_decode(file_get_contents('php://input'), TRUE);
+				try{
+				
+					$borrower_id = isset($params['data'] ['borrower_id']) ? $params ['data']['borrower_id'] : ""; ;
+					$company_name =  isset($params ['data'] ['company_name']) ? $params ['data']['company_name'] : "";
+					$entity_type =   isset($params ['data']['entity_type']) ? $params ['data']['entity_type'] : "" ;
+
+					$fp_borrower_details = array( 
+						'company_name'  => $company_name, 
+						'company_type '=> $entity_type, 
+					); 
+					$this->db->where('user_id',$borrower_id);
+					$this->db->update('fp_borrower_user_details', $fp_borrower_details);
+			
+				json_output(200,array('status' => 200,'message' => 'successfully Added'));
+				}
+				catch(Exception $e){
+				json_output(200,array('status' => 401,'message' => $e->getMessage()));
+				}
+				
+				
+				
+			}
+			else {
+				json_output(200,array('status' => 401,'message' => "Auth Failed "));
+			}
+
+		}
+	}
 } // -------------------------- end ---------------------
