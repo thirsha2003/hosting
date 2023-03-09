@@ -405,7 +405,7 @@ public function profilepercentage()
          $where   = isset($params['where']) ? $params['where'] : "";
          $id  = ($params['id']) ; 
 
-         $sql = 'SELECT bl.product_slug, bl.id  as lq_id, p.id as product_id, bl.borrower_id,p.name,p.image, bl.id FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug =p.slug and bl.borrower_id='.$id;
+         $sql = 'SELECT bl.product_slug, bl.id  as lq_id, p.id as product_id, bl.borrower_id,p.name,p.image, bl.id FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug = p.slug and  bl.is_deleted = "no"  and bl.borrower_id ='.$id;
          
          
          $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
