@@ -22,7 +22,7 @@ class Admin_common extends CI_Controller
 					$this->ci =& get_instance();
 					$this->ci->load->database();
 				
-			}
+			}  // construct 
 			public function check_token(){
 				$check_auth_user  = $this->login->check_auth_user();
 				if($check_auth_user){
@@ -39,7 +39,7 @@ class Admin_common extends CI_Controller
 				}else{
 					return false;
 				}	
-			}
+			} // check_token 
 			public function get_details(){
 				$method = $_SERVER['REQUEST_METHOD'];
 				if($method != 'POST'){
@@ -60,10 +60,8 @@ class Admin_common extends CI_Controller
 					json_output(400,array('status' => 400,'message' => 'Bad request.'));
 				}
 				}
-			}
-
-			public function profilecompletionstatusupdate()
-			{
+			} // get_details
+			public function profilecompletionstatusupdate(){
 						 $method = $_SERVER['REQUEST_METHOD'];
 						 if($method =="POST")
 						 {
@@ -97,18 +95,13 @@ class Admin_common extends CI_Controller
 									{
 										return json_output(400,array('status' => 400,'message' => $checkToken));
 									}
-						 
 						}
 						else
 						{
 						 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 						}
-		 
 			 
-			 }
-
-
-
+		}  //profilecompletionstatusupdate
 			public function addborrower()
 			{
 				$method = $_SERVER['REQUEST_METHOD'];
@@ -144,7 +137,7 @@ class Admin_common extends CI_Controller
 				json_output(400,array('status' => 400,'message' => 'Bad request.'));
 				}
 				}
-			}	
+			}	 // addborrower
 			public function addborrowerold(){
 				$method = $_SERVER['REQUEST_METHOD'];
 				if($method != 'POST'){
@@ -174,7 +167,7 @@ class Admin_common extends CI_Controller
 						json_output(400,array('status' => 400,'message' => 'Bad request.'));
 					}
 				}
-			}
+			}  //  addborrowerold
 			public function borrower_total(){
 				$method = $_SERVER['REQUEST_METHOD'];
 				if($method != 'POST'){
@@ -195,7 +188,7 @@ class Admin_common extends CI_Controller
 					json_output(400,array('status' => 400,'message' => $checkToken));
 				}
 				}
-			}
+			} // borrower_total
 			public function lender_total()
 			{
 				$method = $_SERVER['REQUEST_METHOD'];
@@ -217,7 +210,7 @@ class Admin_common extends CI_Controller
 					json_output(400,array('status' => 400,'message' => $checkToken));
 				}
 				}
-			}
+			} // lender_total
 			// Code by V&I
 			public function gettotalonboardedborrowers()
 			{
@@ -492,32 +485,12 @@ class Admin_common extends CI_Controller
 					}
 				
 			} // End of funciton gettotalSanctionedAmount()---------------------------------------------
-
-
-
-
-
-
-
-
-			
-
-
-
-
-
-
-
-
-	
-
-
-	public function taskassign_old()
-	{
-		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'POST'){
+	       public function taskassign_old()
+		   {
+		  $method = $_SERVER['REQUEST_METHOD'];
+		  if($method != 'POST'){
 		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		}else{
+		  }else{
 			// $checkToken = $this->check_token(); 
 			if(true){
 		  	$response['status']=200;
@@ -554,14 +527,15 @@ class Admin_common extends CI_Controller
 				json_output(400,array('status' => 400,'message' => 'Bad request.'));
 			}
 		}
-	}
+	       } // taskassign_old 
 
-	public function taskassign(){
-		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'POST'){
-		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		}else{
-		 // $checkToken = $this->check_token(); 
+	       public function taskassign()
+	{
+		    $method = $_SERVER['REQUEST_METHOD'];
+		    if($method != 'POST'){
+		     json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		    }else{
+		     // $checkToken = $this->check_token(); 
 		 if(true){
 		   $response['status']=200;
 		   $respStatus = $response['status'];
@@ -587,22 +561,13 @@ class Admin_common extends CI_Controller
 		   from fpa_adminusers where fpa_adminusers.id=".$taskdata->task_assigned_to;
 	  
 		   $rmdata = $this->db->query($assigndata)->row();
-	  
-		
-	  
-			
 					$task_details_worklog =$this->db->insert("fpa_taskdetails_worklog",array('taskdetail_id'=>$taskdata->id)); 
-				  
-		 
 					$fpa_users = "UPDATE fpa_users 
 		   SET status ='assigned', rm_id='".$rmdata->id."',".
 		   "rm_name='".$rmdata->name."',".
 		   "rm_email='".$rmdata->email."' WHERE fpa_users.id=".$taskdata->borrower_id;
 			
-		  
 		  $checkdata = $this->db->query($fpa_users);
-	  
-		  
 		
 		  // if ($this->db->trans_status() === FALSE)
 		  // {
@@ -627,13 +592,13 @@ class Admin_common extends CI_Controller
 		 }else{
 		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		 }
-		}
-	   }
+		  }
+    } // taskassign 
 
 
 
-	public function borrower_user_detail()
-	{
+	      public function borrower_user_detail()
+	      {
 			$method = $_SERVER['REQUEST_METHOD'];
 			if($method =="POST")
 			{
@@ -682,11 +647,11 @@ class Admin_common extends CI_Controller
 					return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 			}
 		
-	}
+	      } // borrower_user_detail
 
 
-	public function borrower_profile_details()
-	{
+	     public function borrower_profile_details()
+	     {
 	  $method = $_SERVER['REQUEST_METHOD'];
 	  if($method =="POST")
 	  {
@@ -727,10 +692,10 @@ class Admin_common extends CI_Controller
 		return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 	  }
 	 
-	}
-
-	public function borrower_newleads()
-	{
+	     } // borrower_profile_details 
+     
+	    public function borrower_newleads()
+	    {
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method =="POST")
 		{
@@ -780,7 +745,7 @@ class Admin_common extends CI_Controller
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
+	    } // borrower_newleads 
 
 
 	public function borrower_leads_fullcomplete()
@@ -837,9 +802,9 @@ class Admin_common extends CI_Controller
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
-	public function borrower_leads_halfcomplete()
-	{
+	} // borrower_leads_fullcomplete 
+	   public function borrower_leads_halfcomplete()
+	   {
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method =="POST")
 		{
@@ -892,9 +857,9 @@ class Admin_common extends CI_Controller
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
-	public function borrower_leads_basecomplete()
-	{
+	   } // borrower_leads_halfcomplete 
+	   public function borrower_leads_basecomplete()
+	   {
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method =="POST")
 		{
@@ -947,10 +912,10 @@ class Admin_common extends CI_Controller
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
+	   } // borrower_leads_basecomplete 
 
-	public function loanapp_dash_details()
-	{
+	    public function loanapp_dash_details()
+	    {
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method =="POST")
 		{
@@ -1019,10 +984,10 @@ class Admin_common extends CI_Controller
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
+	    } // loanapp_dash_details 
 
-	public function borrower_list()
-	{
+	    public function borrower_list()
+	    {
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method =="POST")
 		{
@@ -1071,10 +1036,10 @@ class Admin_common extends CI_Controller
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
+	    } // borrower_list 
 
 	public function totalassignedborrowers()
-  {
+    {
       $method = $_SERVER['REQUEST_METHOD'];
       if($method =="POST")
       {
@@ -1101,10 +1066,7 @@ class Admin_common extends CI_Controller
               $borrowerdetails = $this->db->query($sql)->result(); 
               $data = $this->db->query($sql);
               foreach ($data->result() as $row){
-                $txnArr[] = $row->borrower_id;
-                
-                  
-                
+                $txnArr[] = $row->borrower_id; 
               }
               $res = implode(",",$txnArr);
               $res  = "(".$res.")";
@@ -1130,10 +1092,10 @@ class Admin_common extends CI_Controller
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
     
-  }
+    } // totalassignedborrowers 
 
-  public function borrowers_incompleteprofiles()
-{
+      public function borrowers_incompleteprofiles()
+    {
     $method = $_SERVER['REQUEST_METHOD'];
     if($method =="POST")
     {
@@ -1187,12 +1149,12 @@ class Admin_common extends CI_Controller
         return json_output(400,array('status' => 400,'message' => 'Bad request.'));
     }
   
-}
+    } // borrowers_incompleteprofiles 
 
 
 
-public function borrowers_completeprofiles()
-  {
+   public function borrowers_completeprofiles()
+      {
       $method = $_SERVER['REQUEST_METHOD'];
       if($method =="POST")
       {
@@ -1221,9 +1183,6 @@ public function borrowers_completeprofiles()
               $data = $this->db->query($sql);
               foreach ($data->result() as $row){
                 $txnArr[] = $row->borrower_id;
-                
-                  
-                
               }
               $res = implode(",",$txnArr);
               $res  = "(".$res.")";
@@ -1249,16 +1208,16 @@ public function borrowers_completeprofiles()
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
     
-  }
-  else{
-  $resp = array('status' => 200,'message' =>  'Request method fail');
-      return json_output(400,$resp);
-  }
-}
+        }
+        else{
+        $resp = array('status' => 200,'message' =>  'Request method fail');
+            return json_output(400,$resp);
+        }
+    }  // borrowers_completeprofiles
 
 
-public function borrowers_archievedprofiles()
-  {
+   public function borrowers_archievedprofiles()
+     {
       $method = $_SERVER['REQUEST_METHOD'];
       if($method =="POST")
       {
@@ -1283,17 +1242,12 @@ public function borrowers_archievedprofiles()
               $borrowerdetails = $this->db->query($sql)->result(); 
               $data = $this->db->query($sql);
               foreach ($data->result() as $row){
-                $txnArr[] = $row->borrower_id;
-                
-                  
-                
+                $txnArr[] = $row->borrower_id; 
               }
               $res = implode(",",$txnArr);
               $res  = "(".$res.")";
 
               $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in '.$res;
-
-            
               // $this->db->query($sql)-result();
               // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
               // $trnn[]= $data->id;
@@ -1312,10 +1266,10 @@ public function borrowers_archievedprofiles()
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
     
-  }
+     } // borrowers_archievedprofiles 
 
-  public function approved_amount()
-  {
+     public function approved_amount()
+     {
       $method = $_SERVER['REQUEST_METHOD'];
       if($method =="POST")
       {
@@ -1349,19 +1303,14 @@ public function borrowers_archievedprofiles()
               $count = $this->db->query($sql)->num_rows(); 
        
         if($count >= 1){
-
-        
               $data = $this->db->query($sql);
               foreach ($data->result() as $row){
                 $txnArr[] = $row->borrower_id;
-                
               }
               $res = implode(",",$txnArr);
               $res  = "(".$res.")";
 
               $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in '.$res;
-
-            
               // $this->db->query($sql)-result();
               // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
               // $trnn[]= $data->id;
@@ -1372,7 +1321,7 @@ public function borrowers_archievedprofiles()
       $resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails);
             return json_output($respStatus,$resp);
       }
-    }
+      }
           else
           {
             return json_output(400,array('status' => 400,'message' => $checkToken));
@@ -1383,10 +1332,10 @@ public function borrowers_archievedprofiles()
       {
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
-  }
+     } // approved_amount 
 
-  public function sanctioned_amount()
-  {
+    public function sanctioned_amount()
+     {
       $method = $_SERVER['REQUEST_METHOD'];
       if($method =="POST")
       {
@@ -1421,8 +1370,6 @@ public function borrowers_archievedprofiles()
               $count = $this->db->query($sql)->num_rows(); 
        
         if($count >= 1){
-
-        
               $data = $this->db->query($sql);
               foreach ($data->result() as $row){
                 $txnArr[] = $row->borrower_id;
@@ -1432,8 +1379,6 @@ public function borrowers_archievedprofiles()
               $res  = "(".$res.")";
 
               $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in '.$res;
-
-            
               // $this->db->query($sql)-result();
               // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
               // $trnn[]= $data->id;
@@ -1444,7 +1389,7 @@ public function borrowers_archievedprofiles()
       $resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails);
             return json_output($respStatus,$resp);
       }
-    }
+     }
           else
           {
             return json_output(400,array('status' => 400,'message' => $checkToken));
@@ -1455,22 +1400,9 @@ public function borrowers_archievedprofiles()
       {
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
-  }		
+    }		// sanctioned_amount
 
  
-
- 
-
-	
-	
-
-	
-
-
-	
-
-	
-
 	// public function lender_user_detail()
     // {
     //   $method = $_SERVER['REQUEST_METHOD'];
@@ -1503,7 +1435,7 @@ public function borrowers_archievedprofiles()
     //           foreach ($data->result() as $row){
     //     $resultss = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Sent To Lender"           and lendermaster_id ='.$row->lender_master_id;
     //     $workflowstatus = $this->db->query($resultss)->num_rows();
-    //     $result = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Approved"           and lendermaster_id ='.$row->lender_master_id;
+    //     $result = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals      Approved"           and lendermaster_id ='.$row->lender_master_id;
     //     $Dealsapproved = $this->db->query($result)->num_rows();
     //         $txnArr[] = array("lender_master_id"=>$row->lender_master_id,
     //     "deal_send_to_lender"=>$workflowstatus,
@@ -1514,15 +1446,8 @@ public function borrowers_archievedprofiles()
     //     "entitytype"=>$row->entitytype,
     //     "Active"=>$row->Active,
     //     "lender_user_id"=>$row->lender_user_id,
-    //   );
-        
-                
+    //   );        
     //           }
-             
-
-             
-
-        
     //   //   'data' => $this->db->query($sql)->result()
     //           $resp = array('status' => 200,'message' =>  'Success', 'data'=>$txnArr);
     //           return json_output($respStatus,$resp);
@@ -1581,18 +1506,11 @@ public function borrowers_archievedprofiles()
         "entitytype"=>$row->entitytype,
         "Active"=>$row->Active,
         "lender_user_id"=>$row->lender_user_id,
-    "poc_name"=>$row->poc_name,
-    "lenderuserid"=>$row->lenderuserid,
-    "lendermasterimg"=>$row->lenderimage,
-      );
-        
-                
+        "poc_name"=>$row->poc_name,
+        "lenderuserid"=>$row->lenderuserid,
+        "lendermasterimg"=>$row->lenderimage,
+        );     
               }
-             
-
-             
-
-        
       //   'data' => $this->db->query($sql)->result()
               $resp = array('status' => 200,'message' =>  'Success', 'data'=>$txnArr);
               return json_output($respStatus,$resp);
@@ -1631,17 +1549,12 @@ public function borrowers_archievedprofiles()
          END )as Active
         
         FROM fpa_users b,fp_lender_user_details la ,fp_city fc ,fp_lender_master lm ,fp_fin_institution fin 
-        
         WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' ". $where;
-
 
       $lender_master_id = $this->db->query($sql)->result();
       $count = $this->db->query($sql)->num_rows();
 
 	  if($count>=1){
-
-	  
-
       $data = $this->db->query($sql);
               foreach ($data->result() as $row){
         $resultss = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Sent To Lender"           and lendermaster_id ='.$row->lender_master_id;
@@ -1657,14 +1570,7 @@ public function borrowers_archievedprofiles()
         "entitytype"=>$row->entitytype,
         "Active"=>$row->Active,
       );
-        
-                
               }
-             
-
-             
-
-        
       //   'data' => $this->db->query($sql)->result()
               $resp = array('status' => 200,'message' =>  'Success', 'data'=>$txnArr);
               return json_output($respStatus,$resp);
@@ -1683,10 +1589,11 @@ public function borrowers_archievedprofiles()
       {
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
-    }
+    } // lender_user_detail_statuswise
 
 
-	public function addlender(){
+	public function addlender()
+	{
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'POST'){
 		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
@@ -1725,9 +1632,10 @@ public function borrowers_archievedprofiles()
 		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		 }
 		}
-		 }
+	}  // addlender 
 
-		 public function taskassignlender(){
+		 public function taskassignlender()
+	{
 			$method = $_SERVER['REQUEST_METHOD'];
 			if($method != 'POST'){
 			  json_output(400,array('status' => 400,'message' => 'Bad request.'));
@@ -1759,12 +1667,8 @@ public function borrowers_archievedprofiles()
 			
 			   $rmdata = $this->db->query($assigndata)->row();
 			
-			
-			
-			  
 				  $task_details_worklog =$this->db->insert("fpa_taskdetails_worklog",array('taskdetail_id'=>$taskdata->id)); 
 				  
-			 
 				  $fpa_users = "UPDATE fpa_users 
 			   SET status ='assigned', rm_id='".$rmdata->id."',".
 			   "rm_name='".$rmdata->name."',".
@@ -1785,13 +1689,13 @@ public function borrowers_archievedprofiles()
 			  json_output(400,array('status' => 400,'message' => 'Bad request.'));
 			 }
 			}
-		  }
+	} // taskassignlender
 
 
 		  //  -----------------------RM BORROWER DASHBOARD---------------------------- 
 
-  public function rmborrower_dashboard()
-  {
+    public function rmborrower_dashboard()
+    {
 	$method = $_SERVER['REQUEST_METHOD'];
 	if($method =="POST")
 	{
@@ -1852,7 +1756,7 @@ public function borrowers_archievedprofiles()
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 	}
 
-}
+    } // rmborrower_dashboard
 
 
 
@@ -1885,10 +1789,6 @@ public function borrowers_archievedprofiles()
 
       $lender_master_id = $this->db->query($sql)->result();
 
-
-       //   echo $lender_master_id;
-    //   print_r("----------------------------");
-
       $data = $this->db->query($sql);
               foreach ($data->result() as $row){
         $resultss = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Sent To Lender" and lendermaster_id ='.$row->lender_master_id;
@@ -1903,16 +1803,9 @@ public function borrowers_archievedprofiles()
         "bankname"=>$row->bankname,
         "entitytype"=>$row->entitytype,
         "Active"=>$row->Active,
-    "lenderid"=>$row->lenderid
-      );
-        
-                
+     "lenderid"=>$row->lenderid
+      );     
               }
-             
-
-             
-
-        
       //   'data' => $this->db->query($sql)->result()
               $resp = array('status' => 200,'message' =>  'Success', 'data'=>$txnArr);
               return json_output($respStatus,$resp);
@@ -1926,7 +1819,7 @@ public function borrowers_archievedprofiles()
       {
           return json_output(400,array('status' => 400,'message' => 'Bad request.'));
       }
-    }
+    } // lender_user 
 
 
 	public function activitylog()
@@ -1961,7 +1854,7 @@ public function borrowers_archievedprofiles()
 			{
 					return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 			}
-	}
+	}  // activitylog --------------
 
 
 	public function lender_location()
@@ -2365,7 +2258,7 @@ public function borrowers_archievedprofiles()
 		return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 	  }
 	 
-	}
+	} // portfolio_borrower_user_detail
 
 	public function loanrequestdelete()
 	{
@@ -2404,7 +2297,7 @@ public function borrowers_archievedprofiles()
 			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		}
 	  
-	}
+	}  // loanrequestdelete
 
 
 
@@ -2447,5 +2340,5 @@ public function borrowers_archievedprofiles()
 			}
 
 		}
-	}
+	} // updateborrower
 } // -------------------------- end ---------------------

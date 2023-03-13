@@ -65,7 +65,7 @@ class Borrower extends CI_Controller {
 			return json_output(200,array('status' => 400,'Message' => "Invalid Authentication"));
 		}
 		}
-	}
+	}  //  loan_request 
 
 	public function borrower_requested_loan(){
 
@@ -114,7 +114,7 @@ class Borrower extends CI_Controller {
 			return json_output(200,array('status' => 400,'Message' => "Invalid Authentication"));
 		}
 		}
-	}
+	}   // borrower_requested_loan 
 
 	public function dir_update()
 	{
@@ -151,7 +151,7 @@ class Borrower extends CI_Controller {
 					  }
 				  // }
 			  }
-	}
+	} // dir_update 
 
 	public function doc_upload(){
 
@@ -199,7 +199,7 @@ class Borrower extends CI_Controller {
 			  }
 	
 
-	}
+	}   // doc_upload 
 
 
 
@@ -249,10 +249,11 @@ class Borrower extends CI_Controller {
 			  }
 	
 
-	}
+	} // doc_delect
 
 
-public function dir_doc_delect(){
+  public function dir_doc_delect()
+    {
 
 		$method = $_SERVER['REQUEST_METHOD'];
 			  if($method != 'POST')
@@ -313,7 +314,7 @@ public function dir_doc_delect(){
 			  }
 	
 
-	}
+	}  // dir_doc_delect
 	
 
 	public function dir_addupdate()
@@ -352,7 +353,7 @@ public function dir_doc_delect(){
 					  }
 				  // }
 			  }
-	}
+	} // dir_addupdate 
 
 
 	public function doc_upload_des(){
@@ -418,7 +419,7 @@ public function dir_doc_delect(){
 			  }
 	
 
-	}
+	} // doc_upload_des
 
 
 
