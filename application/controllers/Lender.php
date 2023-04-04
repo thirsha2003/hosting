@@ -117,8 +117,8 @@ class Lender extends CI_Controller
 							$intrest_by = array( 
 							'lender_intrest_received'=>"yes", 
 							'lender_interest_expressed_by' =>  $lenderid, 
-							'loanapplication_status' =>  "Express Interest", 
-							'workflow_status' =>  "Express Interest",
+							// 'loanapplication_status' =>  "Express Interest", 
+							// 'workflow_status' =>  "Express Interest",
 						
 						);
 
