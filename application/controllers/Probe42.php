@@ -36,7 +36,7 @@ public function probeapi()
                   if (strlen($cinorllpin)==21)
                 {         
                             //  This url  using for cin number 
-                           $probeAPI ='https://api.probe42.in/probe_pro_sandbox/companies/';
+                           $probeAPI ='https://api.probe42.in/probe_pro/companies/';
                            $probebasedetails ="/base-details"; 
                            $cin=$cinorllpin;
                            $name_str =$probeAPI.$cin.$probebasedetails;
@@ -47,17 +47,15 @@ public function probeapi()
                               curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                               curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                               curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                                            'x-api-version : 1.3',
-                                             'x-api-key : HeqZByvSwm8PdxEL1drWA2LG9QF84PkaPHeyLvl0',
-                                              'Accept: application/json'
+                                    'x-api-version : 1.3',
+                                    'x-api-key : 0SoeQhURvn2H48V7qSi323dOEb2rwi7L9P0zqzxd',
+                                    'Accept: application/json'
                            ]);            
                             $season_data = curl_exec($ch);
                             curl_close($ch);
                             $result = json_decode($season_data, true);
                             $responseData= $result['data'];
-
-
-
+                          
                             // Getting the comapy details
                             $companyDetails = $responseData['company'];
                             // object for send to DB 
@@ -65,7 +63,7 @@ public function probeapi()
                               'cin'=>$companyDetails['cin'],
                               'company_name'=>$companyDetails['legal_name'],
                               'classification'=>$companyDetails['classification'],
-                              // 'incorporation_date'=>$companyDetails['incorporation_date'], 
+                              'incorporation_date'=>$companyDetails['incorporation_date'], 
                               'paid_up_capital'=>$companyDetails['paid_up_capital'],
                               'sum_of_charges'=> $companyDetails['sum_of_charges'],
                               'authorized_capital'=>$companyDetails['authorized_capital'],
@@ -83,25 +81,46 @@ public function probeapi()
                               'last_agm_date'=> $companyDetails['last_agm_date'],
                               'last_filing_date'=> $companyDetails['last_filing_date'],
                               'api_email'=> $companyDetails['email'], 
-                            ];
-                                  
-                            // if( ($params['borrowerid']) && $borrowerbasedetails->cin==0){
+                              'efiling_status'=> isset( $companyDetails['efiling_status']) ? $companyDetails['efiling_status'] :null,
+                              'cirp_status'=>isset( $companyDetails['cirp_status']) ? $companyDetails['cirp_status'] :null ,
+                              'active_compliance'=>isset( $companyDetails['active_compliance']) ?  $companyDetails['active_compliance'] :null ,
+                              'status'=>isset( $companyDetails['status']) ? $companyDetails['status'] :null,
 
+                            ]; 
                             $where_id= array (
                                 'user_id'=>($params['borrowerid']) ? $params['borrowerid'] : '' );
                             $this->db->where($where_id);
                             $this->db->update('fp_borrower_user_details', $borrowerbasedetails);
-                      // }
-                            // else{
-
-                            //   json_output(200, array('status' => 200 , 'message'=> 'ALREDAY  REGISTERED'));
-                            // }
+                     
                             // ------------------ End of borroweruserdetails-----------------------------
-                               $companydirectors = $responseData['authorized_signatories'];   
+                               $companydirectors = $responseData['authorized_signatories']; 
+
                                  foreach($companydirectors as $directors){
+                                 
+
+                                  $director_type='';
+                                  if($directors['designation'] == 'Managing Director'){
+                                    $director_type=1; 
+                                  }
+                                  elseif ($directors['designation'] == 'Director'){
+                                      $director_type=2;
+                                  }
+                                  elseif ($directors['designation'] == 'Additional Director'){
+                                      $director_type=3;
+                                  }
+                                  elseif ($directors['designation'] == ' Executive Director'){
+                                      $director_type=4;
+                                  }
+                                  elseif ($directors['designation'] == ' Independent Director'){
+                                      $director_type=5;
+                                  }
+                                  elseif ($directors['designation'] == ' Nominee Director'){
+                                      $director_type=6;
+                                  }
+
                                   // object for send to DB 
                                   $directorsdetails=[
-                                    'type'=>1,
+                                    'type'=>$director_type,
                                     'borrower_id'=>isset($params['borrowerid']) ? $params['borrowerid'] : "",
                                     'pan'=> isset($directors['pan'])? $directors['pan']:null,
                                     'din'=> isset($directors['din'])? $directors['din']:null,
@@ -111,7 +130,7 @@ public function probeapi()
                                     'gender'=> isset($directors['gender'])? $directors['gender']:null,
                                     'date_of_birth'=> isset($directors['date_of_birth'])? $directors['date_of_birth']:null,
                                     'age'=> isset($directors['age'])? $directors['age']:null,
-                                    'date_of_appointment'=> isset($directors['date_of_appointment'])? $directors['date_of_appointment']:null,
+                                    'date_appointment'=> isset($directors['date_of_appointment'])? $directors['date_of_appointment']:null,
                                     'date_of_appointment_current'=> isset($directors['date_of_appointment_for_current_designation'])? $directors['date_of_appointment_for_current_designation']:null,
                                     'date_of_cessation'=> isset($directors['date_of_cessation'])? $directors['date_of_cessation']:null,
                                     'nationality'=> isset($directors['nationality'])? $directors['nationality']:null,
@@ -123,27 +142,23 @@ public function probeapi()
                                     'api_city'=> isset($directors['address']['city'])? $directors['address']['city']:null,
                                     'api_state'=> isset($directors['address']['state'])? $directors['address']['state']:null,
                                     'api_pincode'=> isset($directors['address']['pincode'])? $directors['address']['pincode']:null,
+                                    'api_country'=> isset($directors['address']['country'])? $directors['address']['country']:null,
                                   ];                  
-                                                      //  if(($params['borrowerid'])==0 && ($directorsdetails->pan==0 || $directorsdetails->din==0 )){
                                                         $this->db->insert('fp_director_details', $directorsdetails);
                                                         $fp_director = $this->db->insert_id();
-                                                      //  }
-                                                      //  else{
-                                                      //   json_output(200, array('status' => 200 , 'message'=> 'ALREDAY INSERT DIRECTOR DATA')); 
-                                                      //  }
-                                                   
+                                                    
 
                                                     $sql="select t1.pan , t1.id ,t1.din
                                                     from fp_director_details t1 where t1.id=".$fp_director;
                                                     $director_data = $this->db->query($sql)->row();
 
                                                   //  This url using for director network
-                                                  //  Today check to pan or din 
+                                               
                                                   if($director_data->pan!=null){
 
                                                     //  using this url pan 
 
-                                                    $probeAPI ='https://api.probe42.in/probe_pro_sandbox/director/network?pan=';
+                                                    $probeAPI ='https://api.probe42.in/probe_pro/director/network?pan=';
                                                     $pan= $director_data->pan;
                                                     $name_str=$probeAPI.$pan;
                                                     $urlc=$name_str;
@@ -154,7 +169,7 @@ public function probeapi()
                                                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                                                     curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                                               'x-api-version : 1.3',
-                                                                'x-api-key : HeqZByvSwm8PdxEL1drWA2LG9QF84PkaPHeyLvl0',
+                                                                'x-api-key : 0SoeQhURvn2H48V7qSi323dOEb2rwi7L9P0zqzxd',
                                                                 'Accept: application/json'
                                                     ]);            
                                                     $season_data = curl_exec($ch);
@@ -167,8 +182,7 @@ public function probeapi()
 
                                                     if($director_network['data']['director'] !=null){
                                                     foreach ($director_network['data']['director'] as $director_data_new ){
-                                                      if($director_data_new['network']['companies'])
-                                                      {
+                                                      if($director_data_new['network']['companies']){
                                                       foreach ($director_data_new['network']['companies']  as $director_company )
                                                       {
                                                         //  object for send to DB
@@ -178,7 +192,7 @@ public function probeapi()
                                                            'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
                                                            'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
                                                            'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
-                                                          // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                                            'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
                                                            'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
                                                            'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
                                                            'city'=>isset($director_company['city'])?$director_company['city']:null,
@@ -189,14 +203,8 @@ public function probeapi()
                                                            'active_compliance'=>isset($director_company['active_compliance'])?$director_company['active_compliance']:null,
 
                                                         ]; 
-                                                          //  if($director_company_details->director_id  and $director_company_details->cin ){
-
+                                                         
                                                             $this->db->insert('fp_director_network', $director_company_details);
-
-                                                          //  }
-                                                          //  else{
-                                                          //   json_output(200, array('status' => 200 , 'message'=> 'ALREDAY INSERT DIRECTOR DATA')); 
-                                                          //  } 
                                                       } 
                                                     }
                                                     if ($director_data_new['network']['llps']){
@@ -208,7 +216,7 @@ public function probeapi()
                                                           'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
                                                           'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
                                                           'company_status'=>isset($directorllps['status'])?$directorllps['status']:null,
-                                                          // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                                           'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
                                                           'sum_of_charges'=>isset($directorllps['sum_of_charges'])?$directorllps['sum_of_charges']:null,
                                                           'city'=>isset($directorllps['city'])?$directorllps['city']:null,
                                                           'designation'=>isset($directorllps['designation'])?$directorllps['designation']:null,
@@ -219,15 +227,15 @@ public function probeapi()
                                                         $this->db->insert('fp_director_network',  $director_llps_details);
                                                       }
                                                     }
-                                                  } 
-                                                }
+                                                     } 
+                                                     }
 
                                                   }
                                                    if($director_data->pan==null){
 
                                                     // using this url din
 
-                                                    $probeAPI ='https://api.probe42.in/probe_pro_sandbox/director/network?din=';
+                                                    $probeAPI ='https://api.probe42.in/probe_pro/director/network?din=';
                                                     
                                                     $din=$director_data->din;
                                                     $name_str =$probeAPI.$pan;
@@ -239,7 +247,7 @@ public function probeapi()
                                                     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                                                     curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                                               'x-api-version : 1.3',
-                                                                'x-api-key : HeqZByvSwm8PdxEL1drWA2LG9QF84PkaPHeyLvl0',
+                                                                'x-api-key : 0SoeQhURvn2H48V7qSi323dOEb2rwi7L9P0zqzxd',
                                                                 'Accept: application/json'
                                                     ]);            
                                                     $season_data = curl_exec($ch);
@@ -259,7 +267,7 @@ public function probeapi()
                                                            'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
                                                            'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
                                                            'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
-                                                          // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                                            'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
                                                            'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
                                                            'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
                                                            'city'=>isset($director_company['city'])?$director_company['city']:null,
@@ -282,7 +290,7 @@ public function probeapi()
                                                           'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
                                                           'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
                                                           'company_status'=>isset($directorllps['company_status'])?$directorllps['company_status']:null,
-                                                          // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                                           'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
                                                           'paid_up_capital'=>isset($directorllps['paid_up_capital'])?$directorllps['paid_up_capital']:null,
                                                           'sum_of_charges'=>$directorllps['sum_of_charges'],
                                                           'city'=>isset($directorllps['city'])?$directorllps['city']:null,
@@ -322,7 +330,7 @@ public function probeapi()
                         { 
                                 // This url is llpin  
 
-                          $probeAPI ='https://api.probe42.in/probe_pro_sandbox/llps/';
+                          $probeAPI ='https://api.probe42.in/probe_pro/llps/';
                            $probebasedetails ="/base-details";
                            $cin= $cinorllpin; 
                            $name_str =$probeAPI.$cin.$probebasedetails;
@@ -334,7 +342,7 @@ public function probeapi()
                               curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                               curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                             'x-api-version : 1.3',
-                                             'x-api-key : HeqZByvSwm8PdxEL1drWA2LG9QF84PkaPHeyLvl0',
+                                             'x-api-key : 0SoeQhURvn2H48V7qSi323dOEb2rwi7L9P0zqzxd',
                                               'Accept: application/json'
                            ]);            
                             $season_data = curl_exec($ch);
@@ -349,8 +357,7 @@ public function probeapi()
                               'efiling_status'=>isset($companydetails['efiling_status'])?$companydetails['efiling_status']:null,
                               'sum_of_charges'=>isset($companydetails['sum_of_charges'])?$companydetails['sum_of_charges']:null,
                               'cirp_status'=>isset($companydetails['cirp_status'])?$companydetails['cirp_status']:null,
-                              'efiling_status'=>isset($companydetails['efiling_status'])?$companydetails['efiling_status']:null,
-                              // // // 'incorporation_date'=>isset($companydetails['incorporation_date'])?$companydetails['incorporation_date']:null,
+                                'incorporation_date'=>isset($companydetails['incorporation_date'])?$companydetails['incorporation_date']:null,
                               'lei_number'=>isset($companydetails['lei']['number'])?$companydetails['lei']['number']:null,
                               'lei_status'=>isset($companydetails['lei']['status'])?$companydetails['lei']['status']:null,
                               'full_address'=>isset($companydetails['registered_address']['full_address'])?$companydetails['registered_address']['full_address']:null,
@@ -359,21 +366,18 @@ public function probeapi()
                               'api_city'=>isset($companydetails['registered_address']['city'])?$companydetails['registered_address']['city']:null,
                               'api_pincode'=>isset($companydetails['registered_address']['pincode'])?$companydetails['registered_address']['pincode']:null,
                               'api_state'=>isset($companydetails['registered_address']['state'])?$companydetails['registered_address']['state']:null,
+                              'api_country'=> isset($directors['address']['country'])? $directors['address']['country']:null,
                               'classification'=>isset($companydetails['classification'])?$companydetails['classification']:null,
                               'api_email'=>isset($companydetails['email'])?$companydetails['email']:null,
                               'last_agm_date'=>isset($companydetails['last_financial_reporting_date'])?$companydetails['last_financial_reporting_date']:null,
                               'last_filing_date'=>isset($companydetails['last_annual_returns_filed_date'])?$companydetails['last_annual_returns_filed_date']:null,
-                              'total_obligation_of_contributio'=>isset($companydetails['total_obligation_of_contribution'])?$companydetails['total_obligation_of_contribution']:null,
+                              // 'total_obligation_of_contribution'=>isset($companydetails['total_obligation_of_contribution'])?$companydetails['total_obligation_of_contribution']:null,
+
+                              'active_compliance'=>isset( $companyDetails['active_compliance']) ?  $companyDetails['active_compliance'] :null ,
+                              'status'=>isset( $companyDetails['status']) ? $companyDetails['status'] :null,
                             ];
                               
-                            // if(($params['borrowerid']) ? $params['borrowerid'] : '' &&  $borroweruserbasedetails['cin']==null){
-
-                            // };
-                            // else {
-
-                            //   json_output(200, array('status' => 200 , 'message'=> 'ALREDAY  REGISTERED'));
-                            // };
-
+                           
                           $where_id= array (
                           'user_id'=>($params['borrowerid']) ? $params['borrowerid'] : '' );
                           $this->db->where($where_id);
@@ -384,8 +388,27 @@ public function probeapi()
                             $director=$responseData['directors']; 
                             foreach($director as $directors){
                               // object for send to DB 
+                              $director_type='';
+                                  if($directors['designation'] == 'Managing Director'){
+                                    $director_type=1; 
+                                  }
+                                  elseif ($directors['designation'] == 'Director'){
+                                      $director_type=2;
+                                  }
+                                  elseif  ($directors['designation'] == 'Additional Director'){
+                                      $director_type=3;
+                                  }
+                                  elseif ($directors['designation'] == ' Executive Director'){
+                                      $director_type=4;
+                                  }
+                                  elseif ($directors['designation'] == ' Independent Director'){
+                                      $director_type=5;
+                                  }
+                                  elseif ($directors['designation'] == ' Nominee Director'){
+                                      $director_type=6;
+                                  }
                               $directordetails=[
-                                'type' =>1,
+                                'type' => $director_type,
                                 'borrower_id'=>($params['borrowerid']) ? $params ['borrowerid'] : '',
                                 'pan'=> isset($directors['pan'])?$directors['pan']:null,
                                 'din'=> isset($directors['din'])?$directors['din']:null,
@@ -395,7 +418,7 @@ public function probeapi()
                                 'gender'=> isset($directors['gender'])?$directors['gender']:null,
                                 'date_of_birth'=> isset($directors['date_of_birth'])?$directors['date_of_birth']:null,
                                 'age'=> isset($directors['age'])?$directors['age']:null,
-                                'date_of_appointment'=> isset($directors['date_of_appointment'])?$directors['date_of_appointment']:null,
+                                'date_appointment'=> isset($directors['date_of_appointment'])?$directors['date_of_appointment']:null,
                                 'date_of_appointment_current'=>isset($directors['date_of_appointment_for_current_designation'])?$directors['date_of_appointment_for_current_designation']:null,
                                 'date_of_cessation'=>isset($directors['date_of_cessation'])?$directors['date_of_cessation']:null,
                                 'nationality'=> isset($directors['nationality'])?$directors['nationality']:null,
@@ -407,6 +430,7 @@ public function probeapi()
                                 'api_city' => isset($directors['address']['city'])?$directors['address']['city']:null,
                                 'api_state'=> isset($directors['address']['state'])?$directors['address']['state']:null,
                                 'api_pincode'=> isset($directors['address']['pincode'])?$directors['address']['pincode']:null,
+                                'api_country'=> isset($directors['address']['country'])?$directors['address']['country']:null
                               ];
                               $this->db->insert('fp_director_details', $directordetails);
                               $fp_director = $this->db->insert_id();
@@ -418,7 +442,7 @@ public function probeapi()
                             
                             if($director_data->pan!=null){
                               //  using this url pan 
-                              $probeAPI ='https://api.probe42.in/probe_pro_sandbox/director/network?pan=';
+                              $probeAPI ='https://api.probe42.in/probe_pro/director/network?pan=';
                               $pan= $director_data->pan;
                               $name_str=$probeAPI.$pan;
                               $urlc=$name_str;
@@ -429,7 +453,7 @@ public function probeapi()
                               curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                               curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                         'x-api-version : 1.3',
-                                          'x-api-key : HeqZByvSwm8PdxEL1drWA2LG9QF84PkaPHeyLvl0',
+                                          'x-api-key : 0SoeQhURvn2H48V7qSi323dOEb2rwi7L9P0zqzxd',
                                           'Accept: application/json'
                               ]);            
                               $season_data = curl_exec($ch);
@@ -449,7 +473,7 @@ public function probeapi()
                                      'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
                                      'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
                                      'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
-                                    // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                     'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
                                      'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
                                      'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
                                      'city'=>isset($director_company['city'])?$director_company['city']:null,
@@ -472,7 +496,7 @@ public function probeapi()
                                     'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
                                     'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
                                     'company_status'=>isset($directorllps['status'])?$directorllps['status']:null,
-                                    // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                     'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
                                     'sum_of_charges'=>isset($directorllps['sum_of_charges'])?$directorllps['sum_of_charges']:null,
                                     'city'=>isset($directorllps['city'])?$directorllps['city']:null,
                                     'designation'=>isset($directorllps['designation'])?$directorllps['designation']:null,
@@ -487,7 +511,7 @@ public function probeapi()
                             }
                              if($director_data->pan==null){
                               // using this url din
-                              $probeAPI ='https://api.probe42.in/probe_pro_sandbox/director/network?din=';
+                              $probeAPI ='https://api.probe42.in/probe_pro/director/network?din=';
                               $din=$director_data->din;
                               $name_str =$probeAPI.$pan;
                               $urlc=$name_str;
@@ -498,7 +522,7 @@ public function probeapi()
                               curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
                               curl_setopt($ch, CURLOPT_HTTPHEADER, [
                                         'x-api-version : 1.3',
-                                          'x-api-key : HeqZByvSwm8PdxEL1drWA2LG9QF84PkaPHeyLvl0',
+                                          'x-api-key : 0SoeQhURvn2H48V7qSi323dOEb2rwi7L9P0zqzxd',
                                           'Accept: application/json'
                               ]);            
                               $season_data = curl_exec($ch);
@@ -518,7 +542,7 @@ public function probeapi()
                                      'cin'=>isset($director_company['cin'])?$director_company['cin']:null,
                                      'legal_name'=>isset($director_company['legal_name'])?$director_company['legal_name']:null,
                                      'company_status'=>isset($director_company['company_status'])?$director_company['company_status']:null,
-                                    // // //  'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
+                                     'incorporation_date'=>isset($director_company['incorporation_date'])?$director_company['incorporation_date']:null,
                                      'paid_up_capital'=>isset($director_company['paid_up_capital'])?$director_company['paid_up_capital']:null,
                                      'sum_of_charges'=>isset($director_company['sum_of_charges'])?$director_company['sum_of_charges']:null,
                                      'city'=>isset($director_company['city'])?$director_company['city']:null,
@@ -540,7 +564,7 @@ public function probeapi()
                                     'cin'=>isset($directorllps['llpin'])?$directorllps['llpin']:null,
                                     'legal_name'=>isset($directorllps['legal_name'])?$directorllps['legal_name']:null,
                                     'company_status'=>isset($directorllps['company_status'])?$directorllps['company_status']:null,
-                                    // // // 'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
+                                    'incorporation_date'=>isset($directorllps['incorporation_date'])?$directorllps['incorporation_date']:null,
                                     'paid_up_capital'=>isset($directorllps['paid_up_capital'])?$directorllps['paid_up_capital']:null,
                                     'sum_of_charges'=>isset($directorllps['sum_of_charges'])?$directorllps['sum_of_charges']:null,
                                     'city'=>isset($directorllps['city'])?$directorllps['city']:null,

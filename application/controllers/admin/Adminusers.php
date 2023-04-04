@@ -130,12 +130,32 @@ class Adminusers extends CI_Controller
                 if ($response['status'] == 200) {
                     $params = json_decode(file_get_contents('php://input'), true);
                     $useremail = $params['data']['email'];
+
+					$username = $params['data']['name'];
                     $userpassword = $params['data']['password'];
+					$userrole = $params['data']['role_slug'];
+
+                    $userroleslug = '';
+
+                    if ($userrole == 'sa') {
+
+                        $userroleslug = 'Super Admin';
+                    } elseif ($userrole == 'ad') {
+                        $userroleslug = 'Admin';
+                    } elseif ($userrole == 'rm') {
+                        $userroleslug = 'Relationship Manager';
+                    } elseif ($userrole == 'cm') {
+                        $userroleslug = 'Credit Manager';
+                    } elseif ($userrole == 'cc') {
+                        $userroleslug = 'Credit Committee';
+                    }
+					
+
                     if ($params['tableName'] == "fpa_adminusers") {
                         $simple_string = $params['data']['password'];
                         $iv_length = openssl_cipher_iv_length($this->ciphering);
                         $encryption = openssl_encrypt($simple_string, $this->ciphering,
-                            $this->key, $this->options, $this->_iv);
+                        $this->key, $this->options, $this->_iv);
 
                         $d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
 				
@@ -148,8 +168,8 @@ class Adminusers extends CI_Controller
                             $var = $this->db->insert($params['tableName'], $params['data']);
 
                             if ($var == true) {
-                                $subject = "Finnup App - Admin Login Credential";
-                                $message = "Hello Finnup Admin! <br/><br/>" . "Please find the login credential below <br/><br/>" .
+								$subject = "Dear ".$username.",";
+                                $message = "Dear ".$username.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/admin as a ". $userroleslug.", Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
                                 "Email :" . $useremail . "<br/>" .
                                 "Password :" . $userpassword . "<br/>" .
                                 // "Password :" . $userdata->password. "<br/>" .
@@ -157,9 +177,7 @@ class Adminusers extends CI_Controller
                                 "-----------------------------------------------<br/>
                                Team Finnup";
 
-                                // $to = 'support@finnup.in';
-                                // $to = 'rec2004@gmail.com';
-                                // $to = $userdata->email;
+                                
                                 $to = $useremail;
                                 $email = new \SendGrid\Mail\Mail();
                                 $email->setSubject($subject);
@@ -172,6 +190,7 @@ class Adminusers extends CI_Controller
                                 } catch (Exception $e) {
                                     echo 'Caught exception: ', $e->getMessage(), "\n";
                                 }
+                            
                             }
                         } else {
                             $this->db->where('id', $params['data']['id']);
@@ -571,12 +590,38 @@ class Adminusers extends CI_Controller
 					'password'=> $password,
 					'password_status'=>0
 				];
-
+				$adminname=$params['email'];
 				// $this->db->from('fpa_adminusers');
 				$this->db->where('email', $email);
 				$this->db->update('fpa_adminusers',$data['data']); 
 					// echo $old_password;
 					json_output(200,array('status' => 200,'message' => "success"));
+					
+					$subject = "Dear Admin,";
+                    $message = "Dear ".$adminname.","."<br/>"."<br/>"."Please click on the below link to login and reset the password." ."<br/>".
+                   "link : app.finnup.in/#/admin."."<br/>"."<br/>".
+                    "Thanks.";
+                    
+                    $to = 'support@finnup.in';
+                    $email = new \SendGrid\Mail\Mail();
+                    $email->setSubject($subject);
+                    $email->addContent("text/html", $message);
+                    $email->setFrom("support@finnup.in", 'FinnUp Team');
+                    // $email->addTo($to);
+                    $email->addTo($tos);
+                    $sendgrid = new \SendGrid("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");
+                    try {
+                            $response = $sendgrid->send($email);
+                    } catch (Exception $e) {
+                            echo 'Caught exception: ', $e->getMessage(), "\n";
+                    }
+
+
+
+
+
+
+
 				}else{
 					json_output(400,array('status' => 400,'message' => "Something When  Wrong guys"));
 				}

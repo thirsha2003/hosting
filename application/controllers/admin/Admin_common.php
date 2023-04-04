@@ -117,6 +117,7 @@ class Admin_common extends CI_Controller
 				$name = $params['data']['name'];
 				$email = $params['data']['email'];
 				$phone = $params['data']['mobile'];
+				$entity_type = $params ['data']['entity_type'];
 				$created_by =  $params['data']['created_by'];
 				$company_name = isset($params['data']['company_name'])?$params['data']['company_name']:null;
 				$emailandmobileverified =1;
@@ -124,9 +125,35 @@ class Admin_common extends CI_Controller
 				$id = $this->db->insert_id();
 				
 				
-				$add_borrower =$this->db->insert("fp_borrower_user_details", array('user_id'=>$id,'name'=>$name,'email'=>$email, 'phone'=>$phone,'company_name'=>$company_name));
+				$add_borrower =$this->db->insert("fp_borrower_user_details", array('user_id'=>$id,'name'=>$name,'email'=>$email, 'phone'=>$phone,'company_name'=>$company_name,'company_type'=>$entity_type));
 				if($add_user && $add_borrower){
 				json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$id));
+               
+				        $subject = "Dear Superadmin,";
+                        $message = "Dear Superadmin,"."<br/>"."<br/>"."<br/>"."A new application for ".$name." has been created by the ".$created_by." .
+                        Please click on the below link to view ".$name." or assign the same ."."<br/>"."<br/>".
+                        "link : app.finnup.in/#/admin.";
+                       
+                        
+                        $to = 'aisha@finnup.in'; 
+                        $tos = "rahul@finnup.in";
+
+                        $email = new \SendGrid\Mail\Mail();
+                        $email->setSubject($subject);
+                        $email->addContent("text/html", $message);
+                        $email->setFrom("support@finnup.in", 'FinnUp Team');
+                        $email->addTo($to);
+                        $email->addTo($tos);
+                        $sendgrid = new \SendGrid("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");
+                        try {
+                            $response = $sendgrid->send($email);
+                        } catch (Exception $e) {
+                            echo 'Caught exception: ', $e->getMessage(), "\n";
+                        }
+                   
+
+
+
 				}else{
 				json_output(200,array('status' => 400,'message' => 'Bad request.'));
 				}
@@ -138,6 +165,7 @@ class Admin_common extends CI_Controller
 				}
 				}
 			}	 // addborrower
+
 			public function addborrowerold(){
 				$method = $_SERVER['REQUEST_METHOD'];
 				if($method != 'POST'){
@@ -566,6 +594,12 @@ class Admin_common extends CI_Controller
 		   SET status ='assigned', rm_id='".$rmdata->id."',".
 		   "rm_name='".$rmdata->name."',".
 		   "rm_email='".$rmdata->email."' WHERE fpa_users.id=".$taskdata->borrower_id;
+
+
+		   
+                 $rm_name=$rmdata->name;
+                 $company_name = $params['company_name'];
+
 			
 		  $checkdata = $this->db->query($fpa_users);
 		
@@ -582,6 +616,30 @@ class Admin_common extends CI_Controller
 		  //  $this->db->trans_complete();
 	  
 		  if($task_details && $task_details_worklog && $fpa_users){
+
+
+			         $subject = "Dear ".$rm_name.",";
+                        $message = "Dear ".$rm_name.","."<br/><br/>"."A new application for ".$company_name." has been assigned to you by the Superadmin.<br/>
+                        Please click on the below link to view ".$company_name.".<br/><br/>".
+                        "link : app.finnup.in/#/admin.";
+                        
+                        $to = "rahul@finnup.in";
+                        $tos = "aisha@finnup.in";
+                        $email = new \SendGrid\Mail\Mail();
+                        $email->setSubject($subject);
+                        $email->addContent("text/html", $message);
+                        $email->setFrom("support@finnup.in", 'FinnUp Team');
+                        $email->addTo($to);
+                        $email->addTo($tos);
+                        $sendgrid = new \SendGrid("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");
+                        try {
+                            $response = $sendgrid->send($email);
+                        } catch (Exception $e) {
+                            echo 'Caught exception: ', $e->getMessage(), "\n";
+                        }
+
+
+
 		   json_output(200,array('status' => 200,'message' => 'Task assigned successfully!'));
 		  }else{
 		   json_output(200,array('status' => 400,'message' => 'Bad request.'));
@@ -1002,7 +1060,7 @@ class Admin_common extends CI_Controller
 				$join     = isset($params['key']) ? $params['key'] : "";
 				$where     = isset($params['where']) ? $params['where'] : "";  
   
-				$sql = "WITH borrowerTable as (SELECT b.slug, b.status, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.rm_name , bd.status,  bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null;";
+				$sql = "WITH borrowerTable as (SELECT b.slug, b.status, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.rm_name , bd.status,  bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  order by bd.id desc;";
   
 				$borrowerdetails = $this->db->query($sql)->result(); 
 				$data = $this->db->query($sql);
@@ -1484,7 +1542,7 @@ class Admin_common extends CI_Controller
         (CASE 
          WHEN la.is_active=1 THEN 'Active'
          WHEN la.is_active=0 THEN 'In Active'
-         END )as Active
+         END )as Active  
         
         FROM fpa_users b,fp_lender_user_details la ,fp_city fc ,fp_lender_master lm ,fp_fin_institution fin 
         
@@ -1492,7 +1550,7 @@ class Admin_common extends CI_Controller
         $lender_master_id = $this->db->query($sql)->result();
 
         $data = $this->db->query($sql);
-              foreach ($data->result() as $row){
+         foreach ($data->result() as $row){
         $resultss = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Sent To Lender"           and lendermaster_id ='.$row->lender_master_id;
         $workflowstatus = $this->db->query($resultss)->num_rows();
         $result = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Approved"           and lendermaster_id ='.$row->lender_master_id;
@@ -1604,11 +1662,11 @@ class Admin_common extends CI_Controller
 		   $respStatus = $response['status'];
 		 $params = json_decode(file_get_contents('php://input'), TRUE);
 		 try{
-	  
-	  
 		  $name = $params['data']['name'];
 		  $email = $params['data']['email'];
 		  $phone = $params['data']['mobile'];
+          $created_by = $params['data']['created_by'];
+
 		  $add_user = $this->db->insert("fpa_users",array('name'=>$name,'email'=>$email, 'mobile'=>$phone ,'slug'=>'lender','created_by'=>$params['data']['created_by']));
 		  
 		  $id = $this->db->insert_id();
@@ -1621,6 +1679,31 @@ class Admin_common extends CI_Controller
 		
 		  $add_borrower =$this->db->insert("fp_lender_user_details", array('user_id'=>$id,'poc_name'=>$name,'email'=>$email, 'mobile'=>$phone,'department_slug'=>$department,'location_id'=>$location,'lender_master_id'=>$institution,'designation'=>$designation,'branch'=>$branch));
 		  if($add_user && $add_borrower){
+
+			// Email Notification
+			$subject = "Dear ". $created_by.",";
+			$message = "Dear ". $created_by.","."<br/>"."<br/>"."<br/>"."A new Lender Partner ".$name."  has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria."."<br/>"."<br/>".
+		   "Looking forward to building a portfolio with them.";
+
+			
+		   
+		    $to = 'rahul@finnup.in';
+		    $tos = 'aisha@finnup.in';
+		   
+
+			$email = new \SendGrid\Mail\Mail();
+			$email->setSubject($subject);
+			$email->addContent("text/html", $message);
+			$email->setFrom("support@finnup.in", 'FinnUp Team');
+			$email->addTo($to);
+			$email->addTo($tos);
+			$sendgrid = new \SendGrid("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");
+			try {
+				$response = $sendgrid->send($email);
+			} catch (Exception $e) {
+				echo 'Caught exception: ', $e->getMessage(), "\n";
+			}
+			
 		   json_output(200,array('status' => 200,'message' => 'successfully Added'));
 		  }else{
 		   json_output(200,array('status' => 400,'message' => 'Bad request.'));
@@ -1676,8 +1759,36 @@ class Admin_common extends CI_Controller
 			  
 			  
 			  $checkdata = $this->db->query($fpa_users);
+			  $rm_name=$rmdata->name;
+              $company_name = $params['company_name'];
+
+
+
 			
 			  if($task_details && $task_details_worklog && $fpa_users){
+
+				$subject = "Dear ".$rm_name.",";
+                        $message = "Dear ".$rm_name.","."<br/><br/>"."A new application for ".$company_name." has been assigned to you by the Superadmin.<br/>
+                        Please click on the below link to view ".$company_name.".<br/><br/>".
+                        "link : app.finnup.in/#/admin.";
+                        
+                        $to = "rahul@finnup.in";
+                        $tos = "aisha@finnup.in";
+                        $email = new \SendGrid\Mail\Mail();
+                        $email->setSubject($subject);
+                        $email->addContent("text/html", $message);
+                        $email->setFrom("support@finnup.in", 'FinnUp Team');
+                        // $email->addTo($to);
+                        $email->addTo($tos);
+                        $sendgrid = new \SendGrid("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");
+                        try {
+                            $response = $sendgrid->send($email);
+                        } catch (Exception $e) {
+                            echo 'Caught exception: ', $e->getMessage(), "\n";
+                        }
+
+
+
 			   json_output(200,array('status' => 200,'message' => 'Task assigned successfully!'));
 			  }else{
 			   json_output(200,array('status' => 400,'message' => 'Bad request.'));
@@ -2341,4 +2452,160 @@ class Admin_common extends CI_Controller
 
 		}
 	} // updateborrower
+
+
+public function rmcreateborrower()
+{
+		$method = $_SERVER['REQUEST_METHOD'];
+		if($method =="POST")
+		{
+				$checkToken = $this->check_token();
+				if(true)
+				{
+						$response['status']=200;
+						$respStatus = $response['status'];
+						$params 	= json_decode(file_get_contents('php://input'), TRUE);
+	
+						$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+						$join 		= isset($params['key']) ? $params['key'] : "";
+						$where 		= isset($params['where']) ? $params['where'] : "";	
+						
+						$sql = "WITH borrowerTable as (SELECT b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city
+						FROM fpa_users b, fp_borrower_user_details bd 
+						WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND  b.id = bd.user_id AND bd.company_name is not null AND b.created_by = '" .$where. "' )  
+						SELECT bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth 
+						FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null ";
+	
+	
+						$borrowerdetails = $this->db->query($sql)->result(); 
+						$count = $this->db->query($sql)->num_rows(); 
+						if($count >=1){
+	
+					
+	
+						$data = $this->db->query($sql);
+						foreach ($data->result() as $row){
+							$txnArr[] = $row->borrower_id;
+																								
+						}
+						$res = implode(",",$txnArr);
+						$res  = "(".$res.")";
+	
+						$result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in '.$res;
+					
+						// $this->db->query($sql)-result();
+						// $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
+						// $trnn[]= $data->id;
+	
+						$resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails,'data1' =>$this->db->query($result)->result());
+						return json_output($respStatus,$resp);
+					}
+					else{
+						$resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails);
+						return json_output($respStatus,$resp);
+					}
+				}
+				else
+				{
+					return json_output(400,array('status' => 400,'message' => $checkToken));
+				}
+			
+		}
+		else
+		{
+				return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		}
+	
+}  // rmcreateborrower 
+
+
+
+
+public function addconnector()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if($method != 'POST'){
+    json_output(400,array('status' => 400,'message' => 'Bad request.'));
+    }else{
+    $checkToken = $this->check_token();
+    if($checkToken){
+    $response['status']=200;
+    $respStatus = $response['status'];
+    $params = json_decode(file_get_contents('php://input'), TRUE);
+    try{
+    $name = $params['data']['name'];
+    $email = $params['data']['email'];
+    $phone = $params['data']['mobile'];
+    $created_by =  $params['data']['created_by'];
+    $domain = isset($params['data']['companyname']) ? $params['data']['companyname'] : "";
+
+   
+    $emailandmobileverified =1;
+    $add_user = $this->db->insert("fpa_users",array('name'=>$name,'email'=>$email, 'mobile'=>$phone ,'slug'=>'connector', 'created_by'=>$created_by,'is_email_verified'=>$emailandmobileverified,'is_mobile_verified'=>$emailandmobileverified));
+    $id = $this->db->insert_id();
+    
+    
+    $add_connector =$this->db->insert("fp_connector_user_details", array('user_id'=>$id,'name'=>$name,'email'=>$email, 'phone'=>$phone ,'domain' => $domain));
+    if($add_user && $add_connector){
+    json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$id));
+    }else{
+    json_output(200,array('status' => 400,'message' => 'Bad request.'));
+    }
+    }catch(Exception $e){
+    json_output(200,array('status' => 401,'message' => $e->getMessage()));
+    }
+    }else{
+    json_output(400,array('status' => 400,'message' => 'Bad request.'));
+    }
+    }
+}   // addConnector
+
+
+
+
+
+
+
+public function admin_lender_loanproposals()
+ {
+   $method = $_SERVER['REQUEST_METHOD'];
+   if($method =="POST")
+   {
+     $checkToken = $this->check_token();
+     if(true)
+     {
+       $response['status']=200;
+       $respStatus = $response['status'];
+       $params  = json_decode(file_get_contents('php://input'), TRUE);
+
+       $selectkey  = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+       $loanapplication_status = isset($params['loanapplication_status']) ? $params['loanapplication_status'] : "";
+       $where   = isset($params['where']) ? $params['where'] : ""; 
+       $is_created   = isset($params['is_created']) ? $params['is_created'] : ""; 
+
+       $sql="SELECT la.loanrequest_id as lrid ,lm.image , lm.lender_name, p.name as productname, bu.company_name as companyname, la.loanapplication_status as lastatus, la.workflow_status as wfstatus, la.lender_intrest_received,bl.loanamount_slug,bl.loan_min,bl.loan_max,bl.tenor_min,bl.tenor_max,bl.roi_min,bl.roi_max as amount,la.is_created, bu.user_id as borrower_id, p.id as product_id, la.id as loan_app_id
+
+     FROM fpa_loan_applications la,fp_borrower_user_details bu,fp_products p,fp_borrower_loanrequests bl,fp_lender_master lm
+     
+     WHERE bu.user_id = la.borrower_id 
+     and la.product_slug = p.slug and bl.id = la.loanrequest_id and lm.id = la.lendermaster_id AND
+     la.loanapplication_status in ".$loanapplication_status .$where.$is_created;
+
+       $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+       return json_output($respStatus,$resp);
+     }
+     else
+     {
+      return json_output(400,array('status' => 400,'message' => "Token Failed"));
+     }
+   }
+   else
+   {
+     return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+   }
+ }
+ // -----------------End loanproposals-----------------
+
+
+
 } // -------------------------- end ---------------------

@@ -532,3 +532,48 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Use SSL
+|--------------------------------------------------------------------------
+|
+| Run this over HTTP or HTTPS. HTTPS (SSL) is more secure but can cause problems
+| on incorrectly configured servers.
+|
+*/
+
+$config['use_ssl'] = TRUE;
+
+/*
+|--------------------------------------------------------------------------
+| Verify Peer
+|--------------------------------------------------------------------------
+|
+| Enable verification of the HTTPS (SSL) certificate against the local CA
+| certificate store.
+|
+*/
+
+$config['verify_peer'] = TRUE;
+
+
+
+$config['folder_name'] = 'bucketinfo';
+
+
+$config['s3_access_key'] = 'WRITE_YOUR_S3_ACCESS_KEY';
+$config['s3_secret_key'] = 'WRITE_YOUR_S3_SECRET_NAME';
+
+$config['s3_bucket_name'] = 'WRITE_YOUR_S3_BUCKET_NAME';
+$config['s3_bucket_url'] = 'https://BUCKETNAME.s3.amazonaws.com';
+
+
+
+
+
+
+

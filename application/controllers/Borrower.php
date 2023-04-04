@@ -188,6 +188,8 @@ class Borrower extends CI_Controller {
 										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url));
 										$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
 									}
+									$this->notifyadmin($br_id, $doc_type);
+
 						  } else 
 						  {
 							$respStatus = 200;
@@ -200,6 +202,45 @@ class Borrower extends CI_Controller {
 	
 
 	}   // doc_upload 
+
+	public function notifyadmin($br_id = '', $doc_type = '')
+    {
+        if ($br_id) {
+
+            $sql = "select name, email,mobile from fpa_users where id=" . $br_id;
+            $borrowerdata = $this->db->query($sql)->row();
+            $subject = "Finnup : Document upload Alert! : Admin Action Required";
+            $message = "Dear Superadmin and RM,<br/><br/>" .
+            "Borrower  " . $borrowerdata->name .
+            " has saved some updates in the profile." .
+            $doc_type . " document in to the system. <br/><br/>" .
+            "Please find the contact details below <br/><br/>" .
+            "Borrower ID :" . $br_id . "<br/>" .
+            "Borrower Name :" . $borrowerdata->name . "<br/>" .
+            "Contact Email :" . $borrowerdata->email . "<br/>" .
+            "Contact Mobile :" . $borrowerdata->mobile . "<br/>" ."<br/>" ."<br/>" .
+                "---------------------------------------------------<br/>
+                Team Finnup";
+
+            $to = 'support@finnup.in';
+            $email = new \SendGrid\Mail\Mail();
+            $email->setSubject($subject);
+            $email->addContent("text/html", $message);
+            $email->setFrom("support@finnup.in", 'FinnUp Team');
+            $email->addTo($to);
+            $sendgrid = new \SendGrid("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");
+            try {
+                $response = $sendgrid->send($email);
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
+            }
+        }
+    }
+
+
+
+
+
 
 
 

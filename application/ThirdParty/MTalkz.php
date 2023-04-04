@@ -37,7 +37,15 @@ class MTalkz
         }else if($slugbl=="lender")
         {
             $msgTemplateB =$msgTemplateLender;
-        }else
+            
+        } else if ($slugbl=="connector"){
+
+            $msgTemplateB =$msgTemplateLender;
+
+        }
+        
+        
+        else
         {
             $msgTemplateB =$msgTemplateOthers;
         }

@@ -11,7 +11,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 //-----------------------------------------------------------------------------
 class CIBIL extends CI_Controller 
 {
- 
     public function __construct(){
 		parent::__construct();
 		$this->load->helper('json_output');
@@ -26,75 +25,71 @@ class CIBIL extends CI_Controller
 		}
      else
 		{ 
-            if($response['status'] == 200)
+            // if($response['status'] == 200) 
+            if(false)
+
 					{
 						$params = json_decode(file_get_contents('php://input'), TRUE);
-
-
-            // =$params['director_id'];
             if(!isset($params['director_id'])){
 
               $this->db->insert('fp_director_details',$params['data2']);
               $params['director_id'] = $this->db->insert_id();
-            }
 
-            
-            // echo $params['director_id'];
+              $director =   $params['director_id'];
+              
 
-            // die;
-						// $param = json_decode(file_get_contents('php://input'), FALSE);
-
-
-            // $obj = json_decode(json_encode($param->data), true);
-
-            // print_r($obj);
-
-                 
+              // json_output(200, array('status' => 200 , 'message'=> 'success','director_id'=> $director)); 
+            };
                              $data = [
-                                 "reference_id"=>"8623-3245-0000-0005",
-                                 "consent"=>true,
-                                 "consent_purpose"=>"Sara testing",
-                                 "name"=> $params ['data']['Name'],
-                                 "mobile"=> $params['data']['DirectorPhone'],
-                                 "PAN"=> $params['data']['Pan'],
-                                 "address_type"=>"H",
-                                 "inquiry_purpose"=>"PL",
-                                 "document_type"=>"PAN",
-                                 "document_id"=> $params['data']['Pan']
+                              "reference_id"=> (String)$params['cibilreference_id'],
+                              "consent"=> true,
+                              "consent_purpose"=> "FINNUP For Personal Testing",
+                               "name"=> (String) $params ['data']['Name'],
+                              "date_of_birth"=> "",
+                              "address_type"=> "H",
+                              "address"=> "",
+                              "pincode"=> "",
+                              "mobile"=> (String) $params['data']['DirectorPhone'],
+                              "inquiry_purpose"=> "PL",
+                              "document_type"=> "PAN",
+                              "document_id"=> " "
                              ];
-                              
-                            if($params ['data']['Name'] && $params['data']['DirectorPhone'] && $params['data']['Pan'] &&  $params['director_id'] ){
-
-                          $cibilAPI ='https://in.decentro.tech/v2/financial_services/credit_bureau/credit_report';
-                           $name_str =$cibilAPI;
-                           $urlc=$name_str;
-                           $ch = curl_init();
-                           curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                           curl_setopt($ch, CURLOPT_URL, $urlc);
-                           curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-                           curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                           curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-                           curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                             $datas = json_encode($data);
+                            // if(  isset($params ['data']['Name']) &&  isset($params['data']['DirectorPhone']) &&   isset ($params['director_id'] ) )
+                            if(true)
+                          { 
+                        $curl = curl_init();
+                        curl_setopt_array($curl, array(
+                          CURLOPT_URL => 'https://in.decentro.tech/v2/financial_services/credit_bureau/credit_report',
+                          CURLOPT_RETURNTRANSFER => true,
+                          CURLOPT_ENCODING => '',
+                          CURLOPT_MAXREDIRS => 10,
+                          CURLOPT_TIMEOUT => 0,
+                          CURLOPT_FOLLOWLOCATION => true,
+                          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                          CURLOPT_CUSTOMREQUEST => 'POST',
+                          CURLOPT_POSTFIELDS =>strval($datas),
+                          CURLOPT_HTTPHEADER => array(
                             'client_id: FinnUp_prod',
                             'client_secret: 7o4nJGMIyMgvzXYFAaU2Vt0mvd28iTWj',
                             'module_secret: gqYEn1AoaWGBmnS80DBfgvKrJKYfHFxv',
                             'provider_secret: H0iPWht6dpYgRazIsXToqez8HBhhPmQ3',
                             'accept: application/json',
                             'content-type: application/json'
-                         ]);            
-                         $season_data = curl_exec($ch);
-                         curl_close($ch);
+                          ),
+                        ));
+                         $season_data = curl_exec($curl);
+                         curl_close($curl);
                          $result = json_decode($season_data, true);
                          $responseData= $result;
+                         
+                         print_r($responseData);   
+                         
 
-                         print_r($responseData);  
+                         
 
-                    
-                         //  $this->db->insert('fp_cibil_details',$responeData);
-
-                         $responseoutput = $responseData['data']['cCRResponse']['cIRReortDataLst']['0']['cIRReportData'];
-                        //  $responseoutput = $obj['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'];     
-
+                         $responseoutput = $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'];
+                       
                           $CibilValue='';
                           switch (true) {
                             case ($responseoutput['scoreDetails']['0']['value'] >= 300 && $responseoutput['scoreDetails']['0']['value'] <= 400):
@@ -130,18 +125,16 @@ class CIBIL extends CI_Controller
                             case ($responseoutput['scoreDetails']['0']['value'] >= 850 && $responseoutput['scoreDetails']['0']['value'] <=899):
                                     $CibilValue=870; 
                                     break; 
-                          };
-                                        // cibil score update in director_details  
+                          };  // end of switch 
+
+                          // cibil score update in director_details  
                            
-                          $this->db-where(array('id'=>$params['director_id']));
+                          $this->db->where(array('id'=>$params['director_id']));
                           $fp_director = $this->db->update('fp_director_details',array('cibil_score'=>$CibilValue));
+
+
+
                          
-
-
-
-                              
-
-                        
                           $totalaccounts= sizeof($responseoutput['retailAccountDetails']);
                            $total = 0;
                           for ($i = 0; $i < $totalaccounts; $i++) {
@@ -149,10 +142,10 @@ class CIBIL extends CI_Controller
                               $total = $total + (int)$responseoutput['retailAccountDetails'][$i]['balance'];
                              
                             } 
-                               };   //  total of balance 
+                            };   //  total of balance 
+                            
                            $pastDueAmount=0;
                            for ( $j = 0; $j< $totalaccounts; $j++){
-
                               if(isset($responseoutput['retailAccountDetails'][$j]['pastDueAmount'])){
                                 $pastDueAmount =  $pastDueAmount + (int)$responseoutput['retailAccountDetails'][$j]['pastDueAmount'];
                               }
@@ -163,7 +156,6 @@ class CIBIL extends CI_Controller
                             if(isset($responseoutput['retailAccountDetails'][$i]['creditLimit'])){
                               $creditLimit = $creditLimit + (int)$responseoutput['retailAccountDetails'][$i]['creditLimit'];
                             }
-
                            }; // creditLimit 
                            
                            $sanctionamount=0;
@@ -174,30 +166,80 @@ class CIBIL extends CI_Controller
                            }; // sanctionAmount
                            $totalsanctionamount = $creditLimit + $sanctionamount ;
 
+                            
+
                          $cibilsummary_details=[
-                            // 'director_id'=> $params['director_id'],
+                            'reference_id'=> $params['cibilreference_id'],
+                            'director_id'=> $params['director_id'],
                             'fullname'=> $responseoutput['iDAndContactInfo']['personalInfo']['name']['fullName'],
                             'dob'=>$responseoutput['iDAndContactInfo']['personalInfo']['dateOfBirth'],
                             'identificationtype'=> "PAN",
                             'identificationnumber'=>$responseoutput['iDAndContactInfo']['identityInfo']['pANId']['0']['idNumber'],
-                            'mobilenumber'=> $responseoutput['iDAndContactInfo']['phoneInfo']['1']['number'],
+                            'mobilenumber'=> $responseoutput['iDAndContactInfo']['phoneInfo']['0']['number'],
                             'equifax'=> $responseoutput['scoreDetails']['0']['value'],
-                            'cibilscore'=> $CibilValue ,
-                            'totalaccounts'=> $totalaccounts,  
+                            'cibilscore'=> $CibilValue,
+                            'totalaccounts'=>  $responseoutput['retailAccountsSummary']['noOfAccounts'],
                             'overdueaccounts'=> $totalaccounts,
-                            'currentamount'=> $total,
-                            'sanctionedamount'=> $totalsanctionamount ,
+
+                            'currentamount'=> $responseoutput['retailAccountsSummary'] ['totalBalanceAmount'],
+                            'sanctionedamount'=> $responseoutput['retailAccountsSummary']['totalSanctionAmount'],
                             'overdueamount'=> $pastDueAmount,
+                            'totalcurrentaccount'=> $responseoutput['retailAccountsSummary']['noOfActiveAccounts'],
+                            'mostseverestatuswithin24months'=> $responseoutput['retailAccountsSummary']['mostSevereStatusWithIn24Months'],
+                             'singlehighestcredit'=> $responseoutput['retailAccountsSummary'] ['singleHighestCredit'],
+                             'singlehighestsanctionamount'=> $responseoutput['retailAccountsSummary'] ['singleHighestSanctionAmount'],
+                             'totalhighcredit'=> $responseoutput['retailAccountsSummary'] ['totalHighCredit'],
+                             'averageopenbalance'=> $responseoutput['retailAccountsSummary'] ['averageOpenBalance'],
+                             'singlehighestbalance'=> $responseoutput['retailAccountsSummary'] ['singleHighestBalance'],
+                             'noofpastdueaccounts'=> $responseoutput['retailAccountsSummary'] ['noOfPastDueAccounts'],
+                             'noofzerobalanceaccounts'=> $responseoutput['retailAccountsSummary'] ['noOfZeroBalanceAccounts'],
+                             'recentaccount'=> $responseoutput['retailAccountsSummary'] ['recentAccount'],
+                             'oldestaccount'=> $responseoutput['retailAccountsSummary'] ['oldestAccount'],
+                             'totalcreditlimit'=> $responseoutput['retailAccountsSummary'] ['totalCreditLimit'],
+                             'totalmonthlypaymentamount'=> $responseoutput['retailAccountsSummary'] ['totalMonthlyPaymentAmount'], 
                          ];
                           $this->db->insert('fp_director_cibilsummary',$cibilsummary_details);
+
+                         
+                            // This line  code json insert into table 
+
+                          $responseoutputjson= array(
+                            'responsejson'=>$responseData,
+                          );
+                          $this->db->where('director_id', $params['director_id']);
+					              	$this->db->update('fp_director_cibilsummary', $responseoutputjson);   
+
+                          // End of  json 
+
 
 
                           $responseoutputs = $responseoutput['retailAccountDetails'];
 
+
                           // cibilaccountdetails   
                           foreach($responseoutputs as $cibilaccdetails){
+                           
+                            $lastpayment_date='';
+                             if   (isset($cibilaccdetails['lastPaymentDate'])){
+                              $lastpayment_date=$cibilaccdetails['lastPaymentDate'];  
+                             }
+                             elseif(isset($cibilaccdetails['dateClosed'])){
+                              $lastpayment_date=$cibilaccdetails['dateClosed']; 
+                             }
+
+                             $termFrequency='';
+                             if (isset($cibilaccdetails['termFrequency'])
+                             ){
+                               $termFrequency=$cibilaccdetails['termFrequency'];
+                             }
+                             else{
+                              $termFrequency="Others";
+
+                             }
+
+
                             $cibilaccountdetails=[
-                                // 'director_id'=> $params['director_id'],
+                                'director_id'=> $params['director_id'],
                                 'account_type'=> $cibilaccdetails['accountType'],
                                 'status'=>$cibilaccdetails['accountStatus'] ,
                                 'currentbalance'=>$cibilaccdetails['balance'] ,
@@ -206,10 +248,24 @@ class CIBIL extends CI_Controller
                                 'ownership'=> $cibilaccdetails['ownershipType'] ,
                                 'opened_date'=> $cibilaccdetails['dateOpened'] ,
                                 'reported_date'=> $cibilaccdetails['dateReported'] ,
-                                'lastpayment_date'=> $cibilaccdetails['dateReported'] ,
+
+                                'account_open_status'=> $cibilaccdetails['open'],
+                                'lastpayment_date'=> $lastpayment_date,
+                                'termFrequency'=> $termFrequency,
+                                
+
+                               
+
                               ];
                               $this->db->insert('fp_director_cibilaccountdetails',$cibilaccountdetails);
                               $cibilaccountdetail_id = $this->db->insert_id();
+                                     
+                              $sql="select t1.account_number 
+                              from fp_director_cibilaccountdetails t1 where t1.id=".$cibilaccountdetail_id;
+                              $accountnumber = $this->db->query($sql)->row();
+
+
+
                                 //  cibilpayments details 
                                    foreach ($cibilaccdetails['history48Months'] as $cibilpayments){
 
@@ -218,7 +274,7 @@ class CIBIL extends CI_Controller
                                       'cibilaccountdetail_id'=>$cibilaccountdetail_id,
                                       'payment_date'=> $cibilpayments['key'],
                                       'payment_received'=>$cibilpayments['paymentStatus'],
-                                      'account_number'=> $cibilaccdetails['accountNumber'],
+                                      'account_number'=> $accountnumber->account_number,
                                     ];
                                     $this->db->insert('fp_director_cibilpayments',$cibilpayments);
                                    };
@@ -229,21 +285,33 @@ class CIBIL extends CI_Controller
                           
 
                          json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
-
                         }
                         else{
-                      
                           json_output(200, array('status' => 200 , 'message'=> 'Invalid Information'));
+                        }
+
+
+                        $fp_director_details = $this->db->get_where('fp_director_details', array('id' => $params['director_id']));
                           
 
-                        }
-                    }
+                        json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
+
+          }
+        
+
+          if ($response['status'] == 200){
+
+            json_output(200, array('status' =>200,'message' => 'Testing its  Working or wrong  .'));
+          } 
+
+
+
 
                     else{
                       json_output(400, array('status' => 400,'message' => 'Bad request.'));
                     }
 
-                }
+    }
 }
 
 } //----------------------- END OF CIBIL CLASS -------------------------

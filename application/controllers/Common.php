@@ -874,7 +874,7 @@ class Common extends CI_Controller {
 						} else {
 							// $params['data']['user_id_fk'] = (int)$params['user_id_fk'];
 							$sql = "SELECT * FROM ".$params['tableName']." WHERE user_id=".$params['data']['user_id'];
-								 
+							$name=$params['data']['company_name'];
 									if(count($this->db->query($sql)->result())==0){
 										$this->db->insert($params['tableName'], $params['data']);
 									}else{
@@ -882,6 +882,37 @@ class Common extends CI_Controller {
 										$this->db->update($params['tableName'], $params['data']); 
 									}
 							$resp = array('status' => 200,'message' =>  'Inserted success','data' => $this->db->insert_id());
+
+
+							// Email Notification
+							$subject = "Dear Admin,";
+							$message = "Dear Admin,"."<br/>"."<br/>"."Few changes have been done to the borrower ".$name.". 
+							"."<br/>".
+						   "Please visit the link to view the profile and changes"."<br/>".
+						   "link : app.finnup.in/#/admin.";
+			 
+							$to = 'support@finnup.in';
+						   
+						
+						   
+							$email = new \SendGrid\Mail\Mail();
+							$email->setSubject($subject);
+							$email->addContent("text/html", $message);
+							$email->setFrom("support@finnup.in", 'FinnUp Team');
+							$email->addTo($to);
+							$sendgrid = new \SendGrid("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");
+							try {
+								$response = $sendgrid->send($email);
+							} catch (Exception $e) {
+								echo 'Caught exception: ', $e->getMessage(), "\n";
+							}
+
+
+
+
+
+
+
 						}
 						json_output($respStatus,$resp);
 					}
@@ -903,7 +934,7 @@ public function myproposals(){
 	  $respStatus = $response['status'];
 	  
 		  $params = json_decode(file_get_contents('php://input'), TRUE);
-		//   $params['user_id_fk'] = $this->input->get_request_header('User-ID', TRUE); 
+		
 		  
 		  $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
 		  $join = isset($params['key']) ? $params['key'] : "";
@@ -911,12 +942,6 @@ public function myproposals(){
 				
 		  $sql = "SELECT " .$selectkey. " FROM ".$params['tableName']."  WHERE ".$where;
 		    
-		 	// if($params['tableName']=="eventdetails" || $params['tableName']=="sp_contacts"){
-			//     $where = isset($params['where']) ? $params['where'] : "1=1";
-			//     $sql = "SELECT " .$selectkey. " FROM ".$params['tableName']." ".$join." WHERE ".$where;
-			// }else{
-			//     $sql = "SELECT " .$selectkey. " FROM ".$params['tableName']." ".$join." WHERE 1=1";
-			// }
 		  $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 		  json_output($respStatus,$resp);
 	

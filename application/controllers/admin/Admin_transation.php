@@ -660,6 +660,10 @@ public function deal_sanctioned()
 			$us_email   = isset($params['data']['us_email']) ? $params['data']['us_email'] : "";
 			$us_name   = isset($params['data']['us_name']) ? $params['data']['us_name'] : "";
 			$us_id   = isset($params['data']['us_id']) ? $params['data']['us_id'] : "";
+
+
+			$borrower_name =isset($params['data']['borrower_name']) ?$params['data']['borrower_name']:"";
+            $product_name =isset($params['data']['product_name']) ?$params['data']['product_name']:"";
 	   
 						  
 	   
@@ -735,6 +739,37 @@ public function deal_sanctioned()
 			   {
 				 $this->db->trans_complete();
 			   }
+                
+			   if($loanapplication_status== "CC Approval Pending"){
+				$subject = "Dear Superadmin,";
+			   $message = "Dear Superadmin,"."<br/><br/>".$product_name." application from ".$borrower_name." - RM ".$rm_name." has been submitted to you for approval.. Kindly review and approve/reject the application."."<br/><br/>".
+			   "link : app.finnup.in/#/admin.";
+			   
+			 
+			   $to = "aisha@finnup.in"; 
+			   $tos = "rahul@finnup.in";
+			   $email = new \SendGrid\Mail\Mail();
+			   $email->setSubject($subject);
+			   $email->addContent("text/html", $message);
+			   $email->setFrom("support@finnup.in", 'FinnUp Team');
+			   $email->addTo($to); 
+			   $email->addTo($tos);
+			   $sendgrid = new \SendGrid("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");
+			   try {
+				   $response = $sendgrid->send($email);
+			   } catch (Exception $e) {
+				   echo 'Caught exception: ', $e->getMessage(), "\n";
+			   }
+		
+		
+			   }
+               
+
+
+
+
+
+
 			 
 			 return json_output(200,array('status' => 200,'message' => 'Updated Successfully'));
 		   }else{
@@ -976,6 +1011,16 @@ public function  borrowerloanrequest()
 				  {
 					  $borrowerid = $params['data']['borrower_id'];
 					  $lender_product_details_id = $params['data']['lender_product_details_id'];
+					//   $remarks 		= isset($params['data']['remarks']) ? $params['data']['remarks'] : "";
+					  $params 	= json_decode(file_get_contents('php://input'), TRUE);
+					$borrower_id 		= isset($params['data']['borrower_id']) ? $params['data']['borrower_id'] : "";
+					// $loanapp_id 		= $loan_application_id;
+					$assigned_to_id 		= isset($params['data']['assigned_to_id']) ? $params['data']['assigned_to_id'] : "";
+					$remarks 		= isset($params['data']['remarks']) ? $params['data']['remarks'] : "";
+					$loanapplication_status 		= isset($params['data']['loanapplication_status']) ? $params['data']['loanapplication_status'] : "";
+					$us_email 		= isset($params['data']['us_email']) ? $params['data']['us_email'] : "";
+					$us_name 		= isset($params['data']['us_name']) ? $params['data']['us_name'] : "";
+					$us_id 		= isset($params['data']['us_id']) ? $params['data']['us_id'] : "";
 
 					  //isset($params['data']['remarks']) ? $params['data']['remarks'] : "";
 					//   $created_by = isset($params['data']['created_by']) ? $params['data']['created_by']:"";
@@ -986,8 +1031,28 @@ public function  borrowerloanrequest()
 					  $this->db->from('fpa_loan_applications');
 					  $this->db->where($conditions);
 					  $num_results = $this->db->count_all_results();
+
+					  if($num_results == 1 && $loanapplication_status == 'Deal Sent To Lender'){
+						$loanstatus = array( 
+						
+							'loanapplication_status' =>  "Deal Sent To Lender", 
+							'workflow_status' =>  "Deal Sent To Lender",
+							// 'loan_request_remark'=>$remarks,
+						
+						);
+						$this->db->where($conditions);
+						$this->db->update('fpa_loan_applications', $loanstatus);
+						return json_output(200,array('status' => 200,'Message' => "Added successfully"));
+					  }
+
+
+
+
+
+					 
+					  
 					//   echo $num_results;
-					  if($num_results == 0){
+					  else if($num_results == 0){
 						$conditions = array('borrower_id'=>$borrowerid, "product_slug"=> $params['data']['product_slug'],'status'=>'A');
 						$this->db->select('id');
 						$this->db->from('fp_borrower_loanrequests');
@@ -1173,6 +1238,8 @@ public function  borrowerloanrequest()
 							$sql ="select name, email,mobile from fpa_users where id=".$borrowerid;
 
 							$userdata= $this->db->query($sql)->row();
+
+							
 							$subject ="Finnup App Loan Request Alert! : Admin Action Required";
 							$message = "Hello Finnup Admin! <br/><br/>". "There is a loan request from a borrower. Please refer the details below <br/><br/>".
 							"Borrower Name :".$userdata->name."<br/>".
@@ -1299,6 +1366,108 @@ public function  borrowerloanrequest()
   
   }
 
+
+
+
+
+
+  public function getcibildetails()
+			{
+				$method = $_SERVER['REQUEST_METHOD'];
+				if($method != 'POST'){
+				json_output(400,array('status' => 400,'message' => 'Bad request.'));
+				}else{
+				$checkToken = $this->check_token();
+				if(true){
+				$response['status']=200;
+				$respStatus = $response['status'];
+				$params = json_decode(file_get_contents('php://input'), TRUE);
+				try{
+				$name = $params['data']['name'];
+				$email = $params['data']['email'];
+				$phone = $params['data']['mobile'];
+				$entity_type = $params ['data']['entity_type'];
+				$created_by =  $params['data']['created_by'];
+				$company_name = isset($params['data']['company_name'])?$params['data']['company_name']:null;
+				$emailandmobileverified =1;
+				$add_user = $this->db->insert("fpa_users",array('name'=>$name,'email'=>$email, 'mobile'=>$phone ,'slug'=>'borrower', 'company_name'=>$company_name,'created_by'=>$created_by,'is_email_verified'=>$emailandmobileverified,'is_mobile_verified'=>$emailandmobileverified));
+				$id = $this->db->insert_id();
+				
+				
+				$add_borrower =$this->db->insert("fp_borrower_user_details", array('user_id'=>$id,'name'=>$name,'email'=>$email, 'phone'=>$phone,'company_name'=>$company_name,'company_type'=>$entity_type));
+				if($add_user && $add_borrower){
+				json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$id));
+				}else{
+				json_output(200,array('status' => 400,'message' => 'Bad request.'));
+				}
+				}catch(Exception $e){
+				json_output(200,array('status' => 401,'message' => $e->getMessage()));
+				}
+				}else{
+				json_output(400,array('status' => 400,'message' => 'Bad request.'));
+				}
+				}
+			}
+
+
+
+
+			public function getcibil()
+{
+				$method = $_SERVER['REQUEST_METHOD'];
+				if($method != 'POST'){
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+				}else{
+				  $response['status']=200;
+				  $respStatus = $response['status'];
+				  
+					  $params = json_decode(file_get_contents('php://input'), TRUE);
+					
+					  
+					  $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+					  $join = isset($params['key']) ? $params['key'] : "";
+					  $where = isset($params['where']) ? $params['where'] : "";
+							
+					  $sql = "SELECT " .$selectkey. " FROM ".$params['tableName']."  WHERE ".$where;
+ 
+					   $cibilaccounts = $this->db->query($sql)->result();
+					
+					
+					  foreach( $cibilaccounts as  $row ){
+						$cibilacc_id=$row->id;
+						$director_id=$row->director_id;
+
+						$this->db->limit(6);
+						
+                       $payment_get = $this->db->get_where("fp_director_cibilpayments" , array('director_id'=>$director_id,'cibilaccountdetail_id'=>$cibilacc_id))->result();
+					   
+					
+
+					  
+					   
+					$data[] = [
+					'director_id'=> $row->director_id,
+					'account_number'=> $row->account_number,
+					'account_open_status'=> $row->account_open_status,
+					'account_type'=> $row->account_type,
+					'currentbalance'=> $row->currentbalance,
+					'director_id'=> $row->director_id,
+					'id'=> $row->id,
+					'lastpayment_date'=> $row->lastpayment_date,
+					'membername'=> $row->membername,
+					'opened_date'=> $row->opened_date,
+					'ownership'=> $row->ownership,	
+					'reported_date'=> $row->reported_date,	
+					'status'=> $row->status,
+					'payment'=>$payment_get
+					   ];
+					  }
+						
+					  json_output(200,array('status' => 200,'message' => 'successfully Feteach Data',"data"=>$data));
+					
+				
+			}
+}  
 
 
 
