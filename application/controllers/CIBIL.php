@@ -25,8 +25,8 @@ class CIBIL extends CI_Controller
 		}
      else
 		{ 
-            // if($response['status'] == 200) 
-            if(false)
+            if($response['status'] == 200)  
+            // if(false)
 
 					{
 						$params = json_decode(file_get_contents('php://input'), TRUE);

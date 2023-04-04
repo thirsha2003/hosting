@@ -554,7 +554,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT count(*) as TotalAdmin_Recommended FROM `fpa_loan_applications` WHERE
-                            workflow_status IN ('Admin Recommended')";
+                            is_created IN ('A')";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -640,7 +640,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT count(*) as TotalInterest_Expressed FROM `fpa_loan_applications` WHERE
-                       workflow_status IN ('Interest Expressed')";
+                       workflow_status IN ('Express Interest')";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);

@@ -58,12 +58,59 @@ public function probeapi()
                           
                             // Getting the comapy details
                             $companyDetails = $responseData['company'];
+                            $incorporation_date=$companyDetails['incorporation_date'] ;
+
+                            $date_parts = date_parse($incorporation_date);
+
+                            $year = $date_parts['year'];
+                            $month = $date_parts['month'];
+                            $day = $date_parts['day'];
+
+                            $months='';
+                           
+                            if($month=='1'){
+                              $months='January';
+                            }
+                            else if ($month=='2'){
+                              $months='February';
+                            }
+                            else if ($month=='3'){
+                              $months='March';
+                            }
+                            else if ($month=='4'){
+                              $months='April';
+                            }
+                            else if ($month=='5'){
+                              $months='may';
+                            } else if ($month=='6'){
+                             $months='June';
+                            }
+                            else if ($month=='7'){
+                           $months='July';
+                            }
+                            else if ($month=='8'){
+                              $months='August';
+                            }
+                            else if ($month=='9'){
+                              $months='September';
+                            }
+                            else if ($month=='10'){
+                             $months='October';
+                            }
+                            else if ($month=='11'){
+                              $months='November';
+                            }
+                           else if($month=='12') {
+                             $months='December';
+                           }
                             // object for send to DB 
                             $borrowerbasedetails=[
                               'cin'=>$companyDetails['cin'],
                               'company_name'=>$companyDetails['legal_name'],
                               'classification'=>$companyDetails['classification'],
                               'incorporation_date'=>$companyDetails['incorporation_date'], 
+                              'date_of_incro_month'=>$months,
+                              'date_of_incro_year'=>$year,
                               'paid_up_capital'=>$companyDetails['paid_up_capital'],
                               'sum_of_charges'=> $companyDetails['sum_of_charges'],
                               'authorized_capital'=>$companyDetails['authorized_capital'],
@@ -96,7 +143,6 @@ public function probeapi()
                                $companydirectors = $responseData['authorized_signatories']; 
 
                                  foreach($companydirectors as $directors){
-                                 
 
                                   $director_type='';
                                   if($directors['designation'] == 'Managing Director'){
@@ -350,6 +396,52 @@ public function probeapi()
                             $result = json_decode($season_data, true);
                             $responseData = $result['data'];
                             $companydetails = $responseData['llp']; 
+
+                            $incorporation_date=$companyDetails['incorporation_date'] ;
+
+                            $date_parts = date_parse($incorporation_date);
+
+                            $year = $date_parts['year'];
+                            $month = $date_parts['month'];
+                            $day = $date_parts['day'];
+
+                            $months='';
+                           
+                            if($month=='1'){
+                              $months='January';
+                            }
+                            else if ($month=='2'){
+                              $months='February';
+                            }
+                            else if ($month=='3'){
+                              $months='March';
+                            }
+                            else if ($month=='4'){
+                              $months='April';
+                            }
+                            else if ($month=='5'){
+                              $months='may';
+                            } else if ($month=='6'){
+                             $months='June';
+                            }
+                            else if ($month=='7'){
+                           $months='July';
+                            }
+                            else if ($month=='8'){
+                              $months='August';
+                            }
+                            else if ($month=='9'){
+                              $months='September';
+                            }
+                            else if ($month=='10'){
+                             $months='October';
+                            }
+                            else if ($month=='11'){
+                              $months='November';
+                            }
+                           else if($month=='12') {
+                             $months='December';
+                           }
                             // object for  send to DB 
                             $borroweruserbasedetails=[
                               'cin'=>isset($companydetails['llpin'])?$companydetails['llpin']:null,
@@ -358,6 +450,8 @@ public function probeapi()
                               'sum_of_charges'=>isset($companydetails['sum_of_charges'])?$companydetails['sum_of_charges']:null,
                               'cirp_status'=>isset($companydetails['cirp_status'])?$companydetails['cirp_status']:null,
                                 'incorporation_date'=>isset($companydetails['incorporation_date'])?$companydetails['incorporation_date']:null,
+                                'date_of_incro_month'=>$months,
+                                'date_of_incro_year'=>$year,
                               'lei_number'=>isset($companydetails['lei']['number'])?$companydetails['lei']['number']:null,
                               'lei_status'=>isset($companydetails['lei']['status'])?$companydetails['lei']['status']:null,
                               'full_address'=>isset($companydetails['registered_address']['full_address'])?$companydetails['registered_address']['full_address']:null,
