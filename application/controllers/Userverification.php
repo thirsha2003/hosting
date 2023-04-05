@@ -242,11 +242,14 @@ public function newusersignup()
 
 							$slug_name  = $params['data']['slug'];
 
-    					   if($slug_name == '51532518181512'){
+    					   if($slug_name == '51532518181512')
+						   {
     					    $slug = 'borrower';
-    					   }else if($slug_name == "815441521"){
+    					   }else if($slug_name == "815441521")
+						   {
     					    $slug = 'lender';
-    					   } else if ($slug_name == '815102354141513'){
+    					   } else if ($slug_name == '815102354141513')
+						   {
 
 							$slug = 'connector';
 						   }
@@ -267,6 +270,9 @@ public function newusersignup()
 										}catch(Exception $e)
 										{
 											json_output(201, array('status' => 201,'message' => 'Unable to send an email, Please try again'));
+
+										
+
 										}	
 
 								}

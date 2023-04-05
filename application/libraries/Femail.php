@@ -15,48 +15,7 @@ class Femail
                 }
                 //---------------------------------------------------
                            
-                public function sendOTPemail($toemail="",$otp="",$emailslug="Finnup User",$otpvalid='2')
-                {
-                               $subject = "OTP from Finnup!";
-                               $messagetoborrower   ="Dear customer, use this One Time Password ".$otp
-                                                    ." to log in to your FinnUp Borrower account. 
-                                                    This OTP will be valid for the next ".$otpvalid." mins.";
-
-                               $messagetolender   ="Dear customer, use this One Time Password ".$otp
-                               ." to log in to your FinnUp Borrower account. 
-                               This OTP will be valid for the next".$otpvalid." mins.";
-
-                               $messagetoothers   ="Dear customer, use this One Time Password ".$otp
-                               ." to log in to your FinnUp account. 
-                               This OTP will be valid for the next ".$otpvalid." mins.";
-                               if($emailslug=='borrower')
-                               {
-                                    $message = $messagetoborrower;
-                               } else if($emailslug=='lender')
-                               {
-                                   $message = $messagetolender;
-                               }
-                               else 
-                               {
-                                    $message = $messagetoothers;
-                               }                                 
-
-								$to    = $toemail;
-								$email = new \SendGrid\Mail\Mail();
-								$email->setSubject($subject);
-								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
-								$email->addTo($to);							
-								$sendgrid = new \SendGrid("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");
-								try {
-									    $response = $sendgrid->send($email);
-								}catch(\Exception $e) 
-                                        {
-									echo 'Caught email exception: ',  $e->getMessage(), "\n";
-                                             return false;
-								}
-                                return true;
-                }
+              
                 public function verifyEmail($toemail,$otp,$emailslug,$otpvalid)
                 {
                                $subject = "Finnup Team : Verify your email id!";
@@ -96,6 +55,50 @@ class Femail
                                              return false;
 								}
                                         return true;
+                }
+
+                public function sendOTPemail($toemail="",$otp="",$emailslug="Finnup User",$otpvalid='2')
+                {
+                               $subject = "OTP from Finnup!";
+                               $messagetoborrower   ="Dear customer, use this One Time Password ".$otp
+                                                    ." to log in to your FinnUp Borrower account. 
+                                                    This OTP will be valid for the next ".$otpvalid." mins.";
+
+                               $messagetolender   ="Dear customer, use this One Time Password ".$otp
+                               ." to log in to your FinnUp Borrower account. 
+                               This OTP will be valid for the next".$otpvalid." mins.";
+
+                               $messagetoothers   ="Dear customer, use this One Time Password ".$otp
+                               ." to log in to your FinnUp account. 
+                               This OTP will be valid for the next ".$otpvalid." mins.";
+                               if($emailslug=='borrower')
+                               {
+                                    $message = $messagetoborrower;
+                               } else if($emailslug=='lender')
+                               {
+                                   $message = $messagetolender;
+                               }
+                               else 
+                               {
+                                    $message = $messagetoothers;
+                               }                                 
+
+								$to    = $toemail;
+								$email = new \SendGrid\Mail\Mail();
+								$email->setSubject($subject);
+								$email->addContent("text/html", $message);
+								$email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->addTo($to);							
+								$sendgrid = new \SendGrid("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");
+								try {
+									    $response = $sendgrid->send($email);
+								}catch(\Exception $e) 
+                                        {
+									echo 'Caught email exception: ',  $e->getMessage(), "\n";
+									 print_r("--------------------error--------------------------");
+                                             return false;
+								}
+                                return true;
                 }
                 
 }//----------------- end of class fpemail--------------------------------------

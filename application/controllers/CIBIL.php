@@ -227,13 +227,13 @@ class CIBIL extends CI_Controller
                               $lastpayment_date=$cibilaccdetails['dateClosed']; 
                              }
 
-                             $termFrequency='';
+                             $termfrequency='';
                              if (isset($cibilaccdetails['termFrequency'])
                              ){
-                               $termFrequency=$cibilaccdetails['termFrequency'];
+                               $termfrequency=$cibilaccdetails['termFrequency'];
                              }
                              else{
-                              $termFrequency="Others";
+                              $termfrequency="Others";
 
                              }
 
@@ -251,11 +251,7 @@ class CIBIL extends CI_Controller
 
                                 'account_open_status'=> $cibilaccdetails['open'],
                                 'lastpayment_date'=> $lastpayment_date,
-                                'termFrequency'=> $termFrequency,
-                                
-
-                               
-
+                                'termfrequency'=> $termfrequency,
                               ];
                               $this->db->insert('fp_director_cibilaccountdetails',$cibilaccountdetails);
                               $cibilaccountdetail_id = $this->db->insert_id();

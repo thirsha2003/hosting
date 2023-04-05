@@ -133,15 +133,17 @@ class Admin_common extends CI_Controller
                         "link : app.finnup.in/#/admin.";
                        
                         
-                        $to = 'aisha@finnup.in'; 
-                        $tos = "rahul@finnup.in";
+                        // $to = 'aisha@finnup.in'; 
+                        $to = 'parthibangnc51@gmail.com'; 
+
+                        // $tos = "rahul@finnup.in";
 
                         $email = new \SendGrid\Mail\Mail();
                         $email->setSubject($subject);
                         $email->addContent("text/html", $message);
                         $email->setFrom("support@finnup.in", 'FinnUp Team');
                         $email->addTo($to);
-                        $email->addTo($tos);
+                        // $email->addTo($tos);
                         $sendgrid = new \SendGrid("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");
                         try {
                             $response = $sendgrid->send($email);
