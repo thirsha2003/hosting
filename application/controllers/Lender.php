@@ -478,7 +478,7 @@ class Lender extends CI_Controller
 					   
 					   if(isset($params['id'])){
   
-						  $sql = 'SELECT  bd.company_name, bd.turnover, bd.networth, bd.profilecomplete, bd.profilecomplete_percentage , bd.gst, bd.cin, bl.name as location ,t1.name as industry,t2.name as entity
+						  $sql = 'SELECT  bd.company_name, bd.turnover, bd.networth, bd.profilecomplete, bd.profilecomplete_percentage , bd.gst, bd.cin, bl.name  as location ,t1.name as industry,t2.name as entity , bd.pan
 						  FROM fp_borrower_user_details bd LEFT JOIN fp_location bl ON  bd.location=bl.id  LEFT JOIN fp_industry t1 ON t1.id=bd.company_industry LEFT JOIN  fp_entitytype t2 ON t2.id= bd.company_type    
 											   WHERE bd.user_id='.$id;
   
@@ -575,7 +575,7 @@ class Lender extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT count(*) as TotalLoan_Application  FROM`fpa_loan_applications` WHERE loanapplication_status !='inactive' and lender_id=".$where;
+                $sql = "SELECT count(*) as TotalLoan_Application  FROM`fpa_loan_applications` WHERE loanapplication_status !='inactive' and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -604,7 +604,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT count(*) as TotalAdmin_Recommended FROM `fpa_loan_applications` WHERE
-                            is_created IN ('A') and lender_id=".$where;
+                            is_created IN ('A') and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -632,7 +632,7 @@ class Lender extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT count(*) as TotalDeals_ApprovedByLenders FROM `fpa_loan_applications` WHERE workflow_status IN ('Deal Approved','Deal Sanctioned') and lender_id=".$where;
+                $sql = "SELECT count(*) as TotalDeals_ApprovedByLenders FROM `fpa_loan_applications` WHERE workflow_status IN ('Deal Approved','Deal Sanctioned') and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -661,7 +661,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT count(*) as TotalDisbursed_Deals FROM `fpa_loan_applications` WHERE
-                       workflow_status IN ('Deal Sanctioned') and lender_id=".$where;
+                       workflow_status IN ('Deal Sanctioned') and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -690,7 +690,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT count(*) as TotalInterest_Expressed FROM `fpa_loan_applications` WHERE
-                       lender_intrest_received='yes' and  lender_id=".$where;
+                       lender_intrest_received='yes' and  lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -719,7 +719,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT count(*) as TotalDiscussion_Initiated FROM `fpa_loan_applications` WHERE
-                       workflow_status IN ('Discussion Initiated') and lender_id=".$where;
+                       workflow_status IN ('Discussion Initiated') and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -748,7 +748,7 @@ class Lender extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
 
                 $sql = "SELECT sum(approved_amount) as TotalAmount_Approved FROM `fpa_loan_applications`
-                       WHERE workflow_status IN ('Deal Approved') and lender_id=".$where;
+                       WHERE workflow_status IN ('Deal Approved') and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -776,7 +776,7 @@ class Lender extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT sum(sanctioned_amount) as TotalDisbursed_Amount FROM `fpa_loan_applications` WHERE workflow_status IN ('Deal Sanctioned') and lender_id=".$where;
+                $sql = "SELECT sum(sanctioned_amount) as TotalDisbursed_Amount FROM `fpa_loan_applications` WHERE workflow_status IN ('Deal Sanctioned') and lendermaster_id=".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);

@@ -923,6 +923,7 @@ public function verifyemail()
 								$fpausers_array['email']=$email;
 								$fpausers_array['mobile']=$mobile;
 								$fpausers_array['is_email_verified']=1;
+								$fpausers_array['lender_master_id']= isset($lenderid) ? $lenderid:null;
 								
 								$this->db->insert("fpa_users",$fpausers_array);
 								$u_id = $this->db->insert_id();
