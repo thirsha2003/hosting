@@ -81,17 +81,24 @@ class Admin_transation extends CI_Controller
 						   
 								 $data = $this->db->query($sql);
 								 foreach ($data->result() as $row){
+								  
 								   $txnArr[] = $row->lender_product_id;
+									// "loanrequest_id" =>  $row->loanrequest_id
+
+								   
 								   
 								 }
-								 $res = implode(",",$txnArr);
+							
+
+									$res = implode(",",$txnArr);
+
+									// $res = array_filter($res, fn ($res) => !is_null($res));
 								 $res  = "(".$res.")";
+										$sql2 =" select * from fp_lender_master";
+							// $sql2 = "select t1.roi_min,t1.roi_max,t1.loan_max,t1.loan_min,t1.tenor_min,t1.tenor_max, t1.id as lender_product_details_id,t2.id as lender_master_id,t2.image as lender_master_image,t2.lender_name as lender_master_name  from fp_lender_product_details t1,fp_lender_master t2 where t2.id=t1.lender_id and product_id =  ".$product_id." and t1.id not in".$res;
 
-							$sql2 = "select t1.roi_min,t1.roi_max,t1.loan_max,t1.loan_min,t1.tenor_min,t1.tenor_max, t1.id as lender_product_details_id,t2.id as lender_master_id,t2.image as lender_master_image,t2.lender_name as lender_master_name  from fp_lender_product_details t1,fp_lender_master t2 where t2.id=t1.lender_id and product_id =  ".$product_id." and t1.id not in".$res;
+								 
 
-							
-
-							
 							$resp = array('status' => 200,'message' =>  'Success','data' => $loan_app,'data2'=>$this->db->query($sql2)->result());
 							return json_output($respStatus,$resp);
 
@@ -885,9 +892,6 @@ public function  borrowerloanrequest()
 							$id  = ($params['id']) ;
 							$slug = ($params['slug']);	
 							// $product_id = ($params['product_id']);
-
-
-					
 				
 							// try{ 
 
@@ -906,6 +910,7 @@ public function  borrowerloanrequest()
 								t1.created_by,
 								t1.loan_request_status,
 								t3.name as product_name
+								
 								from 
 								fp_borrower_loanrequests t1, fp_borrower_user_details t2,
 								fp_products t3		                                
@@ -918,25 +923,6 @@ public function  borrowerloanrequest()
 								";
 
 
-					// 			$sqls="WITH lendername as  (  SELECT  t1.borrower_id, t2.name,	t2.company_name as companyname, t1.id AS Loanrequest,t1.product_slug, t1.roi_min,t1.roi_max,t1.loan_max,t1.loan_min,
-					// 			t1.tenor_min,
-					// 			t1.tenor_max,
-					// 			t1.created_by,
-					// 			t1.loan_request_status,
-					// 			t3.name as product_name	
-					// 			from 
-					// 			fp_borrower_loanrequests t1, fp_borrower_user_details t2,
-					// 			fp_products t3   	                                
-					// 			Where 
-					// 			t3.slug = t1.product_slug and
-					// 			t1.borrower_id = t2.user_id and   
-					// 			t1.is_deleted = 'no' and 
-					// 			t1.product_slug= '".$slug."' and
-					// 			t1.borrower_id= ".$id.")
-                    //             select ld.Loanrequest,  ld.borrower_id,ld.name,ld.product_name,ld.product_slug,ld.roi_min,ld.roi_max,ld.loan_max,ld.loan_min,ld.tenor_max,ld.tenor_min,ld.created_by,ld.loan_request_status,t4.loanrequest_id,t5.lender_name 
-                    //   FROM lendername as ld LEFT  JOIN  fpa_loan_applications t4 ON  ld.borrower_id= t4.borrower_id  LEFT JOIN  fp_lender_master t5  on t4.lendermaster_id= t5.id  Where t4.product_slug='".$slug."' ";
-                                
-                                
 							   $loan_app = $this->db->query($sqls)->result(); 
 							   $resp = array('status' => 200,'message' =>  'Success','data' => $loan_app);
 							   return json_output($respStatus,$resp);

@@ -72,8 +72,8 @@ class BorrowerAuth extends CI_Controller {
 				$this->db->select();
 				$this->db->from('fpa_users');
 				$this->db->where('token', $token);
-				$this->db->where('token_time >=', $last_min);
-				$this->db->where('token_time <=', $curr);
+				// $this->db->where('token_time >=', $last_min);
+				// $this->db->where('token_time <=', $curr);
 				$result = $this->db->get();
 
 				if($result->num_rows() == 1){
