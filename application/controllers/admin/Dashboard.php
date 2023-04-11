@@ -910,7 +910,7 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "With T1 AS (SELECT * FROM `fpa_taskdetails` WHERE".$where. " group by borrower_id)  SELECT count(*) as total_tasksassingedtorm from T1  ";
+									$sql = "With T1 AS (SELECT * FROM `fpa_taskdetails` WHERE ".$where. " group by borrower_id)  SELECT count(*) as total_tasksassingedtorm from T1 ";
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}

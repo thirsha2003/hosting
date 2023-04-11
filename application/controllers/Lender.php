@@ -302,7 +302,8 @@ class Lender extends CI_Controller
 						ind.name as industry, 
 						fpc.name as cityname,
 						fpd.name as distname,
-						fps.name as statename
+						fps.name as statename,
+						bud.api_pincode
 						FROM fp_borrower_user_details bud 
 						LEFT JOIN fp_industry ind on ind.id=bud.company_industry 
 						left join fp_city fpc on bud.city=fpc.id 
@@ -776,7 +777,7 @@ class Lender extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT sum(sanctioned_amount) as TotalDisbursed_Amount FROM `fpa_loan_applications` WHERE workflow_status IN ('Deal Sanctioned') and lendermaster_id=".$where;
+                $sql = "SELECT sum(sanctioned_amount) as TotalDisbursed_Amount FROM `fpa_loan_applications` WHERE workflow_status IN ('Deal Sanctioned') and lendermaster_id =".$where;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -804,7 +805,7 @@ class Lender extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT t4.loan_min,t4.loan_max, t2.name as productname, t5.name, t3.turnover, t3.networth, t5.name, t3.company_name,t1.is_created,t3.user_id as borrower_id,t1.loanapplication_status as lastatus, t1.lender_intrest_received as lender_intrest_received, t1.id as loan_app_id, t1.loanrequest_id as lrid  FROM fpa_loan_applications t1  LEFT JOIN fp_products t2 ON t1.product_slug=t2.slug LEFT JOIN   fp_borrower_user_details t3 ON t3.user_id = t1.borrower_id LEFT JOIN  fp_borrower_loanrequests t4 ON t1.loanrequest_id=t4.id  LEFT JOIN fp_entitytype t5 ON t5.id=t3.company_type   WHERE t1.loanapplication_status in ('Deal Sent To Lender','New Loan','Express Interest','Discussion Initiated') ".$where ." ORDER BY t1.id DESC ";
+                $sql = "SELECT t4.loan_min,t4.loan_max, t2.name as productname, t5.name, t3.turnover, t3.networth, t5.name, t3.company_name,t1.is_created,t3.user_id as borrower_id,t1.loanapplication_status as lastatus, t1.lender_intrest_received as lender_intrest_received, t1.id as loan_app_id, t1.loanrequest_id as lrid  FROM fpa_loan_applications t1  LEFT JOIN fp_products t2 ON t1.product_slug=t2.slug LEFT JOIN   fp_borrower_user_details t3 ON t3.user_id = t1.borrower_id LEFT JOIN  fp_borrower_loanrequests t4 ON t1.loanrequest_id=t4.id  LEFT JOIN fp_entitytype t5 ON t5.id=t3.company_type   WHERE t1.loanapplication_status in ('Deal Sent To Lender','New Loan','Express Interest','Discussion Initiated') $where";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -968,6 +969,69 @@ class Lender extends CI_Controller
    }
 
 //    End of borrowerloanapplications
+
+
+public function borrower_pincode()
+{
+ $method = $_SERVER['REQUEST_METHOD'];
+ if($method =="POST")
+ {
+	
+		 if(True)
+		 {
+				 $response['status']=200;
+				 $respStatus = $response['status'];
+				 $params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+				 $selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+				 $join 		= isset($params['key']) ? $params['key'] : "";
+				 $where 		= isset($params['where']) ? $params['where'] : "";
+				 $id  = $params['id'];
+				 $pincode  = $params['pincode'];
+				 
+				 if(isset($params['id'])){
+
+					$sql = "SELECT 
+					bud.id, 
+					loc.name as locationname, 
+					ct.name as cityname,
+					dt.name as districtname, 
+					st.name as statename 
+					FROM 
+					fp_borrower_user_details bud,fp_location loc, fp_city ct, fp_district dt, fp_state st 
+					WHERE
+					bud.api_pincode=loc.pincode and 
+					loc.city_id=ct.id and 
+					ct.district_id=dt.id and 
+					dt.state_id=st.id 
+					and bud.api_pincode= $pincode and bud.user_id= $id ";
+
+					$result= $this->db->query($sql)->result();
+					$status = 200;
+					$message = "success";
+					
+				 }else{
+					$result = null ;
+					$status = 0;
+					$message = "ID missing Some field missing";
+				  }				 
+				 $resp = array('status' => $status,'message' => $message ,'data' => $result);
+				 return json_output($respStatus,$resp);
+		 }
+		 else
+		 {
+			 return json_output(400,array('status' => 400,'message' => "missing authentication"));
+		 }
+	 
+ }
+ else
+ {
+		 return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+ }
+
+ } 
+
+//   End of borrower_pincode-------------------------------
 
 
 
