@@ -1008,9 +1008,31 @@ class Admin_common extends CI_Controller
 				AND  LM.id = LA.lendermaster_id
 				AND  PR.slug = LR.product_slug
 				AND  LA.rm   = AU.id ".$where;
+
+				if($where == " AND LA.workflow_status='CC Approved'" || $where == " AND LA.workflow_status='Due Diligence'"){
+					$sql = "SELECT 
+					BO.company_name, 
+					LR.id AS loanrequest_id, 
+					LR.borrower_id, 
+					BO.name AS borrowername, 
+					LR.product_slug, 
+					PR.name AS productname,
+					LR.loanamount_slug,
+					LR.tenor_max, LR.roi_min, 
+					LR.loan_request_status AS loanapplication_status,
+					FPU.rm_name AS rmname
+					FROM fp_borrower_loanrequests LR, 
+					 fp_products PR, fp_borrower_user_details BO,
+					 fpa_users FPU
+					WHERE 
+					 BO.user_id = LR.borrower_id
+					 AND FPU.id = BO.user_id
+					AND  PR.slug = LR.product_slug " .$where;
+				}
   
 				$borrowerdetails = $this->db->query($sql)->result(); 
 				$data = $this->db->query($sql);
+
 				
 				foreach ($data->result() as $row){
 				  $txnArr[] = $row->borrower_id;					
@@ -1033,7 +1055,7 @@ class Admin_common extends CI_Controller
 			}
 			else
 			{
-			  return json_output(400,array('status' => 400,'message' => $checkToken));
+			  return json_output(400,array('status' => 400,'message' => "auth missing"));
 			}
 		  
 		}
