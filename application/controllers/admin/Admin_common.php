@@ -1009,7 +1009,8 @@ class Admin_common extends CI_Controller
 				AND  PR.slug = LR.product_slug
 				AND  LA.rm   = AU.id ".$where;
 
-				if($where == " AND LA.workflow_status='CC Approved'" || $where == " AND LA.workflow_status='Due Diligence'"){
+				if($where == " AND LR.loan_request_status='CC Approved'" || $where == " AND LR.loan_request_status='Due Diligence'" || $where == " AND LR.loan_request_status='CC Rejected'" || $where == " AND LR.loan_request_status='CC Approval Pending'"){
+
 					$sql = "SELECT 
 					BO.company_name, 
 					LR.id AS loanrequest_id, 
