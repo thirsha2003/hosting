@@ -196,7 +196,7 @@ class Dashboard extends CI_Controller
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
 									$sql = "SELECT count(*) as TotalDeals_ApprovedByLenders FROM `fpa_loan_applications` WHERE 
-									workflow_status IN ('Deal Approved','Deal Sanctioned') ";
+									workflow_status IN ('Deal Approved') ";
 									
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
