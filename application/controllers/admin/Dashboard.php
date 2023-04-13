@@ -374,7 +374,7 @@ class Dashboard extends CI_Controller
 					$join     = isset($params['key']) ? $params['key'] : "";
 					$where     = isset($params['where']) ? $params['where'] : "";  
 
-					$sql = "SELECT COUNT(*) as TotalProfilesCompleted FROM fp_borrower_user_details  WHERE profilecomplete_percentage ='100' and profilecomplete='completed'";
+					$sql = "SELECT COUNT(*) as TotalProfilesCompleted FROM fp_borrower_user_details  WHERE profilecomplete_percentage ='100' and profilecomplete='complete'";
 					
 					$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 					return json_output($respStatus,$resp);
@@ -945,6 +945,11 @@ class Dashboard extends CI_Controller
 									ta.borrower_id = bu.user_id AND
 									bu.profilecomplete ='incomplete' 
 									group by ta.borrower_id) SELECT count(*) AS rm_dashboard_incompleteprofiles from T1 ";
+
+
+                                     
+
+
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -974,8 +979,11 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT count(*) as rmdash_completedprofiles FROM fpa_taskdetails as ta, fp_borrower_user_details as bu 
-									WHERE bu.profilecomplete ='complete'  ";
+									
+
+									$sql="SELECT COUNT(*) as rmdash_completedprofiles FROM fpa_users,fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and  fp_borrower_user_details.profilecomplete='complete' and fp_borrower_user_details.profilecomplete_percentage=100 and fpa_users.rm_id=".$where;
+
+
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1102,7 +1110,11 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT count(*) as CC_Pending FROM fpa_taskdetails td, fpa_adminusers ad, fp_borrower_user_details bu, fpa_loan_applications la WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' and bu.user_id=td.borrower_id and bu.profilecomplete='incompleted' AND la.workflow_status IN('CC Approval Pending', 'CC Approved') ".$where;
+									
+
+									$sql = "SELECT COUNT(*) as CC_Pending FROM fpa_users,fp_borrower_loanrequests  WHERE fpa_users.id= fp_borrower_loanrequests.borrower_id and fp_borrower_loanrequests.loan_request_status='CC Approval Pending' and fpa_users.rm_id=".$where;
+
+
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1135,7 +1147,11 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT COUNT(*) sanctioned FROM fpa_taskdetails td, fpa_adminusers ad, fpa_loan_applications la  WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' AND la.borrower_id=td.borrower_id and la.workflow_status='Deals Sanctioned'";
+								
+
+									$sql = "SELECT COUNT(*) as sanctioned FROM fpa_users,fpa_loan_applications WHERE fpa_users.id=fpa_loan_applications.borrower_id and fpa_loan_applications.loanapplication_status='Deal Sanctioned' and fpa_users.rm_id=".$where;
+
+
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1168,7 +1184,10 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT COUNT(*) duediligence FROM fpa_taskdetails td, fpa_adminusers ad, fp_borrower_loanrequests la  WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' AND la.borrower_id=td.borrower_id and la.loan_request_status='Due Diligence'";
+									
+
+                                     $sql="SELECT COUNT(*) as duediligence FROM fpa_users ,fp_borrower_loanrequests WHERE fpa_users.id=fp_borrower_loanrequests.borrower_id and fp_borrower_loanrequests.loan_request_status='Due Diligence' and fpa_users.rm_id=".$where;
+
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1200,8 +1219,10 @@ class Dashboard extends CI_Controller
 									$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
+                                    
+									$sql="SELECT COUNT(*) as cc_approved FROM fpa_users,fp_borrower_loanrequests  WHERE fpa_users.id= fp_borrower_loanrequests.borrower_id and fp_borrower_loanrequests.loan_request_status='CC Approved' and fpa_users.rm_id=".$where;
 
-									$sql = "SELECT COUNT(*) cc_approved FROM fpa_taskdetails td, fpa_adminusers ad, fpa_loan_applications la  WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' AND la.borrower_id=td.borrower_id and la.workflow_status='CC Approved'".$where;
+									
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1234,7 +1255,7 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT COUNT(*) deals_lender FROM fpa_taskdetails td, fpa_adminusers ad, fpa_loan_applications la  WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' AND la.borrower_id=td.borrower_id and la.workflow_status='Deals Sent to Lender'".$where;
+									$sql = "SELECT COUNT(*) as deals_lender FROM fpa_loan_applications la WHERE la.loanapplication_status='Deal Sent To Lender' and  la.rm=".$where;
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1305,7 +1326,11 @@ class Dashboard extends CI_Controller
 							$join 		= isset($params['key']) ? $params['key'] : "";
 							$where 		= isset($params['where']) ? $params['where'] : "";	
 
-							$sql = "SELECT count(*) as Completed FROM fpa_taskdetails td, fpa_adminusers ad, fp_borrower_user_details bu  WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' and bu.user_id=td.borrower_id and bu.profilecomplete='complete' AND td.task_assigned_to=".$where;
+							
+                            
+							$sql="SELECT COUNT(*) as Completed FROM fpa_users , fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and fp_borrower_user_details.profilecomplete='complete' and fp_borrower_user_details.profilecomplete_percentage=100 and fpa_users.rm_id=".$where;
+
+
 
 							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 							return json_output($respStatus,$resp);
@@ -1339,8 +1364,9 @@ class Dashboard extends CI_Controller
 							$join 		= isset($params['key']) ? $params['key'] : "";
 							$where 		= isset($params['where']) ? $params['where'] : "";	
 
-							$sql = "SELECT count(*) as incompleted FROM fpa_taskdetails td, fpa_adminusers ad, fp_borrower_user_details bu  WHERE td.task_assigned_to=ad.id AND ad.role_slug='rm' and bu.user_id=td.borrower_id and bu.profilecomplete='incomplete' and
-							bu.profilecomplete_percentage<60 AND td.task_assigned_to=".$where;
+							
+
+							$sql="SELECT COUNT(*) as incompleted FROM fpa_users , fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and fp_borrower_user_details.profilecomplete='incomplete' and fpa_users.rm_id=".$where;
 
 
 							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());

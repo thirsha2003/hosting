@@ -358,11 +358,11 @@ public function probeapi()
                               {
                                 $shareholderdetails=[
                                   'borrower_id'=> isset($params['borrowerid']) ? $params['borrowerid'] : '',
-                                  'open_charges_id'=>isset($apishareholder['id'])?$apishareholder['id']:null,
-                                  'date'=>isset($apishareholder['date'])?$apishareholder['date']:null,
-                                  'holder_name'=>isset($apishareholder['holder_name'])?$apishareholder['holder_name']:null,
-                                  'amount'=>isset($apishreholder['amount'])?$apishreholder['amount']:null,
-                                  'type'=>isset($apishareholder['type'])?$apishareholder['type']:null,
+                                  'open_charges_id'=>isset($apishareholder['id']) ? $apishareholder['id']:null,
+                                  'date'=>isset($apishareholder['date']) ? $apishareholder['date']:null,
+                                  'holder_name'=>isset($apishareholder['holder_name']) ? $apishareholder['holder_name']:null,
+                                  'amount'=>isset($apishreholder['amount']) ? $apishreholder['amount']:null,
+                                  'type'=>isset($apishareholder['type']) ? $apishareholder['type']:null,
   
                                 ];
                                $this->db->insert('fp_open_charges',$shareholderdetails);
