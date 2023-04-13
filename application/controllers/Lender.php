@@ -891,7 +891,7 @@ class Lender extends CI_Controller
 					 
 					 if(isset($params['id'])){
 
-						$sql = 'SELECT pd.name FROM fpa_loan_applications la, fp_products pd WHERE pd.slug=la.product_slug AND 
+						$sql = 'SELECT pd.name FROM fp_borrower_loanrequests la, fp_products pd WHERE pd.slug=la.product_slug AND 
 						la.borrower_id='.$id;
 
 						$result= $this->db->query($sql)->result();

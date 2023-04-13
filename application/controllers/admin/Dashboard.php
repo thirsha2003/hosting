@@ -617,7 +617,7 @@ class Dashboard extends CI_Controller
 						$join     = isset($params['key']) ? $params['key'] : "";
 						$where     = isset($params['where']) ? $params['where'] : "";  
 
-						$sql = "SELECT COUNT(*) as TotalDue_Diligence FROM fp_borrower_loanrequests WHERE loan_request_status='Due Diligence'";
+						$sql = "SELECT COUNT(*) as TotalDue_Diligence FROM fp_borrower_loanrequests WHERE loan_request_status='Due Diligence' "; 
 						
 						$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 						return json_output($respStatus,$resp);
