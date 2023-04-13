@@ -213,7 +213,7 @@ public function updateworkflowloanapplication(){
 						}
 
 						$fp_borrower_loanrequests = array( 
-							'loan_request_status'  => $loanapplication_status, 
+							// 'loan_request_status'  => $loanapplication_status, 
 							'loan_request_workflow_status'=> $loanapplication_status, 
 							'loan_request_remark'   =>  $remarks,
 						
