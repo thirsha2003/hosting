@@ -5,6 +5,8 @@ header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 header("HTTP/1.1 200 OK");
 
+require_once('application/libraries/S3.php');
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -14,6 +16,8 @@ class Finbox extends CI_Controller
 	public function __construct(){
 		parent::__construct();
 		$this->load->helper('json_output');
+        $this->load->library('S3_upload');
+        $this->load->library('S3');
 	}
 
 public function  finboxapi(){
@@ -61,19 +65,78 @@ public function  finboxapi(){
 					    $result = json_decode ($response, true);
 
 
+                        $output = $result['statements']['0']['pdf_url'];
 
-                        print_r($result); 
+                        $content = file_get_contents($output);
+
+                        $this->load->library('upload');
+                         $config['upload_path'] = './uploads/'; 
+                         $config['allowed_types'] = 'gif|jpg|png|pdf'; 
+                         $config['max_size'] = 1024; 
+
+                         $this->upload->initialize($config);
+                         if (!$this->upload->do_upload($content)) {
+
+                            print_r("filedata");
+                            
+                        } else {
+                
+                            $upload_data = $this->upload->data();
+
+                            print_r("notfiledata");
+
+
+                            
+                        }
+                        
+                         
 
 
 
 
-                        $file_path = $result['statements']['0']['pdf_url'];
+
+
+                       
+
+
+
+ 
+                        // This line code is s3 file upload 
+                    
+                        // $filesCount = count($output);   
+                        // print_r("cont");
+
+                        // print_r($filesCount);
+                        // print_r("count number");
+
+
+
+                        for($i = 0; $i < $filesCount; $i++){
+                            $_FILES['file']['name']     = $_FILES['files']['name'][$i];
+                            $_FILES['file']['type']     = $_FILES['files']['type'][$i];
+                            $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
+                            $_FILES['file']['error']    = $_FILES['files']['error'][$i];
+                            $_FILES['file']['size']     = $_FILES['files']['size'][$i];
+            
+                            $dir = dirname($_FILES["file"]["tmp_name"]);
+                            $destination = $dir . DIRECTORY_SEPARATOR . $_FILES["file"]["name"];
+                            rename($_FILES["file"]["tmp_name"], $destination);
+            
+                            $upload = $this->s3_upload->upload_file($destination);  
+                            
+                            print_r("fileupload fail");
+                        }     
+    
+                    // This  line code end of s3 bucket 
+
+
+                        // $file_path = $result['statements']['0']['pdf_url']; 
 
                           // Load the download helper
-                          $this->load->helper('download');
+                        //   $this->load->helper('download');
 
                           // Generate the download
-                          force_download($file_path, NULL);
+                        //   force_download($file_path, NULL);
 
 
 
@@ -93,12 +156,7 @@ public function  finboxapi(){
                         // $json = json_decode($content, true);
                         // print_r($json);
 
-                        // if ($content === false) {
-                        //     echo "Failed to read URL: $url";
-                        // } else {
-                        //     echo "Content of URL $url:<br>";
-                        //     echo $content;
-                        // }
+                       
 
                         
 						// foreach($result['statements'] as $responsedata){
@@ -279,7 +337,7 @@ public function  finboxapi(){
 
                                      // This are array of value 
                                     $avg_bal_values = array_values($avg_bal);
-
+                                    
                                     $amt_credit_values = array_values($amt_credit);
                                     $amt_debit_values = array_values($amt_debit);
                                     $cnt_outward_cheque_bounce_debit_values = array_values($cnt_outward_cheque_bounce_debit);

@@ -910,7 +910,9 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "With T1 AS (SELECT * FROM `fpa_taskdetails` WHERE ".$where. " group by borrower_id)  SELECT count(*) as total_tasksassingedtorm from T1 ";
+									// $sql = "With T1 AS (SELECT * FROM `fpa_taskdetails` WHERE ".$where. " group by borrower_id)  SELECT count(*) as total_tasksassingedtorm from T1 ";
+
+									$sql ="select count(*) as  total_tasksassingedtorm  from fpa_users where rm_id=".$where;
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -940,11 +942,13 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "WITH T1 AS (SELECT ta.rm FROM `fpa_taskdetails` as ta, fp_borrower_user_details bu 
-									WHERE " .$where. " AND
-									ta.borrower_id = bu.user_id AND
-									bu.profilecomplete ='incomplete' 
-									group by ta.borrower_id) SELECT count(*) AS rm_dashboard_incompleteprofiles from T1 ";
+									// $sql = "WITH T1 AS (SELECT ta.rm FROM `fpa_taskdetails` as ta, fp_borrower_user_details bu 
+									// WHERE " .$where. " AND
+									// ta.borrower_id = bu.user_id AND
+									// bu.profilecomplete ='incomplete' 
+									// group by ta.borrower_id) SELECT count(*) AS rm_dashboard_incompleteprofiles from T1 ";
+									
+									$sql= "select count(*) as rm_dashboard_incompleteprofiles from fpa_users fu,fp_borrower_user_details bu  where fu.id= bu.user_id and bu.profilecomplete ='incomplete' and fu.rm_id=".$where;
 
 
                                      
