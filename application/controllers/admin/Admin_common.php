@@ -1844,6 +1844,8 @@ class Admin_common extends CI_Controller
 					$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
 					$join 		= isset($params['key']) ? $params['key'] : "";
 					$where 		= isset($params['where']) ? $params['where'] : "";	
+					$loan_req 		= isset($params['loan_req']) ? $params['loan_req'] : "";
+					if($loan_req =='')	{
 					
 					
 					$sql="WITH borrowerTable as (SELECT b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city ,bd.user_id,b.status
@@ -1851,6 +1853,18 @@ class Admin_common extends CI_Controller
 					WHERE b.slug ='borrower' AND b.status in ('assigned','active') AND b.id = bd.user_id AND bd.company_name is not null )  
 					SELECT bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth 
 					FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  ".$where." ";
+					}
+
+					else if($loan_req != ""){
+
+						$sql="WITH borrowerTable as (SELECT b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city ,bd.user_id,b.status
+					FROM fpa_users b, fp_borrower_user_details bd 
+					WHERE b.slug ='borrower' AND b.status in ('assigned','active') AND b.id = bd.user_id AND bd.company_name is not null )  
+					SELECT bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry, bd.turnover, bd.networth , bd.user_id
+					FROM fp_borrower_loanrequests lr, borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null and lr.borrower_id = bd.user_id ".$loan_req;
+
+
+					}
 
 
 					$borrowerdetails = $this->db->query($sql)->result(); 
