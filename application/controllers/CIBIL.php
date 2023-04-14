@@ -203,12 +203,12 @@ class CIBIL extends CI_Controller
                          
                             // This line  code json insert into table 
 
-                            $responsejson=array();
+                            // $responsejson=array(); 
 
                             $responsejson['responsejson'] = json_encode($responseData,true);  
 
                             $this->db->where('director_id', $params['director_id']);
-                            $this->db->update('fp_director_cibilsummary',$responsejson);   
+                            $this->db->update('fp_director_cibilsummary',$responsejson ['responsejson']);   
 
                           // End of  json 
 
