@@ -374,7 +374,7 @@ class Dashboard extends CI_Controller
 					$join     = isset($params['key']) ? $params['key'] : "";
 					$where     = isset($params['where']) ? $params['where'] : "";  
 
-					$sql = "SELECT COUNT(*) as TotalProfilesCompleted FROM fp_borrower_user_details  WHERE profilecomplete_percentage ='100' and profilecomplete='complete'";
+					$sql = "SELECT COUNT(*) as TotalProfilesCompleted FROM fp_borrower_user_details  WHERE profilecomplete_percentage ='100' and profilecomplete='completed'";
 					
 					$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 					return json_output($respStatus,$resp);
@@ -548,7 +548,7 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT count(*) as TotalcompletedProfiles FROM  fp_borrower_user_details t1 WHERE t1.profilecomplete='complete'";
+									$sql = "SELECT count(*) as TotalcompletedProfiles FROM  fp_borrower_user_details t1 WHERE t1.profilecomplete='completed'";
 				
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
@@ -985,7 +985,7 @@ class Dashboard extends CI_Controller
 
 									
 
-									$sql="SELECT COUNT(*) as rmdash_completedprofiles FROM fpa_users,fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and  fp_borrower_user_details.profilecomplete='complete' and fp_borrower_user_details.profilecomplete_percentage=100 and fpa_users.rm_id=".$where;
+									$sql="SELECT COUNT(*) as rmdash_completedprofiles FROM fpa_users,fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and  fp_borrower_user_details.profilecomplete='completed' and fp_borrower_user_details.profilecomplete_percentage=100 and fpa_users.rm_id=".$where;
 
 
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
@@ -1332,7 +1332,7 @@ class Dashboard extends CI_Controller
 
 							
                             
-							$sql="SELECT COUNT(*) as Completed FROM fpa_users , fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and fp_borrower_user_details.profilecomplete='complete' and fp_borrower_user_details.profilecomplete_percentage=100 and fpa_users.rm_id=".$where;
+							$sql="SELECT COUNT(*) as Completed FROM fpa_users , fp_borrower_user_details WHERE fpa_users.id=fp_borrower_user_details.user_id and fp_borrower_user_details.profilecomplete='completed' and fp_borrower_user_details.profilecomplete_percentage=100 and fpa_users.rm_id=".$where;
 
 
 
