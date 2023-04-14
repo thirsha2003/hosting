@@ -7,7 +7,7 @@ header("HTTP/1.1 200 OK");
 defined('BASEPATH') OR exit('No direct script access allowed');
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
 
-class BorrowerAuth extends CI_Controller {
+class Borrowerauth extends CI_Controller {
 
 	public function __construct(){
 		parent::__construct();
