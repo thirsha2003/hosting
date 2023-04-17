@@ -60,7 +60,17 @@ class Admin_transation extends CI_Controller
 							$id  = ($params['id']) ;
 							$slug = ($params['slug']);	
 							$product_id = ($params['product_id']);
-				
+
+							if($where == "all"){
+							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
+                                  t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id
+                                  from 
+                                  
+                                  fp_borrower_loanrequests t3,
+                                  fpa_loan_applications t2,
+								  fp_lender_master t4
+                                  Where t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.borrower_id=".$id;
+							}else{
 
 							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
                                   t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id
@@ -72,7 +82,7 @@ class Admin_transation extends CI_Controller
                                   Where t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
 
 								//   echo $sql;
-							
+							}
 								 $loan_app = $this->db->query($sql)->result(); 
 								 $count = $this->db->query($sql)->num_rows(); 
 						  
@@ -895,6 +905,36 @@ public function  borrowerloanrequest()
 				
 							// try{ 
 
+								if($where=="all"){
+
+									$sqls= "SELECT  
+								t1.borrower_id, 
+								t2.name as borrowername,
+								t2.company_name as companyname, 
+								t1.id AS Loanrequest,
+								t1.product_slug, 
+								t1.roi_min,
+								t1.roi_max,
+								t1.loan_max,
+								t1.loan_min,
+								t1.tenor_min,
+								t1.tenor_max,
+								t1.created_by,
+								t1.loan_request_status,
+								t3.name as product_name
+								
+								from 
+								fp_borrower_loanrequests t1, fp_borrower_user_details t2,
+								fp_products t3		                                
+								Where 
+								t3.slug = t1.product_slug and
+								t1.borrower_id = t2.user_id and 
+								t1.is_deleted = 'no'  and
+								t1.borrower_id= ".$id."
+								";
+
+								}else{
+
 								$sqls= "SELECT  
 								t1.borrower_id, 
 								t2.name as borrowername,
@@ -921,7 +961,7 @@ public function  borrowerloanrequest()
 								t1.product_slug= '".$slug."' and
 								t1.borrower_id= ".$id."
 								";
-
+								}
 
 							   $loan_app = $this->db->query($sqls)->result(); 
 							   $resp = array('status' => 200,'message' =>  'Success','data' => $loan_app);
