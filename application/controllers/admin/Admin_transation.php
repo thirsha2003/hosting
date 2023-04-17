@@ -1402,7 +1402,7 @@ public function  borrowerloanrequest()
      }
      else
      {
-    return json_output(400,array('status' => 400,'message' => $checkToken));
+    return json_output(400,array('status' => 400,'message' => 'Bad request.'));
      }
    
     }
