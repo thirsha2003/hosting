@@ -5,9 +5,12 @@ header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 header("HTTP/1.1 200 OK");
 
-require_once('application/libraries/S3.php');
+require 'vendor/autoload.php';
+
 
 defined('BASEPATH') OR exit('No direct script access allowed');
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -64,114 +67,97 @@ public function  finboxapi(){
                         curl_close($curl);
 					    $result = json_decode ($response, true);
 
-
-                        $output = $result['statements']['0']['pdf_url'];
-
-                        $content = file_get_contents($output);
-
-                        $this->load->library('upload');
-                         $config['upload_path'] = './uploads/'; 
-                         $config['allowed_types'] = 'gif|jpg|png|pdf'; 
-                         $config['max_size'] = 1024; 
-
-                         $this->upload->initialize($config);
-                         if (!$this->upload->do_upload($content)) {
-
-                            print_r("filedata");
-                            
-                        } else {
-                
-                            $upload_data = $this->upload->data();
-
-                            print_r("notfiledata");
-
-
-                            
-                        }
                         
+
+                        // $output = $result['statements']['2']['pdf_url'];
+
+                        //    $responseoutput = file_get_contents($output);
+                        
+                        //        $bucket = 'bucketinfo';
+                        //        $keyname = 'Finbox';
+                        //        $Folder_name = 'finbox1/';
+                        //        $Addkey_name = $Folder_name.$keyname;
+
+                        //        $s3 = new S3Client([
+                        //         'version' => 'latest',
+                        //         'region'  => 'ap-south-1'
+                        //     ]);
+                        //     try {
+                        //         // Upload data.
+                        //         $result = $s3->putObject([
+                        //             'Bucket' => $bucket,
+                        //             'Key'    => $Addkey_name,
+                        //             'Body'   => $responseoutput ,
+                        //             'ACL'    => 'public-read'
+                        //         ]);
+                            
+                        //         // Print the URL to the object.
+                        //         // echo $result['ObjectURL'] . PHP_EOL; 
+                        //         $url = $result['ObjectURL'];
+                        //         print_r("------");
+                        //         print_r($url);
+                        //         print_r("------");
+                        //     print_r("file upload successfully in s3 bucket ");
+                        //     }
+                        //     catch (S3Exception $e) {
+                        //         echo $e->getMessage() . PHP_EOL;
+                        //     }
+
+
+						foreach($result['statements'] as $responsedata){
+
+							$finboxpdf=[
+                            "borrower_id"=>$borrower_id,
+                            "entity_id"=> $entity_id,
+							"statement_id"=>$responsedata['statement_id'],
+							"bank_name"=> $responsedata['bank_name'],
+							"pdf_password"=> $responsedata['pdf_password'],
+							"pdf_url"=> $responsedata['pdf_url'],
+							"account_id"=> $responsedata['account_id'],
+							"source"=> $responsedata['source'],
+                            "message"=> $responsedata['message'],
+							];
+                            
                          
 
-
-
-
-
-
-                       
-
-
-
- 
-                        // This line code is s3 file upload 
-                    
-                        // $filesCount = count($output);   
-                        // print_r("cont");
-
-                        // print_r($filesCount);
-                        // print_r("count number");
-
-
-
-                        for($i = 0; $i < $filesCount; $i++){
-                            $_FILES['file']['name']     = $_FILES['files']['name'][$i];
-                            $_FILES['file']['type']     = $_FILES['files']['type'][$i];
-                            $_FILES['file']['tmp_name'] = $_FILES['files']['tmp_name'][$i];
-                            $_FILES['file']['error']    = $_FILES['files']['error'][$i];
-                            $_FILES['file']['size']     = $_FILES['files']['size'][$i];
-            
-                            $dir = dirname($_FILES["file"]["tmp_name"]);
-                            $destination = $dir . DIRECTORY_SEPARATOR . $_FILES["file"]["name"];
-                            rename($_FILES["file"]["tmp_name"], $destination);
-            
-                            $upload = $this->s3_upload->upload_file($destination);  
-                            
-                            print_r("fileupload fail");
-                        }     
-    
-                    // This  line code end of s3 bucket 
-
-
-                        // $file_path = $result['statements']['0']['pdf_url']; 
-
-                          // Load the download helper
-                        //   $this->load->helper('download');
-
-                          // Generate the download
-                        //   force_download($file_path, NULL);
-
-
-
-                        // $output =   $result['statements'];
-
-                        // print_r(end($result['statements']));  
-                      
-					    // $output = $result['statements']['0']['pdf_url']; 
-
-                        // $data = readfile($output); 
-
-
-                        // $url = $output;
-                        // $content = file_get_contents($url);
-
-
-                        // $json = json_decode($content, true);
-                        // print_r($json);
-
-                       
-
+                            // $responseoutput = file_get_contents($finboxpdf['pdf_url']);
                         
-						// foreach($result['statements'] as $responsedata){
+                            //        $bucket = 'bucketinfo';
+                            //     //    $keyname = 'Finbox'; 
+                            //        $keyname = $finboxpdf['statement_id'];
+                            //        $Folder_name = 'ICICI/';
+                            //        $Addkey_name = $Folder_name.$keyname;
+    
+                            //        $s3 = new S3Client([
+                            //         'version' => 'latest',
+                            //         'region'  => 'ap-south-1'
+                            //     ]);
+                            //     try {
+                            //         // Upload data.
+                            //         $result = $s3->putObject([
+                            //             'Bucket' => $bucket,
+                            //             'Key'    => $Addkey_name,
+                            //             'Body'   => $responseoutput ,
+                            //             'ACL'    => 'public-read'
+                            //         ]);
+                                
+                            //         // Print the URL to the object.
+                            //         // echo $result['ObjectURL'] . PHP_EOL; 
+                            //         $url = $result['ObjectURL'];
+                            //         print_r("------");
+                            //         print_r($url);
 
-						// 	$finboxpdf=[
-                        //  "borrower_id"=>$borrower_id,
-                        //  "entity_id"=> $entity_id,
-						// 	"statement_id"=>$responsedata['statement_id'],
-						// 	"bank_name"=> $responsedata['bank_name'],
-						// 	"pdf_password"=> $responsedata['pdf_password'],
-						// 	"pdf_url"=> $responsedata['pdf_url'],
-						// 	"account_id"=> $responsedata['account_id'],
-						// 	"source"=> $responsedata['source'],
-                        //  "message"=> $responsedata['message'],
-						// 	];
+                            //         print_r("------");
+                            //     print_r("file upload successfully in s3 bucket ");
+                            //     }
+                            //     catch (S3Exception $e) {
+                            //         echo $e->getMessage() . PHP_EOL;
+                            //     }
+
+
+
+
+
                       
                         // This line code deletestatus code 
 
@@ -185,11 +171,8 @@ public function  finboxapi(){
 
 
 						// 	$this->db->insert("fp_finbox_pdfs", $finboxpdf); 
-						// }
-
-
-
-
+						 }
+                         
                         $Finboxapi ="https://portal.finbox.in/bank-connect/v1/entity/";
                         $finboxendpoint ="/xlsx_report";  
                         $entityid=$entity_id;
@@ -213,16 +196,53 @@ public function  finboxapi(){
 					    $result = json_decode ($response, true);
 
 
-                        print_r($result);
+						foreach($result['reports'] as $responsedata){
+							$finboxpdf=[
+                             "borrower_id"=>$borrower_id,
+							"xlsxlink"=>$responsedata['link'],
+							"account_id"=> $responsedata['account_id'],
+							];
+                         
+                            $responseoutput = file_get_contents($finboxpdf['xlsxlink']);
+                        
+                            $bucket = 'bucketinfo';
+                         //    $keyname = 'Finbox'; 
+                            $keyname = $finboxpdf['account_id'];
+                            $Folder_name = 'XLSX2/';
+                            $Addkey_name = $Folder_name.$keyname.".xlsx";
 
-						//  print_r(end($result['reports']));  
+                            $s3 = new S3Client([
+                             'version' => 'latest',
+                             'region'  => 'ap-south-1'
+                         ]);
+                         try {
+                             // Upload data.
+                             $result = $s3->putObject([
+                                 'Bucket' => $bucket,
+                                 'Key'    => $Addkey_name,
+                                 'Body'   => $responseoutput ,
+                                 'ACL'    => 'public-read'
+                             ]);
+                         
+                             // Print the URL to the object.
+                             // echo $result['ObjectURL'] . PHP_EOL; 
+                             $url = $result['ObjectURL'];
+                             print_r("------");
+                             print_r($url);
 
-						// foreach($result['reports'] as $responsedata){
-						// 	$finboxpdf=[
-                        //  "borrower_id"=>$borrower_id,
-						// 	"xlsxlink"=>$responsedata['link'],
-						// 	"account_id"=> $responsedata['account_id'],
-						// 	];
+                             print_r("------");
+                         print_r("file upload successfully in s3 bucket ");
+                         }
+                         catch (S3Exception $e) {
+                             echo $e->getMessage() . PHP_EOL;
+                         }
+
+
+
+
+
+
+
 
                         // This line code delete status code 
                              
@@ -239,7 +259,7 @@ public function  finboxapi(){
 
 
 						// 	$this->db->insert("fp_finbox_xlsx_report", $finboxpdf);
-                        // }
+                        }
 
 
 
@@ -266,7 +286,7 @@ public function  finboxapi(){
                         curl_close($curl);
 					    $result = json_decode ($response, true);
 
-                        print_r($result);
+                        // print_r($result); 
 
                         // print_r(end($result['accounts']));  
 

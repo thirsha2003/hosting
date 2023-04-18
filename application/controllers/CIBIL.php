@@ -83,7 +83,7 @@ class CIBIL extends CI_Controller
                          $result = json_decode($season_data, true);
                          $responseData= $result;
                          
-                         print_r($responseData);   
+                        //  print_r($responseData);   
                          
 
                          
@@ -208,7 +208,7 @@ class CIBIL extends CI_Controller
                             $responsejson['responsejson'] = json_encode($responseData,true);  
 
                             $this->db->where('director_id', $params['director_id']);
-                            $this->db->update('fp_director_cibilsummary',$responsejson ['responsejson']);   
+                            $this->db->update('fp_director_cibilsummary',$responsejson);    
 
                           // End of  json 
 

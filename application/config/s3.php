@@ -33,7 +33,7 @@ $config['verify_peer'] = TRUE;
 |
 */
 
-$config['access_key'] = 'AKIAYRVTG64ZXVJBLFE5';
+$config['access_key'] = 'AKIAYRVTG64ZZFZYVBMV';
 
 /*
 |--------------------------------------------------------------------------
@@ -66,7 +66,7 @@ $config['bucket_name'] = 'bucketinfo';
 |
 */
 
-$config['folder_name'] = 'WRITE_YOUR_S3_BUCKETS_FOLDER_NAME';
+$config['folder_name'] = 'FINNUPBS';
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +77,8 @@ $config['folder_name'] = 'WRITE_YOUR_S3_BUCKETS_FOLDER_NAME';
 |
 */
 
-$config['s3_url'] = 'https://finnup.s3.ap-south-1.amazonaws.com/';
+
+$config['s3_url'] = 'https://s3://bucketinfo/FINNUPBS/';
 
 /*
 |--------------------------------------------------------------------------
@@ -99,7 +100,7 @@ $config['get_from_enviroment'] = FALSE;
 | Name for access key in enviroment
 |
 */
-$config['access_key_envname'] = 'http://finnup.cu3siqxd9aqt.ap-south-1.rds.amazonaws.com/';
+$config['access_key_envname'] = 'https://bucketinfo.s3.ap-south-1.amazonaws.com/FINNUPBS/';
 
 /*
 |--------------------------------------------------------------------------
@@ -110,7 +111,8 @@ $config['access_key_envname'] = 'http://finnup.cu3siqxd9aqt.ap-south-1.rds.amazo
 |
 
 */
-$config['secret_key_envname'] = 'http://finnup.cu3siqxd9aqt.ap-south-1.rds.amazonaws.com/';
+// $config['secret_key_envname'] = 'http://finnup.cu3siqxd9aqt.ap-south-1.rds.amazonaws.com/';  old url for secret
+$config['secret_key_envname'] = 'https://bucketinfo.s3.ap-south-1.amazonaws.com/FINNUPBS/';
 
 /*
 |--------------------------------------------------------------------------

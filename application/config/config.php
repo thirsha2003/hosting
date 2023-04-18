@@ -147,7 +147,7 @@ $config['subclass_prefix'] = 'MY_';
 | Note: This will NOT disable or override the CodeIgniter-specific
 |	autoloading (application/config/autoload.php)
 */
-$config['composer_autoload'] = FALSE;
+$config['composer_autoload'] = TRUE; 
 
 /*
 |--------------------------------------------------------------------------
@@ -562,14 +562,14 @@ $config['verify_peer'] = TRUE;
 
 
 
-$config['folder_name'] = 'bucketinfo';
+$config['folder_name'] = 'FINNUPBS';
 
 
-$config['s3_access_key'] = 'WRITE_YOUR_S3_ACCESS_KEY';
-$config['s3_secret_key'] = 'WRITE_YOUR_S3_SECRET_NAME';
+$config['s3_access_key'] = 'AKIAYRVTG64ZZFZYVBMV';
+$config['s3_secret_key'] = 'JHRQ2TAq8HdP3dnoqpHjJjDi3fUTAMjdIbK6/1SS';
 
-$config['s3_bucket_name'] = 'WRITE_YOUR_S3_BUCKET_NAME';
-$config['s3_bucket_url'] = 'https://BUCKETNAME.s3.amazonaws.com';
+$config['s3_bucket_name'] = 'bucketinfo';
+$config['s3_bucket_url'] = 'https://s3://bucketinfo/FINNUPBS/';
 
 
 

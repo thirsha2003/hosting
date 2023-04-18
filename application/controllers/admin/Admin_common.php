@@ -2473,6 +2473,7 @@ class Admin_common extends CI_Controller
 						'company_name'  => $company_name, 
 						'company_type '=> $entity_type, 
 					); 
+					
 					$this->db->where('user_id',$borrower_id);
 					$this->db->update('fp_borrower_user_details', $fp_borrower_details);
 			

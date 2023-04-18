@@ -380,7 +380,7 @@ class Borrower extends CI_Controller {
 						  {
 							  $d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
 							  $pan = isset($params['data']['pan']) ? $params['data']['pan'] : "0";
-							  $sql = "SELECT * FROM ".$params['tableName']." WHERE status = 1 and id =".$d_id." or pan = '".$pan."'" ;
+							  $sql = "SELECT * FROM ".$params['tableName']." WHERE status = 1 and id=".$d_id;
 								  
 									  if(count($this->db->query($sql)->result())==0){
 										  $this->db->insert($params['tableName'], $params['data']);
