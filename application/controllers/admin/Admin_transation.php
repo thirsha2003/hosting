@@ -496,8 +496,8 @@ public function profilepercentage()
 					$where 		= isset($params['where']) ? $params['where'] : "";
 					$id  = isset($params['id']) ?  $params['id']: 0;	
 
-					$sql = 'SELECT   la.poc_name,la.email,la.mobile,lm.lender_name,fc.name as location ,fd.name ,lm.image as lenderimage,lm.hq_address as lenderaddress, lm.id as lendermasterid FROM  fp_lender_user_details la ,fp_lender_master lm ,fp_departments  fd ,fp_city  fc WHERE
-					la.lender_master_id=lm.id AND la.department_slug=fd.slug AND la.location_id = fc.id AND la.user_id='.$id;
+					$sql = 'SELECT   la.poc_name,la.email,la.mobile,lm.lender_name,fc.name as location ,fd.name ,lm.image as lenderimage,lm.hq_address as lenderaddress, lm.id as lendermasterid ,fin.name as lendertype FROM  fp_lender_user_details la ,fp_lender_master lm ,fp_departments  fd ,fp_city  fc , fp_fin_institution fin  WHERE  lm.lender_type=fin.id and 
+     				la.lender_master_id=lm.id AND la.department_slug=fd.slug AND la.location_id = fc.id AND la.user_id='.$id;
 					
 					
 					$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
