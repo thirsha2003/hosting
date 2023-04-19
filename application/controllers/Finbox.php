@@ -67,43 +67,6 @@ public function  finboxapi(){
                         curl_close($curl);
 					    $result = json_decode ($response, true);
 
-                        
-
-                        // $output = $result['statements']['2']['pdf_url'];
-
-                        //    $responseoutput = file_get_contents($output);
-                        
-                        //        $bucket = 'bucketinfo';
-                        //        $keyname = 'Finbox';
-                        //        $Folder_name = 'finbox1/';
-                        //        $Addkey_name = $Folder_name.$keyname;
-
-                        //        $s3 = new S3Client([
-                        //         'version' => 'latest',
-                        //         'region'  => 'ap-south-1'
-                        //     ]);
-                        //     try {
-                        //         // Upload data.
-                        //         $result = $s3->putObject([
-                        //             'Bucket' => $bucket,
-                        //             'Key'    => $Addkey_name,
-                        //             'Body'   => $responseoutput ,
-                        //             'ACL'    => 'public-read'
-                        //         ]);
-                            
-                        //         // Print the URL to the object.
-                        //         // echo $result['ObjectURL'] . PHP_EOL; 
-                        //         $url = $result['ObjectURL'];
-                        //         print_r("------");
-                        //         print_r($url);
-                        //         print_r("------");
-                        //     print_r("file upload successfully in s3 bucket ");
-                        //     }
-                        //     catch (S3Exception $e) {
-                        //         echo $e->getMessage() . PHP_EOL;
-                        //     }
-
-
 						foreach($result['statements'] as $responsedata){
 
 							$finboxpdf=[
@@ -117,8 +80,6 @@ public function  finboxapi(){
 							"source"=> $responsedata['source'],
                             "message"=> $responsedata['message'],
 							];
-                            
-                         
 
                             // $responseoutput = file_get_contents($finboxpdf['pdf_url']);
                         
@@ -154,10 +115,6 @@ public function  finboxapi(){
                             //         echo $e->getMessage() . PHP_EOL;
                             //     }
 
-
-
-
-
                       
                         // This line code deletestatus code 
 
@@ -172,6 +129,9 @@ public function  finboxapi(){
 
 						// 	$this->db->insert("fp_finbox_pdfs", $finboxpdf); 
 						 }
+                      
+                        //    This Url is xlsx  End point 
+
                          
                         $Finboxapi ="https://portal.finbox.in/bank-connect/v1/entity/";
                         $finboxendpoint ="/xlsx_report";  

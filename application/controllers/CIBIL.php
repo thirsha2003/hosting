@@ -16,8 +16,11 @@ class CIBIL extends CI_Controller
 		$this->load->helper('json_output');
 	}
 
-    public function  cibilscore(){
-        $response['status'] = 200;
+    public function  cibilscore()
+    {
+      $CibilValue= 0;
+      $did=0;
+     $response['status'] = 200;
 		$respStatus = $response['status'];
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'POST'){
@@ -26,20 +29,23 @@ class CIBIL extends CI_Controller
      else
 		{ 
             if($response['status'] == 200)  
-            // if(false)
+          
 
 					{
 						$params = json_decode(file_get_contents('php://input'), TRUE);
-            if(!isset($params['director_id'])){
+                
+            $did= $params['director_id'];
 
-              $this->db->insert('fp_director_details',$params['data2']);
-              $params['director_id'] = $this->db->insert_id();
+            // if(!isset($params['director_id'])){
 
-              $director =   $params['director_id'];
+            //   $this->db->insert('fp_director_details',$params['data2']);
+            //   $params['director_id'] = $this->db->insert_id();
+
+            //   $director =   $params['director_id'];
               
 
-              // json_output(200, array('status' => 200 , 'message'=> 'success','director_id'=> $director)); 
-            };
+            //   // json_output(200, array('status' => 200 , 'message'=> 'success','director_id'=> $director)); 
+            // };
                              $data = [
                               "reference_id"=> (String)$params['cibilreference_id'],
                               "consent"=> true,
@@ -77,72 +83,71 @@ class CIBIL extends CI_Controller
                             'accept: application/json',
                             'content-type: application/json'
                           ),
-                        ));
+                          ));
                          $season_data = curl_exec($curl);
                          curl_close($curl);
                          $result = json_decode($season_data, true);
                          $responseData= $result;
                          
-                        //  print_r($responseData);   
-                         
-
-                         
+                        //  print_r($responseData);     
 
                          $responseoutput = $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'];
-                       
-                          $CibilValue='';
+
+                         $Scorefromjson = $responseoutput['scoreDetails']['0']['value'];
+                          
                           switch (true) {
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 300 && $responseoutput['scoreDetails']['0']['value'] <= 400):
+                            case ($Scorefromjson >= 300 && $Scorefromjson<= 400):
                               $CibilValue=400; 
                               break;
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 400 && $responseoutput['scoreDetails']['0']['value'] <= 449):
-                              $CibilValue=420; 
+                            case ($Scorefromjson >= 401 && $Scorefromjson <= 450):
+                              $CibilValue=450; 
                               break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 450 && $responseoutput['scoreDetails']['0']['value'] <= 499):
-                                $CibilValue=470; 
+                            case ($Scorefromjson > 450 && $Scorefromjson <= 500):
+                                $CibilValue=500; 
                                 break;        
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 500 && $responseoutput['scoreDetails']['0']['value'] <= 549):
-                               $CibilValue=520; 
+                            case ($Scorefromjson > 500 && $Scorefromjson <= 550):
+                               $CibilValue=550; 
                                break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 550 && $responseoutput['scoreDetails']['0']['value'] <= 599):
-                                 $CibilValue=570; 
+                            case ($Scorefromjson > 550 && $Scorefromjson <= 600):
+                                 $CibilValue=600; 
                                  break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 600 && $responseoutput['scoreDetails']['0']['value'] <= 649):
-                                   $CibilValue=620; 
+                            case ($Scorefromjson > 600 && $Scorefromjson<= 650):
+                                   $CibilValue=650; 
                                    break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 650 && $responseoutput['scoreDetails']['0']['value'] <= 699):
-                                     $CibilValue=670; 
+                            case ($Scorefromjson > 650 && $Scorefromjson <= 700):
+                                     $CibilValue=700; 
                                      break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 700 && $responseoutput['scoreDetails']['0']['value'] <= 749):
-                               $CibilValue=720; 
+                            case ($Scorefromjson > 700 && $Scorefromjson <= 750):
+                               $CibilValue=750; 
                                break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 750 && $responseoutput['scoreDetails']['0']['value'] <= 799):
-                                 $CibilValue=770; 
+                            case ($Scorefromjson > 750 && $Scorefromjson <= 800):
+                                 $CibilValue=800; 
                                  break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 800 && $responseoutput['scoreDetails']['0']['value'] <=849):
-                                  $CibilValue=820; 
+                            case ($Scorefromjson > 800 && $Scorefromjson <= 850):
+                                  $CibilValue=850; 
                                   break;  
-                            case ($responseoutput['scoreDetails']['0']['value'] >= 850 && $responseoutput['scoreDetails']['0']['value'] <=899):
-                                    $CibilValue=870; 
+                            case ($Scorefromjson > 850 && $Scorefromjson <= 900):
+                                    $CibilValue=900; 
                                     break; 
+                            default:
+                                    $CibilValue = $Scorefromjson ;
                           };  // end of switch 
 
                           // cibil score update in director_details  
+
                            
-                          $this->db->where(array('id'=>$params['director_id']));
-                          $fp_director = $this->db->update('fp_director_details',array('cibil_score'=>$CibilValue));
+                        
 
-
-
-                         
+                          
                           $totalaccounts= sizeof($responseoutput['retailAccountDetails']);
                            $total = 0;
-                          for ($i = 0; $i < $totalaccounts; $i++) {
+                          for ($i = 0; $i < $totalaccounts; $i++) 
+                          {
                             if(isset($responseoutput['retailAccountDetails'][$i]['balance'])){
                               $total = $total + (int)$responseoutput['retailAccountDetails'][$i]['balance'];
                              
                             } 
-                            };   //  total of balance 
+                          };   //  total of balance 
                             
                            $pastDueAmount=0;
                            for ( $j = 0; $j< $totalaccounts; $j++){
@@ -198,17 +203,51 @@ class CIBIL extends CI_Controller
                              'totalcreditlimit'=> $responseoutput['retailAccountsSummary'] ['totalCreditLimit'],
                              'totalmonthlypaymentamount'=> $responseoutput['retailAccountsSummary'] ['totalMonthlyPaymentAmount'], 
                          ];
-                          $this->db->insert('fp_director_cibilsummary',$cibilsummary_details);
 
-                         
+                      
+                         $sql = "SELECT director_id FROM  fp_director_cibilsummary WHERE director_id=".$params['director_id'] ;
+								  
+                         if(count($this->db->query($sql)->result())==0){
+                        
+                          $this->db->insert('fp_director_cibilsummary',$cibilsummary_details);
+                         } 
+                         else {
+                          $this->db->trans_start();
+
+                          $Deletestatus =  $this->db->delete('fp_director_cibilsummary', array('director_id' => $params['director_id'])); 
+
+                          $Delete_cibilaccount =   $this->db->delete('fp_director_cibilaccountdetails', array('director_id' => $params['director_id']));
+
+                          $Delete_payment =   $this->db->delete('fp_director_cibilpayments', array('director_id' => $params['director_id']));
+
+                          $this->db->trans_complete();
+                          if ($this->db->trans_status() === true){
+
+                            $this->db->insert('fp_director_cibilsummary',$cibilsummary_details);
+                          }
+                         }
+
+                           
+                          // $this->db->where(array('id'=>$params['director_id']));
+                          // $fp_director = $this->db->update('fp_director_details',array('cibil_score'=> $CibilValue));
+
+                          $this->db->set('cibil_score',$CibilValue);
+                          $this->db->where('id',$did);
+                          $this->db->update('fp_director_details');
+
+                          echo " Cibil updated Successfully";
+                          echo $CibilValue;
+                                
+                          
+
                             // This line  code json insert into table 
 
                             // $responsejson=array(); 
 
-                            $responsejson['responsejson'] = json_encode($responseData,true);  
+                            // $responsejson['responsejson'] = json_encode($responseData,true);  
 
-                            $this->db->where('director_id', $params['director_id']);
-                            $this->db->update('fp_director_cibilsummary',$responsejson);    
+                            // $this->db->where('director_id', $params['director_id']);
+                            // $this->db->update('fp_director_cibilsummary',$responsejson ['responsejson']);   
 
                           // End of  json 
 
@@ -229,8 +268,7 @@ class CIBIL extends CI_Controller
                              }
 
                              $termfrequency='';
-                             if (isset($cibilaccdetails['termFrequency'])
-                             ){
+                             if (isset($cibilaccdetails['termFrequency'])){
                                $termfrequency=$cibilaccdetails['termFrequency'];
                              }
                              else{
@@ -254,6 +292,9 @@ class CIBIL extends CI_Controller
                                 'lastpayment_date'=> $lastpayment_date,
                                 'termfrequency'=> $termfrequency,
                               ];
+
+
+                               
                               $this->db->insert('fp_director_cibilaccountdetails',$cibilaccountdetails);
                               $cibilaccountdetail_id = $this->db->insert_id();
                                      
@@ -277,11 +318,12 @@ class CIBIL extends CI_Controller
                                    };
                           } 
                     
-
                     $fp_director_details = $this->db->get_where('fp_director_details', array('id' => $params['director_id']));
                           
 
-                         json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
+                        //  json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
+
+                         json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!'));
                         }
                         else{
                           json_output(200, array('status' => 200 , 'message'=> 'Invalid Information'));
@@ -298,7 +340,7 @@ class CIBIL extends CI_Controller
 
           if ($response['status'] == 200){
 
-            json_output(200, array('status' =>200,'message' => 'Testing its  Working or wrong  .'));
+            json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!'));
           } 
 
 
