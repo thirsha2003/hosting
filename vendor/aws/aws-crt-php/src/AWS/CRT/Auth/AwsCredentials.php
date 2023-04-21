@@ -29,7 +29,7 @@ final class AwsCredentials extends NativeResource {
     }
 
     private $access_key_id;
-    private $secret_access_key;
+    private $secret_access_key; 
     private $session_token;
     private $expiration_timepoint_seconds = 0;
 

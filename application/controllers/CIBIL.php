@@ -184,11 +184,11 @@ class CIBIL extends CI_Controller
                             'equifax'=> $responseoutput['scoreDetails']['0']['value'],
                             'cibilscore'=> $CibilValue,
                             'totalaccounts'=>  $responseoutput['retailAccountsSummary']['noOfAccounts'],
-                            'overdueaccounts'=> $totalaccounts,
+                            'overdueaccounts'=> $responseoutput['retailAccountsSummary']['noOfPastDueAccounts'],
 
                             'currentamount'=> $responseoutput['retailAccountsSummary'] ['totalBalanceAmount'],
                             'sanctionedamount'=> $responseoutput['retailAccountsSummary']['totalSanctionAmount'],
-                            'overdueamount'=> $pastDueAmount,
+                            'overdueamount'=> $responseoutput['retailAccountsSummary']['totalPastDue'],
                             'totalcurrentaccount'=> $responseoutput['retailAccountsSummary']['noOfActiveAccounts'],
                             'mostseverestatuswithin24months'=> $responseoutput['retailAccountsSummary']['mostSevereStatusWithIn24Months'],
                              'singlehighestcredit'=> $responseoutput['retailAccountsSummary'] ['singleHighestCredit'],

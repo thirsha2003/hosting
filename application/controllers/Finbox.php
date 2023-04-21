@@ -81,53 +81,65 @@ public function  finboxapi(){
                             "message"=> $responsedata['message'],
 							];
 
-                            // $responseoutput = file_get_contents($finboxpdf['pdf_url']);
+                                $responseoutput = file_get_contents($finboxpdf['pdf_url']);
                         
-                            //        $bucket = 'bucketinfo';
-                            //     //    $keyname = 'Finbox'; 
-                            //        $keyname = $finboxpdf['statement_id'];
-                            //        $Folder_name = 'ICICI/';
-                            //        $Addkey_name = $Folder_name.$keyname;
-    
-                            //        $s3 = new S3Client([
-                            //         'version' => 'latest',
-                            //         'region'  => 'ap-south-1'
-                            //     ]);
-                            //     try {
-                            //         // Upload data.
-                            //         $result = $s3->putObject([
-                            //             'Bucket' => $bucket,
-                            //             'Key'    => $Addkey_name,
-                            //             'Body'   => $responseoutput ,
-                            //             'ACL'    => 'public-read'
-                            //         ]);
+                                   $bucket = 'bucketinfo';
+                                   
+                                  $keyname = "FINNBID".$borrower_id."/".$finboxpdf['statement_id'];
+                                   $Folder_name = 'FINBOXPDF/';
                                 
-                            //         // Print the URL to the object.
-                            //         // echo $result['ObjectURL'] . PHP_EOL; 
-                            //         $url = $result['ObjectURL'];
-                            //         print_r("------");
-                            //         print_r($url);
+                                   $Addkey_name = $Folder_name.$keyname.".pdf";
+    
+                                   $s3 = new S3Client([
+                                    'version' => 'latest',
+                                    'region'  => 'ap-south-1'
+                                ]);
+                                try {
+                                    // Upload data.
+                                    $result = $s3->putObject([
+                                        'Bucket' => $bucket,
+                                        'Key'    => $Addkey_name,
+                                        'Body'   => $responseoutput ,
+                                        'ACL'    => 'public-read'
+                                    ]);
+                                
+                                    // Print the URL to the object.
+                                    // echo $result['ObjectURL'] . PHP_EOL; 
+                                    $url = $result['ObjectURL'];
+                                   
 
-                            //         print_r("------");
-                            //     print_r("file upload successfully in s3 bucket ");
-                            //     }
-                            //     catch (S3Exception $e) {
-                            //         echo $e->getMessage() . PHP_EOL;
-                            //     }
+                                print_r("file upload successfully in s3 bucket in pdf");
+                                }
+                                catch (S3Exception $e) {
+                                    echo $e->getMessage() . PHP_EOL;
+                                }
 
-                      
-                        // This line code deletestatus code 
+                            $pdffinbox=[
+                                'borrower_id'=>$finboxpdf['borrower_id'],
+                                'entity_id'=>$finboxpdf['entity_id'],
+                                'statement_id'=>$finboxpdf['statement_id'],
+                                'bank_name'=>$finboxpdf['bank_name'],
+                                'pdf_password'=>$finboxpdf['pdf_password'],
+                                'pdf_url'=>$finboxpdf['pdf_url'],
+                                'account_id'=>$finboxpdf['account_id'],
+                                'source'=>$finboxpdf['source'],
+                                'message'=>$finboxpdf['message'],
+                                's3_url'=>$url,               
+                            ];
 
-                    //    $pdf_updated = array('delete_status'=>0);
+                            $sql="select t1.statement_id from fp_finbox_pdfs t1  where  t1.statement_id ='".$pdffinbox['statement_id']."' and t1.borrower_id = ".$pdffinbox['borrower_id'];
 
-                    //    $this->db->where('borrower_id'=>$borrower_id);
-                    //    $this->db->update('fp_finbox_pdfs',$pdf_updated);
+                            if(count($this->db->query($sql)->result())==0){
 
-                    //  end  of  delete status code 
+                                $this->db->insert("fp_finbox_pdfs", $pdffinbox);
 
+                            }
+                            else{ 
+                                $this->db->where('statement_id',$pdffinbox['statement_id']);
+                                $this->db->update('fp_finbox_pdfs',$pdffinbox);
+                            }
 
-
-						// 	$this->db->insert("fp_finbox_pdfs", $finboxpdf); 
+							  
 						 }
                       
                         //    This Url is xlsx  End point 
@@ -158,17 +170,16 @@ public function  finboxapi(){
 
 						foreach($result['reports'] as $responsedata){
 							$finboxpdf=[
-                             "borrower_id"=>$borrower_id,
+                            "borrower_id"=>$borrower_id,
 							"xlsxlink"=>$responsedata['link'],
 							"account_id"=> $responsedata['account_id'],
 							];
-                         
+
                             $responseoutput = file_get_contents($finboxpdf['xlsxlink']);
                         
                             $bucket = 'bucketinfo';
-                         //    $keyname = 'Finbox'; 
-                            $keyname = $finboxpdf['account_id'];
-                            $Folder_name = 'XLSX2/';
+                            $keyname = "FINNBID".$borrower_id."/".$finboxpdf['account_id'];
+                            $Folder_name = 'FINBOXXLSX/';
                             $Addkey_name = $Folder_name.$keyname.".xlsx";
 
                             $s3 = new S3Client([
@@ -187,43 +198,34 @@ public function  finboxapi(){
                              // Print the URL to the object.
                              // echo $result['ObjectURL'] . PHP_EOL; 
                              $url = $result['ObjectURL'];
-                             print_r("------");
-                             print_r($url);
-
-                             print_r("------");
-                         print_r("file upload successfully in s3 bucket ");
+                            
+                         print_r("file upload successfully in s3 bucket in xlsx ");
                          }
                          catch (S3Exception $e) {
                              echo $e->getMessage() . PHP_EOL;
                          }
+                
+                        $finboxxlsx=[
+                            "borrower_id"=>$finboxpdf['borrower_id'],
+                            "xlsxlink"=>$finboxpdf['xlsxlink'],
+                            "account_id"=>$finboxpdf['account_id'],
+                            "s3_url"=>$url,
+                        ];
+                        
+                        $sql = "select t1.account_id from fp_finbox_xlsx_report t1  where t1.account_id = '". $finboxxlsx['account_id']."' and t1.borrower_id = ".$finboxxlsx['borrower_id'];
+
+                        if(count($this->db->query($sql)->result())==0){
+                            $this->db->insert('fp_finbox_xlsx_report',$finboxxlsx);
+
+                        }
+                        else{
+                            $this->db->where('account_id',$finboxxlsx['account_id']);
+					      $this->db->update('fp_finbox_xlsx_report', $finboxxlsx);
 
 
-
-
-
-
-
-
-                        // This line code delete status code 
-                             
-                        // $xlsx_update = array(
-                        //     "delete_status"=>0,
-                        // );
-
-                        // $this->db->where('borrower_id'=>$borrower_id);
-                        // $this->db->update("fp_finbox_xlsx_report",$xlsx_update);
-
-                        //  //  END OF delete_status code 
-
-
-
-
-						// 	$this->db->insert("fp_finbox_xlsx_report", $finboxpdf);
                         }
 
-
-
-            
+                        }
                         // This url is monthlyanalysis
                         $Finboxapi ="https://portal.finbox.in/bank-connect/v1/entity/";
                         $finboxendpoint ="/monthly_analysis_updated";  
@@ -246,74 +248,67 @@ public function  finboxapi(){
                         curl_close($curl);
 					    $result = json_decode ($response, true);
 
-                        // print_r($result); 
-
-                        // print_r(end($result['accounts']));  
-
                         $totalaccount = sizeof($result['accounts']);   
 
                         foreach($result['accounts'] as $row){
                                 $statement_id = $row['statements'];
                                 $count = sizeof($statement_id);
-                              
+
+
+                                $monthcount = $row['months'];
+                                $monthfirstvalue = $row['months'][0];
+                                $monthslastvalues = end($monthcount);
+                             
                                 foreach($statement_id as $statement){
 
                                     $data = [$statement];
-                          
-                                 
                                 }
+
+
                             $accounts_details =[
                                 'borrower_id'=>$borrower_id,
                                 'entity_id'=>$entity_id,
                                 'linked_id'=>$linked_id,
                                 'bank_name'=>$row['bank'],
                                 'account_id'=>$row['account_id'],
-                                 'ifsc'=>$row['ifsc'],
-                                'statement_id'=>$row['last_updated'],
-                                //'from_date_oldest'=>$row['months'],
-                                'from_date_oldest'=>21/06/2022,
-                                //'todate_latest'=>$row['months'],
-                                'todate_latest'=>22/03/2023,
+                                'ifsc'=>$row['ifsc'],
+                                // 'statement_id'=>$row['last_updated'],
+                                'from_date_oldest'=>$monthfirstvalue,
+                                'todate_latest'=> $monthslastvalues,
                                 'type_of_accounts'=>$row['account_category'],
-                                'account_number'=>$row['account_number'],
-                                //'totalaccounts'=> $totalaccount,                              
+                                'account_number'=>$row['account_number'],                              
                                 'totalaccounts'=>$totalaccount,                              
                             ];
 
-                            // ------------this line code delete status code------                              
+                            $sql="select t1.account_id from fp_finbox_accounts_details t1 where t1.account_id='".$accounts_details['account_id']."' and t1.borrower_id=".$accounts_details['borrower_id'];
+                            
+                            if(count($this->db->query($sql)->result())==0){
 
-                            // $finbox_updated= array(
-                            //     "delete_status"=>0,
-                            // );
-                            // $this->db->where('borrower_id',$borrower_id);
-						    // $this->db->update('fp_finbox_accounts_details', $fp_borrower_loanrequests); 
+                                $this->db->insert("fp_finbox_accounts_details", $accounts_details);
+                            }
+                            else{
+                                $this->db->where("account_id",$accounts_details['account_id']);
+                                $this->db->update("fp_finbox_accounts_details", $accounts_details);
 
-                            // -----------------end of delete status code------------------- 
+                            }
 
-                                   
-
-                            $this->db->insert("fp_finbox_accounts_details", $accounts_details); 
-
+                            // $this->db->insert("fp_finbox_accounts_details", $accounts_details)
                         }
-
                          $monthly_analysis= $result['monthly_analysis']['account_id'];
-
-                        //  print_r(end($monthly_analysis));  
 
                          foreach($monthly_analysis as $ma)
                          {
                                 $keys = array_keys($ma);
                                 foreach($keys as $key) {
                                     // print_r($key); 
-
                                     $avg_bal = $ma[$key]['monthly_analysis']['avg_bal'];
                                     $amt_credit = $ma[$key]['monthly_analysis']['amt_credit'];
                                     $amt_debit = $ma[$key]['monthly_analysis']['amt_debit'];
                                     $cnt_outward_cheque_bounce_debit = $ma[$key]['monthly_analysis']['cnt_outward_cheque_bounce_debit'];
-
                                     $cnt_inward_cheque_bounce_credit = $ma[$key]['monthly_analysis']['cnt_inward_cheque_bounce_credit'];
                                     $avg_credit_transaction_size = $ma[$key]['monthly_analysis']['avg_credit_transaction_size'];
                                     $avg_debit_transaction_size = $ma[$key]['monthly_analysis']['avg_debit_transaction_size'];
+                                    
 
                                      // This are array of value 
                                     $avg_bal_values = array_values($avg_bal);
@@ -324,9 +319,6 @@ public function  finboxapi(){
                                     $cnt_inward_cheque_bounce_credit_values = array_values($cnt_inward_cheque_bounce_credit);
                                     $avg_credit_transaction_size_values = array_values($avg_credit_transaction_size);
                                     $avg_debit_transaction_size_values = array_values($avg_debit_transaction_size);
-
-                                    // print_r($avg_bal_values); 
-
                                     // end of array of values 
 
                                     // This are array of count 
@@ -340,17 +332,15 @@ public function  finboxapi(){
                                     $avg_credit_transaction_size_count = sizeof($avg_credit_transaction_size_values);
                                     $avg_debit_transaction_size_count = sizeof($avg_debit_transaction_size_values);
 
-                                      // print_r($avg_bal_count); 
+                                // print_r($avg_bal_count); 
                                     // End of array of count 
                                      $avg_bal_total = 0;
                                     for ($i=0; $i<=$avg_bal_count-1; $i++){
                                         $avg_bal_total = $avg_bal_total + (int) $avg_bal_values[$i];
                                     };
-
                                     $avg_bal_totals = $avg_bal_total / $avg_bal_count;
                                     
                                     //  print_r($avg_bal_totals);  
-                               
                                     $amt_credit_total = 0;
                                     for ($i=0; $i<=$amt_credit_count-1; $i++){
 
@@ -372,7 +362,7 @@ public function  finboxapi(){
                                         $cnt_outward_cheque_bounce_debit_total = $cnt_outward_cheque_bounce_debit_total+ $cnt_outward_cheque_bounce_debit_values[$i];  
                                     } ;
                                     $cnt_outward_cheque_bounce_debit_totals = $cnt_outward_cheque_bounce_debit_total/$cnt_outward_cheque_bounce_debit_count; 
- 
+
                                     // print_r($cnt_outward_cheque_bounce_debit_totals);  
                                     $cnt_inward_cheque_bounce_credit_total = 0 ;
                                     for($i=0; $i<=$cnt_inward_cheque_bounce_credit_count-1; $i++){
@@ -380,17 +370,15 @@ public function  finboxapi(){
                                     };
 
                                     $cnt_inward_cheque_bounce_credit_totals= $cnt_inward_cheque_bounce_credit_total/$cnt_inward_cheque_bounce_credit_count;
-
                                     //  print_r($cnt_outward_cheque_bounce_debit_totals); 
                                     $avg_credit_transaction_size_total = 0 ;
 
                                     for ($i=0; $i<=$avg_credit_transaction_size_count-1; $i++){
                                         $avg_credit_transaction_size_total = $avg_credit_transaction_size_total + $avg_credit_transaction_size_values[$i];
-
                                     };
+
                                     $avg_credit_transaction_size_totals = $avg_credit_transaction_size_total/$avg_credit_transaction_size_count;
                                     // print_r($avg_credit_transaction_size_totals); 
-
                                     $avg_debit_transaction_size_total = 0 ;
 
                                     for ($i=0; $i<=$avg_debit_transaction_size_count-1; $i++){
@@ -398,8 +386,7 @@ public function  finboxapi(){
                                     };
                                     $avg_debit_transaction_size_totals = $avg_debit_transaction_size_total/$avg_debit_transaction_size_count;
 
-                                    // print_r($avg_debit_transaction_size_totals); 
-                            
+                                    // print_r($avg_debit_transaction_size_totals);
                                     $monthlydata=[
                                         'borrower_id'=>$borrower_id,
                                         'account_id'=>$key,
@@ -408,31 +395,27 @@ public function  finboxapi(){
                                         'total_amount_of_debit_transactions'=>$amt_debit_totals,
                                          'total_no_of_outward_cheque_bounce'=>$cnt_outward_cheque_bounce_debit_totals,
                                          'total_no_of_inward_cheque_bounce'=>$cnt_inward_cheque_bounce_credit_totals,
-
                                          'average_credit_transaction_size'=> $avg_credit_transaction_size_totals,
-
                                          'average_debit_transaction_size'=>$avg_debit_transaction_size_totals,
-                            
                                     ];
-                                         
-                                    //  THis line code delete_staus 
 
-                                        //   $monthly_update = array(
-                                        //     "delete_status"=>0,
-                                        //   );
+                                    $sql="select t1.account_id from fp_finbox_monthly_details t1 where t1.account_id='".$monthlydata['account_id']."' and t1.borrower_id=".$monthlydata['borrower_id'];
+                            
+                                   if(count($this->db->query($sql)->result())==0){
 
-                                        //   $this->db->where('borrower_id',$borrower_id);
-                                        //   $this->db->update('fp_finbox_monthly_details',$monthly_update);
+                                  $this->db->insert("fp_finbox_monthly_details", $monthlydata);
 
-                                        // End of delete status code 
+                                 }
+                                 else{
+                                     $this->db->where("account_id",$monthlydata['account_id']);
+                                     $this->db->update("fp_finbox_monthly_details",$monthlydata);
+      
+                                 }
 
-                                   
-
-                                    // $this->db->insert('fp_finbox_monthly_details', $monthlydata);  
+                                    //  $this->db->insert('fp_finbox_monthly_details', $monthlydata);   
                                 }
                         }
                         json_output(200, array('status' => 200 , 'message'=> 'success'));  	
-
 					}
 					catch(Exception $e)
 					{
@@ -441,16 +424,4 @@ public function  finboxapi(){
 				}
 			}
 } //  end of finbox 
-
-
-
-
-
-
-
-
-
-
-
-
 }

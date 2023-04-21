@@ -2647,5 +2647,42 @@ public function admin_lender_loanproposals()
  // -----------------End loanproposals-----------------
 
 
+ public function bankstatement()
+ {
+   $method = $_SERVER['REQUEST_METHOD'];
+   if($method =="POST")
+   {
+     $checkToken = $this->check_token();
+     if(true)
+     {
+       $response['status']=200;
+       $respStatus = $response['status'];
+       $params  = json_decode(file_get_contents('php://input'), TRUE);
+
+       $selectkey  = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+       $where   = isset($params['where']) ? $params['where'] : ""; 
+      
+
+       $sql="SELECT t1.bank_name,t1.account_id, t1.ifsc,t1.type_of_accounts,t1.account_number,t2.total_amount_of_credit_transactions,t2.total_amount_of_debit_transactions,t2.total_no_of_inward_cheque_bounce,t2.total_no_of_outward_cheque_bounce,t2.average_eod_balance,t2.average_credit_transaction_size,t2.average_debit_transaction_size,t1.totalaccounts,t1.from_date_oldest,t1.todate_latest,t3.s3_url FROM  fp_finbox_accounts_details t1 ,fp_finbox_monthly_details t2, fp_finbox_xlsx_report t3 
+	   WHERE t1.account_id = t2.account_id and 
+	   t2.account_id = t3.account_id and 
+	   t1.borrower_id =".$where;
+
+       $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+       return json_output($respStatus,$resp);
+     }
+     else
+     {
+      return json_output(400,array('status' => 400,'message' => "Token Failed"));
+     }
+   }
+   else
+   {
+     return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+   }
+ }
+ // -----------------End loanproposals-----------------
+
+
 
 } // -------------------------- end ---------------------
