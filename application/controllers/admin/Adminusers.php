@@ -616,12 +616,6 @@ class Adminusers extends CI_Controller
                             echo 'Caught exception: ', $e->getMessage(), "\n";
                     }
 
-
-
-
-
-
-
 				}else{
 					json_output(400,array('status' => 400,'message' => "Something When  Wrong guys"));
 				}
@@ -633,6 +627,52 @@ class Adminusers extends CI_Controller
 		}
 		
 	}  // end of adminforgotpass
+
+	public function domainblocklist()
+	{
+			  $method = $_SERVER['REQUEST_METHOD'];
+			  if($method != 'POST')
+			  {
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			  }else
+			  {
+				  
+					  $response['status'] = 200;
+					  $respStatus = $response['status'];
+					  if($response['status'] == 200)
+					  {
+						  $params = json_decode(file_get_contents('php://input'), TRUE);
+						  if ($params['tableName'] == "") 
+						  {
+							  $respStatus = 400;
+							  $resp = array('status' => 400,'message' =>  'Fields Missing');
+						  } else 
+						  {
+							  $d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
+							  $domain = isset($params['data']['domain']) ? $params['data']['domain'] : "";
+							  $sql = "SELECT * FROM ".$params['tableName']." WHERE id =".$d_id;
+							  $domain_dub_check = "SELECT * FROM ".$params['tableName']." WHERE domain = '".$domain."'";
+								  
+									  if(count($this->db->query($sql)->result())==0 ){
+										if(count($this->db->query($domain_dub_check)->result())==0 ){
+											$this->db->insert($params['tableName'], $params['data']);
+										}else{
+											$this->db->where('domain',$params['data']['domain'] );
+											$this->db->update($params['tableName'], array("status"=> 1)); 
+										}
+										 
+									  }else{
+							
+										  $this->db->where('id',$params['data']['id'] );
+										  $this->db->update($params['tableName'], $params['data']); 
+									  }
+							  $resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
+						  }
+						  json_output($respStatus,$resp);
+					  }
+				  // }
+			  }
+	}
 
 
 } // -------------------------- end ---------------------

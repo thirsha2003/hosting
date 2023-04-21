@@ -226,8 +226,33 @@ public function newusersignup()
 			if($check_auth_user == true)
 			{
 				$params = json_decode(file_get_contents('php://input'), TRUE);
-				if ($params['tableName'] == ""){
-					$respStatus = 400;
+
+				$allowuser = $params['data']['email'];
+				$domain_name = substr(strrchr($allowuser, "@"), 1);
+				$domain_name = explode('.', $domain_name)[0];
+				if($domain_name != "" || $domain_name != null){
+
+					$query = "select * from (SELECT SUBSTRING_INDEX(domain,'.',1) as domain from fp_domaincheck where status = 1) as fp_domaincheck where domain = '".$domain_name."'";
+					$result = $this->db->query($query)->num_rows();
+					// $this->db->select('*');
+					// $this->db->where(array("status" => 1));
+					// $this->db->like('domain',$domain_name);
+					// $query=$this->db->get("fp_domaincheck");
+					// $result=$query->result_array();
+					if($result > 0)
+					{
+					$domain_check = false;
+					}
+					else
+					{
+					$domain_check = true;
+					}
+				}else{
+					$domain_check = false;
+					$resp = array('status' => 400,'message' =>  'Fields Missing');
+				}
+				if ($params['tableName'] == "" || $domain_check != true){
+					$respStatus = 200;
 					$resp = array('status' => 400,'message' =>  'Fields Missing');
 				} else {
 							$email_id 	= $params['data']['email'];
@@ -261,7 +286,7 @@ public function newusersignup()
 								//Sending an email OTP
 								if($email_id!='' && $email_id!=null)
 								{
-									$eOTP = sprintf("%06d", mt_rand(1, 999999));
+									$eOTP = sprintf("%06d", mt_rand(100000, 999999));
 									try
 										{
 											//$this->load->library('femail');
@@ -280,7 +305,7 @@ public function newusersignup()
 								if($mobile!='' && $mobile!=null)
 								{
 									//--------------------------------------------------
-										$mOTP = sprintf("%06d", mt_rand(1, 999999));
+										$mOTP = sprintf("%06d", mt_rand(100000, 999999));
 										// code for mobile OTP
 										$msgreturn=$MTalkMobOtp->sendmobileotp($mobile,$slug,$mOTP);
 									
