@@ -420,18 +420,19 @@ class Borrower extends CI_Controller {
 							$url = $params['url'] ;
 							$des =isset($params['des']) ? $params['des'] : null;
 							$active = isset($params['active']) ? $params['active'] : 0;
+							$title = isset($params['title']) ? $params['title'] : "";
 							
 
 							
 							$sql = "SELECT * FROM fp_borrower_docs WHERE delete_status = 1 and borrower_id =".$br_id." and doc_type = '".$doc_type."'";
 								
 									if(count($this->db->query($sql)->result())==0){
-										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url,"description"=>$des,"actives"=>$active));
+										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url,"description"=>$des,"actives"=>$active,"doc_title"=>$title));
 										$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
 									}else{
 										$this->db->where(array('borrower_id'=>$br_id,"doc_type"=>$doc_type));
 										// $this->db->update('fp_borrower_docs', array("delete_status"=>"0"));
-										$this->db->insert('fp_borrower_docs',array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url,"description"=>$des,"actives"=>$active));
+										$this->db->insert('fp_borrower_docs',array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url,"description"=>$des,"actives"=>$active,"doc_title"=>$title));
 										$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
 									}
 
