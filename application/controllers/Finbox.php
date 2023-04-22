@@ -83,7 +83,7 @@ public function  finboxapi(){
 
                                 $responseoutput = file_get_contents($finboxpdf['pdf_url']);
                         
-                                   $bucket = 'bucketinfo';
+                                   $bucket = 'finnup';
                                    
                                   $keyname = "FINNBID".$borrower_id."/".$finboxpdf['statement_id'];
                                    $Folder_name = 'FINBOXPDF/';
@@ -108,7 +108,7 @@ public function  finboxapi(){
                                     $url = $result['ObjectURL'];
                                    
 
-                                print_r("file upload successfully in s3 bucket in pdf");
+                                // print_r("file upload successfully in s3 bucket in pdf");
                                 }
                                 catch (S3Exception $e) {
                                     echo $e->getMessage() . PHP_EOL;
@@ -177,7 +177,7 @@ public function  finboxapi(){
 
                             $responseoutput = file_get_contents($finboxpdf['xlsxlink']);
                         
-                            $bucket = 'bucketinfo';
+                            $bucket = 'finnup';
                             $keyname = "FINNBID".$borrower_id."/".$finboxpdf['account_id'];
                             $Folder_name = 'FINBOXXLSX/';
                             $Addkey_name = $Folder_name.$keyname.".xlsx";
@@ -199,7 +199,7 @@ public function  finboxapi(){
                              // echo $result['ObjectURL'] . PHP_EOL; 
                              $url = $result['ObjectURL'];
                             
-                         print_r("file upload successfully in s3 bucket in xlsx ");
+                        //  print_r("file upload successfully in s3 bucket in xlsx ");
                          }
                          catch (S3Exception $e) {
                              echo $e->getMessage() . PHP_EOL;
@@ -308,7 +308,7 @@ public function  finboxapi(){
                                     $cnt_inward_cheque_bounce_credit = $ma[$key]['monthly_analysis']['cnt_inward_cheque_bounce_credit'];
                                     $avg_credit_transaction_size = $ma[$key]['monthly_analysis']['avg_credit_transaction_size'];
                                     $avg_debit_transaction_size = $ma[$key]['monthly_analysis']['avg_debit_transaction_size'];
-                                    
+
 
                                      // This are array of value 
                                     $avg_bal_values = array_values($avg_bal);
