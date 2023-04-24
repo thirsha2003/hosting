@@ -235,8 +235,8 @@ class CIBIL extends CI_Controller
                           $this->db->where('id',$did);
                           $this->db->update('fp_director_details');
 
-                          echo " Cibil updated Successfully";
-                          echo $CibilValue;
+                          // echo " Cibil updated Successfully";
+                          // echo $CibilValue;
                                 
                           
 

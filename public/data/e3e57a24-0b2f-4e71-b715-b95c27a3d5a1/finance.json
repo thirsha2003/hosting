@@ -1,0 +1,1126 @@
+{
+  "status": true,
+  "code": null,
+  "message": null,
+  "body": [
+    {
+      "entity": {
+        "industry": null,
+        "industryCodeType": null,
+        "country": null,
+        "currency": null,
+        "portfolio": null,
+        "code": "Balaji",
+        "name": "Balaji",
+        "metadata": {},
+        "extraDetails": null
+      },
+      "financialDataContainer": {
+        "finType": null,
+        "periods": [
+          {
+            "finkey": "Balaji-2019-ANNUAL-AUD-MR-STA",
+            "fintype": "STA",
+            "type": "ANNUAL",
+            "datatype": {
+              "datattype": "AUD",
+              "timetype": "MR",
+              "key": "AUD-MR"
+            },
+            "perioddef": {
+              "ptype": "ANNUAL",
+              "year": 2019,
+              "ptypeidx": 0,
+              "yearidx": 1,
+              "monthidx": 0,
+              "key": "2019-ANNUAL",
+              "calenderYear": 2019,
+              "displaylabel": "Annual -19",
+              "displaylabelwithyear": "Annual -19",
+              "periodlabel": "Annual -19",
+              "monthname": null
+            },
+            "key": "2019-ANNUAL",
+            "year": 2019,
+            "periodidx": 0
+          },
+          {
+            "finkey": "Balaji-2018-ANNUAL-AUD-MR-STA",
+            "fintype": "STA",
+            "type": "ANNUAL",
+            "datatype": {
+              "datattype": "AUD",
+              "timetype": "MR",
+              "key": "AUD-MR"
+            },
+            "perioddef": {
+              "ptype": "ANNUAL",
+              "year": 2018,
+              "ptypeidx": 0,
+              "yearidx": 1,
+              "monthidx": 0,
+              "key": "2018-ANNUAL",
+              "calenderYear": 2018,
+              "displaylabel": "Annual -18",
+              "displaylabelwithyear": "Annual -18",
+              "periodlabel": "Annual -18",
+              "monthname": null
+            },
+            "key": "2018-ANNUAL",
+            "year": 2018,
+            "periodidx": 0
+          },
+          {
+            "finkey": "Balaji-2020-ANNUAL-AUD-AR-STA",
+            "fintype": "STA",
+            "type": "ANNUAL",
+            "datatype": {
+              "datattype": "AUD",
+              "timetype": "AR",
+              "key": "AUD-AR"
+            },
+            "perioddef": {
+              "ptype": "ANNUAL",
+              "year": 2020,
+              "ptypeidx": 0,
+              "yearidx": 2,
+              "monthidx": 0,
+              "key": "2020-ANNUAL",
+              "calenderYear": 2020,
+              "displaylabel": "Annual -20",
+              "displaylabelwithyear": "Annual -20",
+              "periodlabel": "Annual -20",
+              "monthname": null
+            },
+            "key": "2020-ANNUAL",
+            "year": 2020,
+            "periodidx": 0
+          }
+        ],
+        "finitems": [
+          {
+            "name": "LSTOCL",
+            "label": "Other Current Liabilities",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 976980,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 964960,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 976980,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Liabilities",
+              "subclassname": "",
+              "classcode": "CCCURRENTLIABILITIES",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ASTCASH",
+            "label": "Cash in Hand",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 25558,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Assets",
+              "subclassname": "Cash and cash equivalent",
+              "classcode": "CCCURRENTASSET",
+              "subclasscode": "SBCASHEQUIVALENT"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ECAPITAL",
+            "label": "Share Capital",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 956420,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 839560,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 956420,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 956420,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Equity",
+              "subclassname": "",
+              "classcode": "CCEQUITY",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ASTDEBTORSLSIX",
+            "label": "Sundry Debtors - Less than 6 months",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 65400,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Assets",
+              "subclassname": "Current Accounts Receivable Less than 6 Months",
+              "classcode": "CCCURRENTASSET",
+              "subclasscode": "SBSTTRADERECEIVABLELSIX"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ASTOCA",
+            "label": "Other Current Assets",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 19877,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 336000,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 976979.5,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 964960,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 996856.5,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Assets",
+              "subclassname": "",
+              "classcode": "CCCURRENTASSET",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ASTBANK",
+            "label": "Cash at Bank",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 16419,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Assets",
+              "subclassname": "Cash and cash equivalent",
+              "classcode": "CCCURRENTASSET",
+              "subclasscode": "SBCASHEQUIVALENT"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ALTTANGIBLE",
+            "label": "Tangible Assets",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 612103,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 186960,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 612102,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Non Current Assets",
+              "subclassname": "Fixed Assets",
+              "classcode": "CCNONCURRENTASSET",
+              "subclasscode": "SBPPE"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ALTLOAN",
+            "label": "Long Term Loans and Advances",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 245000,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 442000,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 245000,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Non Current Assets",
+              "subclassname": "",
+              "classcode": "CCNONCURRENTASSET",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ASTSTOCK",
+            "label": "Stock (Inventory + WIP + Unsold Finished Goods)",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 12500,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Assets",
+              "subclassname": "Inventories",
+              "classcode": "CCCURRENTASSET",
+              "subclasscode": "SBINVENTORIES"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "LSTCREDITORSNONMSME",
+            "label": "Sundry Creditors Other than MSME",
+            "values": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 20560,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 125400,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 20560,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2019-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2018-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              },
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Liabilities",
+              "subclassname": "Current Trade Payables Non MSME",
+              "classcode": "CCCURRENTLIABILITIES",
+              "subclasscode": "SBSTTRADEPAYABLESNONMSME"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "OTHRNONOPEX",
+            "label": "Other Non Operating Expenses",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 66919,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Non Operating Expenses",
+              "subclassname": "",
+              "classcode": "CCNONOPERATINGEXP",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "CLSTOCK",
+            "label": "Closing Stock",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": -12500,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Cost of Goods Sold",
+              "subclassname": "",
+              "classcode": "CCCOGS",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "OPERATINGEXP",
+            "label": "Other Operating Expenses",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 18650,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Expenses",
+              "subclassname": "",
+              "classcode": "CCOPERATINGEXP",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ELECTRICITYEXP",
+            "label": "Electricity",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 42540,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Expenses",
+              "subclassname": "",
+              "classcode": "CCOPERATINGEXP",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "SALARYTODIR",
+            "label": "Directors Remuneration",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 275640,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Expenses",
+              "subclassname": "",
+              "classcode": "CCOPERATINGEXP",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "REVENUE",
+            "label": "Revenue",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 3916687,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Revenue",
+              "subclassname": "",
+              "classcode": "CCREVENUE",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "SGA",
+            "label": "Selling General and Administrative Expenses",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 68900,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Expenses",
+              "subclassname": "",
+              "classcode": "CCOPERATINGEXP",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "DEP",
+            "label": "Depreciation",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 105398,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Depreciation",
+              "subclassname": "",
+              "classcode": "CCDEPRECIATION",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "PURCHASES",
+            "label": "Purchases",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 2764640,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Cost of Goods Sold",
+              "subclassname": "Purchases",
+              "classcode": "CCCOGS",
+              "subclasscode": "SBPURCHASES"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "DUTIESTAXES",
+            "label": "Duties and Taxes",
+            "values": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 54000,
+                "datatype": "AUD"
+              }
+            ],
+            "calculatedvalues": [
+              {
+                "periodkey": "2020-ANNUAL",
+                "value": 0,
+                "datatype": "AUD"
+              }
+            ],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Expenses",
+              "subclassname": "",
+              "classcode": "CCOPERATINGEXP",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ASTLOAN",
+            "label": "Short Term Loans and Advances",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Assets",
+              "subclassname": "",
+              "classcode": "CCCURRENTASSET",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "BNKCHRGS",
+            "label": "Bank Charges",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Finance Cost",
+              "subclassname": "",
+              "classcode": "CCFINANCECOST",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "WAGES",
+            "label": "Employee Benefit Expense",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Operating Expenses",
+              "subclassname": "Salaries",
+              "classcode": "CCOPERATINGEXP",
+              "subclasscode": "SBSALARIES"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "OTHROPINC",
+            "label": "Other Operating Income",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Other Operating Income",
+              "subclassname": "",
+              "classcode": "CCOTHERINC",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "LSTACCRUALS",
+            "label": "Accrued Expenses and Expenses Payable",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Current Liabilities",
+              "subclassname": "",
+              "classcode": "CCCURRENTLIABILITIES",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "INTEXP",
+            "label": "Interest Expense",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "IS",
+              "classname": "Finance Cost",
+              "subclassname": "",
+              "classcode": "CCFINANCECOST",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "LLTSECURED",
+            "label": "Secured Long Term Loan ",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Non Current Liabilities",
+              "subclassname": "Secured Long Debts",
+              "classcode": "CCNONCURRENTLIABILITIES",
+              "subclasscode": "SBLTSECURED"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "LLTUNSECURED",
+            "label": "Unsecured Long Term Loan",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Non Current Liabilities",
+              "subclassname": "Unsecured Long Debts",
+              "classcode": "CCNONCURRENTLIABILITIES",
+              "subclasscode": "SBLTUNSECURED"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "ALTONCA",
+            "label": "Other Non-Current Assets",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Non Current Assets",
+              "subclassname": "",
+              "classcode": "CCNONCURRENTASSET",
+              "subclasscode": ""
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          },
+          {
+            "name": "LSTSECURED",
+            "label": "Secured Short Term Borrowings",
+            "values": [],
+            "calculatedvalues": [],
+            "classification": {
+              "componenttype": "BS",
+              "classname": "Non Current Liabilities",
+              "subclassname": "Secured Short Debts",
+              "classcode": "CCNONCURRENTLIABILITIES",
+              "subclasscode": "SBSTSECURED"
+            },
+            "classified": true,
+            "mappings": [],
+            "useradded": false,
+            "sortorder": 0
+          }
+        ],
+        "metrics": null,
+        "originalunit": {
+          "currency": "INR",
+          "unit": "ACTUALS",
+          "adjustmentfactor": 0
+        },
+        "adjustedunit": null
+      },
+      "template": {
+        "name": "T_DETAILED_INSIGHT",
+        "label": "Template_DE"
+      },
+      "documentInfo": {
+        "auditdata": null,
+        "dmscode": "0ef3a7d5f4da4aa2b4eef5d342a8f475",
+        "docname": "BALAJI_ITR 20-21.pdf",
+        "doctype": "FST",
+        "metadata": {
+          "template": {
+            "id": 0,
+            "name": "Template_DE",
+            "code": "T_DETAILED_INSIGHT"
+          },
+          "unit": "ACTUALS",
+          "currency": {
+            "code": "INR",
+            "name": "INR",
+            "desc": "Rupees"
+          },
+          "language": {
+            "code": "en",
+            "name": "English",
+            "desc": "English"
+          },
+          "datatype": "AUDITED",
+          "password": "",
+          "industrycode": "",
+          "features": [],
+          "entityid": "Balaji",
+          "entityname": "Balaji",
+          "apibankusername": null,
+          "finendmonidx": 3,
+          "country": "IND"
+        },
+        "msgid": "e3e57a24-0b2f-4e71-b715-b95c27a3d5a1",
+        "processed": true,
+        "statuscode": 200,
+        "statusmsg": "",
+        "validationstate": "VALIDATION_INPROGRESS",
+        "id": {
+          "timestamp": 1643284368,
+          "machineIdentifier": 8488291,
+          "processIdentifier": 1,
+          "counter": 14295692,
+          "time": 1643284368000,
+          "date": "2022-01-27T11:52:48.000+0000",
+          "timeSecond": 1643284368
+        },
+        "linkedEntity": {
+          "industry": null,
+          "industryCodeType": null,
+          "country": null,
+          "currency": null,
+          "portfolio": null,
+          "code": "Balaji",
+          "name": "Balaji",
+          "metadata": {},
+          "extraDetails": null
+        },
+        "subType": null,
+        "spreadingTemplateCode": "T_DETAILED_INSIGHT",
+        "template": {
+          "name": "T_DETAILED_INSIGHT",
+          "label": "Template_DE"
+        },
+        "extension": "pdf"
+      },
+      "unit": {
+        "currency": "INR",
+        "unit": "ACTUALS",
+        "adjustmentfactor": 0
+      }
+    }
+  ]
+}

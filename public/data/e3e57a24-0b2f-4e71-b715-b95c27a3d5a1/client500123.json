@@ -1,0 +1,934 @@
+{
+  "status": true,
+  "code": null,
+  "message": "",
+  "body": {
+    "entity": {
+      "code": "CLIENT_500123",
+      "name": "CLIENT_500123"
+    },
+    "document": {
+      "code": "977d0947a55648988c55018dac3e793d",
+      "name": "Annual Financial Report - FY 2021-22(2).pdf"
+    },
+    "template": {
+      "code": "T_Finnup",
+      "name": "Finnup_Template"
+    },
+    "financials": [
+      {
+        "fintype": "STA",
+        "periods": [
+          {
+            "ptype": "ANNUAL",
+            "key": "2022-ANNUAL",
+            "year": 2022,
+            "ptypeidx": 0
+          },
+          {
+            "ptype": "ANNUAL",
+            "key": "2021-ANNUAL",
+            "year": 2021,
+            "ptypeidx": 0
+          }
+        ],
+        "components": [
+          {
+            "code": "BS",
+            "name": "Balance Sheet",
+            "items": [
+              {
+                "code": "LSTSTBRWSTBRWSCRDBNK000L3",
+                "name": "Short term borrowings from Banks",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWSCRDBNKTRML4",
+                "name": "Bank Borrowings - From applicant Bank",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWSCRDBNKOTHL4",
+                "name": "Bank Borrowings - From other Banks",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 2135875100000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 768297400000
+                  }
+                ]
+              },
+              {
+                "code": "LSTSTBRWSTBRWSCRDGRPCO0L3",
+                "name": "Short term borrowings from Associates & Group Concerns repayable within one year",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWUNSCRDOTHRL3",
+                "name": "Short term borrowings from Others",
+                "values": []
+              },
+              {
+                "code": "LSTSTPAYCRDTRPUR0000000L2",
+                "name": "Creditors for purchases – others",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 3385597800000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1125900700000
+                  }
+                ]
+              },
+              {
+                "code": "LSTSTPAYCRDTRGRP0000000L2",
+                "name": "Creditors for purchases – Group Companies",
+                "values": []
+              },
+              {
+                "code": "LSTLSTOLOCLCRDTREXP0000L2",
+                "name": "Creditors for expenses",
+                "values": []
+              },
+              {
+                "code": "LSTLSTOLOCLADVNCPAYREC0L2",
+                "name": "Advances/ payments from customers/deposits from dealers.",
+                "values": []
+              },
+              {
+                "code": "LSTSPROVPROV00000000000L1",
+                "name": "Provisions ",
+                "values": []
+              },
+              {
+                "code": "LSTSPROVPROVTAX00000000L2",
+                "name": "        - Tax",
+                "values": []
+              },
+              {
+                "code": "LSTSPROVPROVDEFTAX00000L2",
+                "name": "        - Deferred tax",
+                "values": []
+              },
+              {
+                "code": "LSTSPROVPROVOTHR0000000L2",
+                "name": " - Others",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 29898200000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 10000000000
+                  }
+                ]
+              },
+              {
+                "code": "LSTLSTOLOCLUNPDDIV00000L2",
+                "name": "Dividends Payable",
+                "values": []
+              },
+              {
+                "code": "LSTLSTOLOCLSTATUTORY000L2",
+                "name": "Statutory liabilities due within one year",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWSCRDMTRLLNL4",
+                "name": "Installments of Term Loans/Debentures (due within one year)- To banks ",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWSCRDMTRDEBL4",
+                "name": "Installments of Term Loans/Debentures (due within one year)- To Others",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWUNSCRDDEP0L3",
+                "name": "Deposits due / payable within a year",
+                "values": []
+              },
+              {
+                "code": "LSTSTBRWSTBRWSCRDMTRONLL4",
+                "name": "Other Current Liabilities due within one year",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 487214000000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 202619900000
+                  }
+                ]
+              },
+              {
+                "code": "LLTLTBRWLTBRWSCRDLNDEB0L3",
+                "name": "Debentures maturing after 1 year",
+                "values": []
+              },
+              {
+                "code": "LLTLTBRWLTBRWSCRDLNPREFL3",
+                "name": "Preference share capital maturity < 12 years",
+                "values": []
+              },
+              {
+                "code": "LLTLTBRWLTBRWSCRDLNPDEPL3",
+                "name": "Dealer's Deposit",
+                "values": []
+              },
+              {
+                "code": "LLT00000DEFTAXNCL000000L1",
+                "name": "Deferred Tax Liability",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 234860100000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "code": "LLTLTBRWLTBRWSCRDLNOWN0L3",
+                "name": "Term Loans  - From Banks",
+                "values": []
+              },
+              {
+                "code": "LLTLTBRWLTBRWSCRDLNTERML3",
+                "name": "Term Loans - From Financial Institution",
+                "values": []
+              },
+              {
+                "code": "LLTLTBRWLTBRWSCRDLNTDEPL3",
+                "name": "Term Deposits",
+                "values": []
+              },
+              {
+                "code": "LLTLTBRWLTBRWUNSCRDLNGCL3",
+                "name": "Borrowings from subsidiaries / affiliates",
+                "values": []
+              },
+              {
+                "code": "LLTLTBRWLTBRWUNSCRDLN00L2",
+                "name": "Unsecured Loans ",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 8450830700000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1625288600000
+                  }
+                ]
+              },
+              {
+                "code": "LLTLLTOLONCL00000000000L1",
+                "name": "Other term liabilities",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 988399500000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1062348600000
+                  }
+                ]
+              },
+              {
+                "code": "EQTSHARECAPEQTY00000000L2",
+                "name": "Equity Share Capital ",
+                "values": []
+              },
+              {
+                "code": "EQTSHARECAPPAID00000000L2",
+                "name": "Share Capital (Paid-up)",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 5362616000000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 4966352000000
+                  }
+                ]
+              },
+              {
+                "code": "EQT00000SHRAPPPENDALLOTL1",
+                "name": "Share Application money",
+                "values": []
+              },
+              {
+                "code": "EQTRESRVRSRVGEN00000000L2",
+                "name": "General Reserve",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 6729318800000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1633300200000
+                  }
+                ]
+              },
+              {
+                "code": "EQTRESRVRSRVREVAL000000L2",
+                "name": "Revaluation Reserve",
+                "values": []
+              },
+              {
+                "code": "EQTSHARECAPPROPRIETOR00L2",
+                "name": "Partners capital / Proprietor's capital",
+                "values": []
+              },
+              {
+                "code": "EQTSHARECAPCURPARTNER00L2",
+                "name": "Balance in Partners' Current A/c (+ / -)",
+                "values": []
+              },
+              {
+                "code": "EQTRESRVRSRVOTHER000000L2",
+                "name": "Other Reserves & Surplus:",
+                "values": []
+              },
+              {
+                "code": "EQTRESRVRSRVPREMIUM0000L2",
+                "name": "Share Premium",
+                "values": []
+              },
+              {
+                "code": "EQTRESRVRSRVSUBSIDY0000L2",
+                "name": "Capital subsidy",
+                "values": []
+              },
+              {
+                "code": "EQTRESRVRSRVQUASIEQTY00L2",
+                "name": "Quasi Equity",
+                "values": []
+              },
+              {
+                "code": "EQTRESRVRSRVPROFIT00000L2",
+                "name": "Balance in P&L Account (+ / - )",
+                "values": []
+              },
+              {
+                "code": "ASTCACEQCASHHAND0000000L2",
+                "name": "Cash Balances",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 296035100000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 121901800000
+                  }
+                ]
+              },
+              {
+                "code": "ASTCACEQCASHBANK0000000L2",
+                "name": "Bank Balances",
+                "values": []
+              },
+              {
+                "code": "ASTSNVSTINVESTSEC000000L2",
+                "name": "Govt. and other trustee Securities",
+                "values": []
+              },
+              {
+                "code": "ASTSNVSTINVESTFD0000000L2",
+                "name": "Fixed Deposits with Banks",
+                "values": []
+              },
+              {
+                "code": "ASTSNVSTINVESTOTHER0000L2",
+                "name": "Others – Investments in Subsidiaries/Group Companies",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 153476700000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "code": "ASTSTRECRECVDOMESTIC000L2",
+                "name": "Domestic Receivables ",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 7127164100000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 930417800000
+                  }
+                ]
+              },
+              {
+                "code": "ASTSTRECRECVEXPORT00000L2",
+                "name": "Export Receivables",
+                "values": []
+              },
+              {
+                "code": "ASTBSINVINVNTRYRMIMP000L3",
+                "name": " Raw Materials – Imported",
+                "values": []
+              },
+              {
+                "code": "ASTBSINVINVNTRYRMIND000L3",
+                "name": " Raw Materials – Indigenous",
+                "values": []
+              },
+              {
+                "code": "ASTBSINVINVNTRYWIP00000L2",
+                "name": " Work in process",
+                "values": []
+              },
+              {
+                "code": "ASTBSINVINVNTRYFG000000L2",
+                "name": " Finished Goods (incl Traded Goods)",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 3505994400000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 477742200000
+                  }
+                ]
+              },
+              {
+                "code": "ASTBSINVINVNTRYSPRIMP00L3",
+                "name": "Other consumable spares – Imported",
+                "values": []
+              },
+              {
+                "code": "ASTBSINVINVNTRYSPRIND00L3",
+                "name": "Other consumable spares -  Indigenous",
+                "values": []
+              },
+              {
+                "code": "ASTSADVNADVSUPPLIERS000L2",
+                "name": "Advances to suppliers of Raw materials/Stores/Spares",
+                "values": []
+              },
+              {
+                "code": "ASTASTOAOCAADVTAX000000L2",
+                "name": "Advance payment of tax",
+                "values": []
+              },
+              {
+                "code": "ASTASTOAOCAPREPAID00000L2",
+                "name": "Prepaid Expenses",
+                "values": []
+              },
+              {
+                "code": "ASTASTOAOCA000000000000L1",
+                "name": "Other Advances/current Asset",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 1576770200000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1424344600000
+                  }
+                ]
+              },
+              {
+                "code": "ALTTANGIFIXEDGROSS00000L2",
+                "name": "Gross Block ",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 6702277000000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 4216897800000
+                  }
+                ]
+              },
+              {
+                "code": "ALTTANGIFIXEDDEP0000000L2",
+                "name": "Less: Accumulated Depreciation",
+                "values": []
+              },
+              {
+                "code": "ALTTANGIFIXEDCAPWIP0000L2",
+                "name": "Capital Work in progress",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 5704839200000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 2549803800000
+                  }
+                ]
+              },
+              {
+                "code": "ALTLNVSTLINVESTGRPCO000L2",
+                "name": "Investments in Group concerns",
+                "values": []
+              },
+              {
+                "code": "ALTLNVSTLINVESTSUBSID00L2",
+                "name": "Loans to group concerns / Advances to subsidiaries",
+                "values": []
+              },
+              {
+                "code": "ALTLNVSTLINVESTOTHER000L2",
+                "name": "Investments in others",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 506075000000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1097116100000
+                  }
+                ]
+              },
+              {
+                "code": "ALTLADVNLLOANCAPGD00000L2",
+                "name": "Advances to suppliers of capital goods and contractors",
+                "values": []
+              },
+              {
+                "code": "ALTLTRECDBTRDEFREC00000L2",
+                "name": "Deferred receivables (maturity exceeding one year)",
+                "values": []
+              },
+              {
+                "code": "ALTLTRECDBTRG1200000000L2",
+                "name": "Debtors more than 6 months",
+                "values": []
+              },
+              {
+                "code": "ALTLADVNLLOANOTHER00000L2",
+                "name": "Others (Loans & Advances non current in nature, ICD’s etc.)",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 160000000000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 211340000000
+                  }
+                ]
+              },
+              {
+                "code": "ALTALTOAONCASECDEP00000L2",
+                "name": "Security deposits",
+                "values": []
+              },
+              {
+                "code": "ALTALTOAONCAGOVTDEPOSITL2",
+                "name": "Deposits with Government departments",
+                "values": []
+              },
+              {
+                "code": "ALT00000DEFTAXNCA000000L1",
+                "name": "Deferred Tax Asset",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 0
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 280507100000
+                  }
+                ]
+              },
+              {
+                "code": "ALTALTOAONCA00000000000L1",
+                "name": "Other Non-current Assets",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 0
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 0
+                  }
+                ]
+              },
+              {
+                "code": "ALTINTANINTNGBL00000000L1",
+                "name": "Intangible Assets:",
+                "values": []
+              },
+              {
+                "code": "ALTINTANINTNGBLGW000000L2",
+                "name": "Goodwill, Patents & trademarks",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 2071978600000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 84036300000
+                  }
+                ]
+              },
+              {
+                "code": "ALTALTOAMISCPRELIMINARYL1",
+                "name": "Miscellaneous expenditure not w/off",
+                "values": []
+              },
+              {
+                "code": "ALTALTOAONCADEFERREDEXPL2",
+                "name": "Other deferred revenue expenses",
+                "values": []
+              }
+            ],
+            "calculateditems": []
+          },
+          {
+            "code": "IS",
+            "name": "Income Statement",
+            "items": [
+              {
+                "code": "REV00000REVENUE00000000L0",
+                "name": "Sales",
+                "values": []
+              },
+              {
+                "code": "REVSALESPRODDOMESTIC000L2",
+                "name": " - Domestic",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 16125882900000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 6113282000000
+                  }
+                ]
+              },
+              {
+                "code": "REVSALESPRODEXPORT00000L2",
+                "name": " - Export",
+                "values": []
+              },
+              {
+                "code": "OOI00000OPINC0000000000L0",
+                "name": "Other Income",
+                "values": []
+              },
+              {
+                "code": "OOI00000EXPORTINC000000L1",
+                "name": "Export Incentive",
+                "values": []
+              },
+              {
+                "code": "OOI00000OTHERRECURRING0L1",
+                "name": "Other Income",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 44867900000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 62105200000
+                  }
+                ]
+              },
+              {
+                "code": "COG00000COSTSALES000000L0",
+                "name": "Cost of Sales",
+                "values": []
+              },
+              {
+                "code": "COGPURCHCOSTRM000000000L2",
+                "name": "Raw materials consumed ",
+                "values": []
+              },
+              {
+                "code": "COGPURCHCOSTRMIMP000000L3",
+                "name": "                        i) Imported",
+                "values": []
+              },
+              {
+                "code": "COGPURCHCOSTRMIND000000L3",
+                "name": "                        ii) Indigenous",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 10540516700000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1914419600000
+                  }
+                ]
+              },
+              {
+                "code": "COGPURCHCOSTSPR00000000L2",
+                "name": "Other Spares consumed ",
+                "values": []
+              },
+              {
+                "code": "COGPURCHCOSTSPRIMP00000L3",
+                "name": "                        i) Imported",
+                "values": []
+              },
+              {
+                "code": "COGPURCHCOSTSPRIND00000L3",
+                "name": "                        ii) Indigenous",
+                "values": []
+              },
+              {
+                "code": "COGISODCODCPOWER0000000L2",
+                "name": "Power and fuel ",
+                "values": []
+              },
+              {
+                "code": "COGISODCODCLABOUR000000L2",
+                "name": "Direct labour and wages",
+                "values": []
+              },
+              {
+                "code": "COGISODCODCOTHER0000000L2",
+                "name": "Other manufacturing expenses",
+                "values": []
+              },
+              {
+                "code": "DEPISDEPDEPRECIATION000L1",
+                "name": "Depreciation",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 1101416700000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 374053200000
+                  }
+                ]
+              },
+              {
+                "code": "COGISINVCHNGOPNWIP00000L3",
+                "name": "Add: Op. Stock of WIP",
+                "values": []
+              },
+              {
+                "code": "COGISINVCHNGCLSWIP00000L3",
+                "name": "Less: Cl. Stock of WIP",
+                "values": []
+              },
+              {
+                "code": "COGISINVCHNGOPNFG000000L3",
+                "name": "Add: Opening Stock of Finished Goods",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": -3028252200000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": -392736200000
+                  }
+                ]
+              },
+              {
+                "code": "COGISINVCHNGCLSFG000000L3",
+                "name": "Less: Closing Stock  of Finished Goods",
+                "values": []
+              },
+              {
+                "code": "OPXOXSGASGAEXP000000000L1",
+                "name": "Administrative and Selling expenses",
+                "values": []
+              },
+              {
+                "code": "OPXWAGESEMPEXPSALARIES0L2",
+                "name": "Salary & Staff Expenses",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 2681237500000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 1261313000000
+                  }
+                ]
+              },
+              {
+                "code": "OPXOXSGASGAEXPBADDEBT00L2",
+                "name": "Bad Debts",
+                "values": []
+              },
+              {
+                "code": "OPXOXSGASGAEXPOFFICE000L2",
+                "name": "Selling, Gen. & Administration Exp",
+                "values": []
+              },
+              {
+                "code": "FIN00000FINCOST00000000L0",
+                "name": "Finance Charges",
+                "values": []
+              },
+              {
+                "code": "FINFCINTINTWCLOAN000000L2",
+                "name": "Interest - Working capital loans",
+                "values": []
+              },
+              {
+                "code": "FINFCINTINTLLOAN0000000L2",
+                "name": "Interest - Term Loans/Fixed loans",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 607378100000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 6313700000
+                  }
+                ]
+              },
+              {
+                "code": "FINISOFCBANKCHARGES0000L1",
+                "name": "Bank Charges",
+                "values": []
+              },
+              {
+                "code": "NOI00000NONOPINC0000000L0",
+                "name": "Add: Non Operating Income",
+                "values": []
+              },
+              {
+                "code": "FINFCINTINT000000000000L1",
+                "name": "Interest Income",
+                "values": []
+              },
+              {
+                "code": "NOI00000PROFITSALE00000L1",
+                "name": "Profit on sale of assets/ investments",
+                "values": []
+              },
+              {
+                "code": "OOI00000DIVIDEND0000000L1",
+                "name": "Dividend received",
+                "values": []
+              },
+              {
+                "code": "NOI00000PROFITSALEFOREXL2",
+                "name": "Forex gains",
+                "values": []
+              },
+              {
+                "code": "XTR00000PEEXTRRDNRYINC0L1",
+                "name": "Extraordinary Income",
+                "values": []
+              },
+              {
+                "code": "NOI00000OTHERNOI0000000L1",
+                "name": "Other Non Operating Income",
+                "values": []
+              },
+              {
+                "code": "NOX00000NONOPEXP0000000L0",
+                "name": "Deduct Non Operating Expenses",
+                "values": []
+              },
+              {
+                "code": "NOXIONOELSALE0000000000L1",
+                "name": "Loss on sale of assets",
+                "values": []
+              },
+              {
+                "code": "XTR00000PEEXTRRDNRYEXP0L1",
+                "name": "Extraordinary Expenses ",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 3267900000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 41010900000
+                  }
+                ]
+              },
+              {
+                "code": "NOXIONOELSALECFOREX0000L2",
+                "name": "Forex losses",
+                "values": []
+              },
+              {
+                "code": "NOXIONOEOTHRNOX00000000L1",
+                "name": "Other Non- operating expenses",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 2258130800000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 2197606700000
+                  }
+                ]
+              },
+              {
+                "code": "TAX00000TAX000000000000L0",
+                "name": "Provision for taxation:",
+                "values": []
+              },
+              {
+                "code": "TAX00000CURRENTTAX00000L1",
+                "name": " Current",
+                "values": [
+                  {
+                    "key": "2022-ANNUAL",
+                    "value": 515367200000
+                  },
+                  {
+                    "key": "2021-ANNUAL",
+                    "value": 213623000000
+                  }
+                ]
+              },
+              {
+                "code": "TAX00000DEFERREDTAX0000L1",
+                "name": " Deferred",
+                "values": []
+              }
+            ],
+            "calculateditems": []
+          }
+        ]
+      }
+    ],
+    "checkpoints": []
+  }
+}

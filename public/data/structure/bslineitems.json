@@ -1,0 +1,311 @@
+{
+  
+  "Dividends Payable": {
+    "classname": "Current Liabilities",
+    "subclassname": ""
+  },
+  "Short term borrowings from Banks": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Bank Borrowings - From applicant Bank": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Bank Borrowings - From other Banks": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Short term borrowings from Associates & Group Concerns repayable within one year": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Short term borrowings from Others": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Creditors for purchases – others": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Trade Payables"
+  },
+  "Creditors for purchases – Group Companies": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Trade Payables"
+  },
+  "Creditors for expenses": {
+    "classname": "Current Liabilities",
+    "subclassname": ""
+  },
+  "Advances/ payments from customers/deposits from dealers.": {
+    "classname": "Current Liabilities",
+    "subclassname": ""
+  },
+  "Provisions ": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Provisions"
+  },
+  "        - Tax": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Provisions"
+  },
+  "        - Deferred tax": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Provisions"
+  },
+  " - Others": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Provisions"
+  },
+  "Statutory liabilities due within one year": {
+    "classname": "Current Liabilities",
+    "subclassname": ""
+  },
+  "Installments of Term Loans/Debentures (due within one year)- To banks ": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Installments of Term Loans/Debentures (due within one year)- To Others": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Deposits due / payable within a year": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Other Current Liabilities due within one year": {
+    "classname": "Current Liabilities",
+    "subclassname": "Short Term Borrowings"
+  },
+  "Debentures maturing after 1 year": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Preference share capital maturity < 12 years": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Dealer's Deposit": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Deferred Tax Liability": {
+    "classname": "Non Current Liabilities",
+    "subclassname": ""
+  },
+  "Term Loans  - From Banks": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Term Loans - From Financial Institution": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Term Deposits": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Borrowings from subsidiaries / affiliates": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Unsecured Loans ": {
+    "classname": "Non Current Liabilities",
+    "subclassname": "Long Term Borrowings"
+  },
+  "Other term liabilities": {
+    "classname": "Non Current Liabilities",
+    "subclassname": ""
+  },
+  "Equity Share Capital ": {
+    "classname": "Equity",
+    "subclassname": "Share Capital"
+  },
+  "Share Capital (Paid-up)": {
+    "classname": "Equity",
+    "subclassname": "Share Capital"
+  },
+  "Share Application money": {
+    "classname": "Equity",
+    "subclassname": ""
+  },
+  "General Reserve": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Revaluation Reserve": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Partners capital / Proprietor's capital": {
+    "classname": "Equity",
+    "subclassname": "Share Capital"
+  },
+  "Balance in Partners' Current A/c (+ / -)": {
+    "classname": "Equity",
+    "subclassname": "Share Capital"
+  },
+  "Other Reserves & Surplus:": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Share Premium": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Capital subsidy": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Quasi Equity": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Balance in P&L Account (+ / - )": {
+    "classname": "Equity",
+    "subclassname": "Reserves and Surplus"
+  },
+  "Cash Balances": {
+    "classname": "Current Assets",
+    "subclassname": "Cash and Cash Equivalents"
+  },
+  "Bank Balances": {
+    "classname": "Current Assets",
+    "subclassname": "Cash and Cash Equivalents"
+  },
+  "Govt. and other trustee Securities": {
+    "classname": "Current Assets",
+    "subclassname": "Short Term Investments"
+  },
+  "Fixed Deposits with Banks": {
+    "classname": "Current Assets",
+    "subclassname": "Short Term Investments"
+  },
+  "Others – Investments in Subsidiaries/Group Companies": {
+    "classname": "Current Assets",
+    "subclassname": "Short Term Investments"
+  },
+  "Domestic Receivables ": {
+    "classname": "Current Assets",
+    "subclassname": "Short Term Trade Receivables"
+  },
+  "Export Receivables": {
+    "classname": "Current Assets",
+    "subclassname": "Short Term Trade Receivables"
+  },
+  " Raw Materials – Imported": {
+    "classname": "Current Assets",
+    "subclassname": "Inventories"
+  },
+  " Raw Materials – Indigenous": {
+    "classname": "Current Assets",
+    "subclassname": "Inventories"
+  },
+  " Work in process": {
+    "classname": "Current Assets",
+    "subclassname": "Inventories"
+  },
+  " Finished Goods (incl Traded Goods)": {
+    "classname": "Current Assets",
+    "subclassname": "Inventories"
+  },
+  "Other consumable spares – Imported": {
+    "classname": "Current Assets",
+    "subclassname": "Inventories"
+  },
+  "Other consumable spares -  Indigenous": {
+    "classname": "Current Assets",
+    "subclassname": "Inventories"
+  },
+  "Advances to suppliers of Raw materials/Stores/Spares": {
+    "classname": "Current Assets",
+    "subclassname": "Short Term Loans and Advances"
+  },
+  "Advance payment of tax": {
+    "classname": "Current Assets",
+    "subclassname": ""
+  },
+  "Prepaid Expenses": {
+    "classname": "Current Assets",
+    "subclassname": ""
+  },
+  "Other Advances/current Asset": {
+    "classname": "Current Assets",
+    "subclassname": ""
+  },
+  "Gross Block ": {
+    "classname": "Non Current Assets",
+    "subclassname": "Tangible Assets"
+  },
+  "Less: Accumulated Depreciation": {
+    "classname": "Non Current Assets",
+    "subclassname": "Tangible Assets"
+  },
+  "Capital Work in progress": {
+    "classname": "Non Current Assets",
+    "subclassname": "Tangible Assets"
+  },
+  "Investments in Group concerns": {
+    "classname": "Non Current Assets",
+    "subclassname": "Long Term Investments"
+  },
+  "Loans to group concerns / Advances to subsidiaries": {
+    "classname": "Non Current Assets",
+    "subclassname": "Long Term Investments"
+  },
+  "Investments in others": {
+    "classname": "Non Current Assets",
+    "subclassname": "Long Term Investments"
+  },
+  "Advances to suppliers of capital goods and contractors": {
+    "classname": "Non Current Assets",
+    "subclassname": "Intangible Assets"
+  },
+  "Deferred receivables (maturity exceeding one year)": {
+    "classname": "Non Current Assets",
+    "subclassname": "Long Term Trade Receivables"
+  },
+  "Debtors more than 6 months": {
+    "classname": "Non Current Assets",
+    "subclassname": "Long Term Trade Receivables"
+  },
+  "Others (Loans & Advances non current in nature, ICD’s etc.)": {
+    "classname": "Non Current Assets",
+    "subclassname": "Long Term Loans and Advances"
+  },
+  "Security deposits": {
+    "classname": "Non Current Assets",
+    "subclassname": ""
+  },
+  "Deposits with Government departments": {
+    "classname": "Non Current Assets",
+    "subclassname": ""
+  },
+  "Deferred Tax Asset": {
+    "classname": "Non Current Assets",
+    "subclassname": ""
+  },
+  "Other Non-current Assets": {
+    "classname": "Non Current Assets",
+    "subclassname": ""
+  },
+  "Intangible Assets:": {
+    "classname": "Non Current Assets",
+    "subclassname": "Intangible Assets"
+  },
+  "Goodwill, Patents & trademarks": {
+    "classname": "Non Current Assets",
+    "subclassname": "Intangible Assets"
+  },
+  "Miscellaneous expenditure not w/off": {
+    "classname": "Non Current Assets",
+    "subclassname": ""
+  },
+  "Other deferred revenue expenses": {
+    "classname": "Non Current Assets",
+    "subclassname": ""
+  },
+  "": {
+    "classname": "Current Liabilities",
+    "subclassname": ""
+  }
+}

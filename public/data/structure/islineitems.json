@@ -1,0 +1,178 @@
+{
+  "Sales": {
+    "classname": "Operating Revenue",
+    "subclassname": ""
+  },
+  " - Domestic": {
+    "classname": "Operating Revenue",
+    "subclassname": ""
+  },
+  " - Export": {
+    "classname": "Operating Revenue",
+    "subclassname": ""
+  },
+  "Less Excise Duty (if applicable)": {
+    "classname": "Operating Revenue",
+    "subclassname": ""
+  },
+  "Other Incomes": {
+    "classname": "Other Operating Income",
+    "subclassname": ""
+  },
+  "Other Income": {
+    "classname": "Other Operating Income",
+    "subclassname": ""
+  },
+  "Export Incentive": {
+    "classname": "Other Operating Income",
+    "subclassname": ""
+  },
+  "Cost of Sales": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": ""
+  },
+  "Raw materials consumed ": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Purchases"
+  },
+  "                        i) Imported": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Purchases"
+  },
+  "                        ii) Indigenous": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Purchases"
+  },
+  "Other Spares consumed ": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Purchases"
+  },
+  "Power and fuel ": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": ""
+  },
+  "Direct labour and wages": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": ""
+  },
+  "Other manufacturing expenses": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": ""
+  },
+  "Depreciation": {
+    "classname": "Depreciation",
+    "subclassname": ""
+  },
+  "Add: Op. Stock of WIP": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Changes in Inventories of Finished Goods, Work-in-Progress and Stock-in-Trade"
+  },
+  "Less: Cl. Stock of WIP": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Changes in Inventories of Finished Goods, Work-in-Progress and Stock-in-Trade"
+  },
+  "Add: Opening Stock of Finished Goods": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Changes in Inventories of Finished Goods, Work-in-Progress and Stock-in-Trade"
+  },
+  "Less: Closing Stock  of Finished Goods": {
+    "classname": "Cost of Goods Sold",
+    "subclassname": "Changes in Inventories of Finished Goods, Work-in-Progress and Stock-in-Trade"
+  },
+  "Administrative and Selling expenses": {
+    "classname": "Operating Expenses",
+    "subclassname": ""
+  },
+  "Salary & Staff Expenses": {
+    "classname": "Operating Expenses",
+    "subclassname": "Employee Benefits Expense"
+  },
+  "Bad Debts": {
+    "classname": "Operating Expenses",
+    "subclassname": ""
+  },
+  "Selling, Gen. & Administration Exp": {
+    "classname": "Operating Expenses",
+    "subclassname": ""
+  },
+  "Finance Charges": {
+    "classname": "Finance Cost",
+    "subclassname": ""
+  },
+  "Interest - Working capital loans": {
+    "classname": "Finance Cost",
+    "subclassname": ""
+  },
+  "Interest - Term Loans/Fixed loans": {
+    "classname": "Finance Cost",
+    "subclassname": ""
+  },
+  "Bank Charges": {
+    "classname": "Finance Cost",
+    "subclassname": ""
+  },
+  "Add: Non Operating Income": {
+    "classname": "Non Operating Income",
+    "subclassname": ""
+  },
+  "Interest Income": {
+    "classname": "Non Operating Income",
+    "subclassname": ""
+  },
+  "Profit on sale of assets/ investments": {
+    "classname": "Non Operating Income",
+    "subclassname": ""
+  },
+  "Dividend received": {
+    "classname": "Non Operating Income",
+    "subclassname": ""
+  },
+  "Forex gains": {
+    "classname": "Non Operating Income",
+    "subclassname": ""
+  },
+  "Extraordinary Income": {
+    "classname": "Non Operating Expenses",
+    "subclassname": "Exceptional Items, Extraordinary Items and Prior Period Items"
+  },
+  "Other Non Operating Income": {
+    "classname": "Non Operating Income",
+    "subclassname": ""
+  },
+  "Deduct Non Operating Expenses": {
+    "classname": "Non Operating Expenses",
+    "subclassname": ""
+  },
+  "Loss on sale of assets": {
+    "classname": "Non Operating Expenses",
+    "subclassname": ""
+  },
+  "Extraordinary Expenses ": {
+    "classname": "Non Operating Expenses",
+    "subclassname": "Exceptional Items, Extraordinary Items and Prior Period Items"
+  },
+  "Forex losses": {
+    "classname": "Non Operating Expenses",
+    "subclassname": ""
+  },
+  "Other Non- operating expenses": {
+    "classname": "Non Operating Expenses",
+    "subclassname": ""
+  },
+  "Provision for taxation:": {
+    "classname": "Tax",
+    "subclassname": ""
+  },
+  " Current": {
+    "classname": "Tax",
+    "subclassname": ""
+  },
+  " Deferred": {
+    "classname": "Tax",
+    "subclassname": ""
+  },
+  "": {
+    "classname": null,
+    "subclassname": null
+  }
+}
