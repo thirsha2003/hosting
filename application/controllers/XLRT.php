@@ -19,6 +19,111 @@ class XLRT extends CI_Controller
         $this->load->library('encryption');
     }
 
+    public function  xlrtlogin(){
+
+        $response['status'] = 200;
+        $respStatus = $response['status'];
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method != 'POST'){
+            json_output(400, array('status' => 400,'message' => 'Bad request.')); 
+        }
+     else
+        { 
+            if($response['status'] == 200)
+                    {
+                        $params = json_decode(file_get_contents('php://input'), TRUE);
+                        try{
+                            // $client = \Config\Services::curlrequest();
+                                // $url = "https://finnupuat.xlrt.ai/auth-api//gatekeeper/login";
+                                // $curl = curl_init($url);
+                                // curl_setopt($curl, CURLOPT_URL, $url);
+                                // curl_setopt($curl, CURLOPT_POST, true);
+                                // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                                //     $headers = array(
+                                //     "accept: */*",
+                                //     "Content-Type: application/json",
+                                //     );
+                                //     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+                                //     $data = '{ "password": "xlrt12809", "userid": "finnupuat1"}';
+
+                                //     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+
+                                //     //for debug only!
+                                //     curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                                //     curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+                                //     // $result = curl_exec($curl);
+
+                                //     $headerSize = curl_getinfo( $curl , CURLINFO_HEADER_SIZE );
+                                //     $headerStr = substr( $result , 0 , $headerSize );
+                                //     $bodyStr = substr( $result , $headerSize );
+
+                            // convert headers to array
+                            // $headers = headersToArray( $headerStr );
+                            // curl_close($curl);
+                            // print_r($headerStr);
+
+                     
+                            // CURL   start of code 
+                            // $url = "https://finnupuat.xlrt.ai/auth-api//gatekeeper/login";
+                            // $curl = curl_init($url);
+                            // curl_setopt($curl, CURLOPT_URL, $url);
+                            // curl_setopt($curl, CURLOPT_POST, true);
+                            // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                            // $headers = array(
+                            //    "accept: */*",
+                            //    "Content-Type: application/json",
+                            // );
+                            // curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                            // $data = '{ "password": "xlrt12809", "userid": "finnupuat1"}';
+                            // curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                            // //for debug only!
+                            // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                            // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                            // $resp = curl_exec($curl);
+                            // print_r($resp);
+                            // CURL  End of code 
+
+                            $url = 'https://finnupuat.xlrt.ai/auth-api//gatekeeper/login';
+   
+                            /* eCurl */
+                            $curl = curl_init($url);
+                            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+                            curl_setopt($curl, CURLOPT_HEADER, 1);
+                            /* Data */
+                            $data = [
+                                'password'=>'xlrt12809', 
+                                'userid'=>'finnupuat1'
+                            ];
+                            
+                            /* Set JSON data to POST */
+                            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                                
+                            /* Define content type */
+                            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type:application/json','accept: */*'));
+                            $response = curl_exec($curl);
+                            $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+                            $header = substr($response, 0, $header_size);
+                            $body = substr($response, $header_size);
+                            curl_close($curl);
+                            print_r($header);
+                        }
+                    catch(Exception $e)
+					{
+						echo 'Caught exception: ',  $e->getMessage(), "\n";
+					}
+
+
+                    }
+                }
+            }
+
+
+
+
+
      function PostProcessingStatus()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -42,6 +147,8 @@ class XLRT extends CI_Controller
                 ////eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZmlubnVwIn0.wQCWD2B69-H-svUxORcYYFxNRXQqcdf9K41dNIU5I-8
                 ////////Access_code is the header
                 $decoded = JWT::decode($token, 'finnupkey', true);
+
+
                 if ($decoded->user == 'finnup') {
                     // Send the response back to the client
                     http_response_code(200); // OK
@@ -77,43 +184,84 @@ class XLRT extends CI_Controller
 
     function authXLRT()
     {
-        $url = "https://finnupuat.xlrt.ai/auth-api/gatekeeper/login";
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $response['status'] = 200;
+        $respStatus = $response['status'];
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method != 'POST'){
+            json_output(400, array('status' => 400,'message' => 'Bad request.')); 
+        }
+     else
+        { 
+            if($response['status'] == 200)
+                    {
+                        $params = json_decode(file_get_contents('php://input'), TRUE);
 
-        $headers = array(
-            "Accept: */*",
-            "Content-Type: application/json",
-            "Access-Control-Expose-Headers:X-Custom-header"
-        );
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                        $url = "https://finnupuat.xlrt.ai/auth-api/gatekeeper/login";
 
-        $data = <<<DATA
-                {
-                "password": xlrt12809,
-                "userid": "finnupuat1"
+                        $curl = curl_init();
+                        curl_setopt($curl, CURLOPT_URL, $url);
+                        curl_setopt($curl, CURLOPT_POST, true);
+                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                
+                        $headers = array(
+                            "Accept: */*",
+                            "Content-Type: application/json",
+                            "Access-Control-Expose-Headers:X-Custom-header",
+                            "Authorization: ''  ",
+                        );
+                        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                
+                        $data = 
+                                [
+                                    "password"=> "xlrt12809",
+                                    "userid"=> "finnupuat1"
+                                ];
+                               
+                                
+                                
+                
+                       curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                
+                        $resp = curl_exec($curl);
+
+                        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+
+                        
+                        $headerStr = substr($resp, 0, $headerSize);
+
+                     
+                        $bodyStr = substr($resp, $headerSize);
+                      
+                        // convert headers to array
+                        $headers = $this->headersToArray($headerStr);
+
+                        
+                        curl_close($curl);
+
+                        print_r($resp );
+
+                    
+			json_output(200,$resp );
+            
+                        
+                        // return $headers['Authorization'];
+
+
+                        // print_r($headers['Authorization']);
+                    }
                 }
-                DATA;
 
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
-        $resp = curl_exec($curl);
-        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $headerStr = substr($resp, 0, $headerSize);
-        $bodyStr = substr($resp, $headerSize);
 
-        // convert headers to array
-        $headers = $this->headersToArray($headerStr);
-        curl_close($curl);
-        return $headers['Authorization'];
+
+     
     }
 
     function getExtractionResponse($dmsCode, $accesstoken)
     {
-        $url = 'https://finnupuat.xlrt.ai/fst-api/financialdocs/' + $dmsCode + '/extraction';
+        $url = 'https://finnupuat.xlrt.ai/fst-api/financialdocs/' + $dmsCode + '/extraction'; 
+        $url = 'https://finnupuat.xlrt.ai/fst-api/financialdocs/' + 'ad2b3047236c42c382b0e599716a1eac' + '/extraction'; 
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -126,6 +274,7 @@ class XLRT extends CI_Controller
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         $resp = curl_exec($curl);
+
     }
 
     function headersToArray($str)

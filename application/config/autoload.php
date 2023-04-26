@@ -39,6 +39,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |  $autoload['packages'] = array(APPPATH.'third_party', '/usr/local/shared');
 |
 */
+
+$autoload['libraries'] = array('curl');
+
+
 $autoload['packages'] = array();
 
 /*
