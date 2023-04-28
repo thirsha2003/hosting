@@ -767,7 +767,7 @@ class Dashboard extends CI_Controller
 
     } //----------------------- partner_borrower_user_detail ---------------------
 
-    public function partner_totalborrowerleads()
+    public function partner_catotalborrowerleads()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method == "POST") {
@@ -812,7 +812,7 @@ class Dashboard extends CI_Controller
 
     } //----------------------- partner_totalborrowerleads ---------------------
 
-    public function partner_totaldraftleads()
+    public function partner_catotaldraftleads()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method == "POST") {
@@ -856,7 +856,7 @@ class Dashboard extends CI_Controller
 
     }
     //----------------------- partner_totaldraftleads ---------------------
-    public function partner_totaleligibleleads()
+    public function partner_catotaleligibleleads()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method == "POST") {
@@ -909,7 +909,7 @@ class Dashboard extends CI_Controller
 
     } //----------------------- partner_totaleligibleleads ---------------------
 
-    public function partner_totalassignedleads()
+    public function partner_catotalassignedleads()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method == "POST") {
@@ -960,7 +960,7 @@ class Dashboard extends CI_Controller
 
     } //----------------------- partner_totalassignedleads ---------------------
 
-    public function partner_totalapprovedprofiles()
+    public function partner_catotalapprovedprofiles()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method == "POST") {
@@ -1004,5 +1004,400 @@ class Dashboard extends CI_Controller
         }
 
     } //----------------------- partner_totalapprovedprofiles ---------------------
+
+
+
+// -----------------connector Superadmin API------------------------
+
+public function partner_totalborrowerleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+                            $partner_id = isset($params['partner_id']) ? $params['partner_id'] : "";
+
+            $sql = "WITH borrowerTable as
+            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null AND b.created_by=pa.email)
+            SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany,bd.pid, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where' OR pid ='$partner_id'";
+
+            $borrowerdetails = $this->db->query($sql)->result();
+            $data = $this->db->query($sql);
+            foreach ($data->result() as $row) {
+                $txnArr[] = $row->borrower_id;
+
+            }
+            $res = implode(",", $txnArr);
+            $res = "(" . $res . ")";
+
+            $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
+
+            // $this->db->query($sql)-result();
+            // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
+            // $trnn[]= $data->id;
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $this->db->query($result)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} //----------------------- partner_totalborrowerleads ---------------------
+
+public function partner_totaldraftleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = " WITH connectorTable as
+            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name,b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND b.created_by=pa.email AND bd.profilecomplete ='incomplete' AND b.rm_id is null)
+            SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany,bd.pid, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM connectorTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
+
+            $borrowerdetails = $this->db->query($sql)->result();
+            $data = $this->db->query($sql);
+            foreach ($data->result() as $row) {
+                $txnArr[] = $row->borrower_id;
+
+            }
+            $res = implode(",", $txnArr);
+            $res = "(" . $res . ")";
+
+            $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
+
+            // $this->db->query($sql)-result();
+            // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
+            // $trnn[]= $data->id;
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $this->db->query($result)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+}
+//----------------------- partner_totaldraftleads ---------------------
+public function partner_totaleligibleleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "WITH connectorTable as
+            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND  b.created_by=pa.email AND bd.profilecomplete ='completed'  AND bd.profilecomplete_percentage=100 AND b.rm_id is null)
+            SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM connectorTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
+
+            $borrowerdetails = $this->db->query($sql)->result();
+            $data = $this->db->query($sql);
+            foreach ($data->result() as $row) {
+                $txnArr[] = $row->borrower_id;
+
+            }
+            $res = implode(",", $txnArr);
+            $res = "(" . $res . ")";
+
+            $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
+
+            // $this->db->query($sql)-result();
+            // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
+            // $trnn[]= $data->id;
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $this->db->query($result)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} //----------------------- partner_totaleligibleleads ---------------------
+
+public function partner_totalassignedleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "WITH borrowerTable as
+            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status='assigned' AND b.id = bd.user_id AND  b.rm_id is not null and b.created_by=pa.email)
+            SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
+
+            $borrowerdetails = $this->db->query($sql)->result();
+            $data = $this->db->query($sql);
+            foreach ($data->result() as $row) {
+                $txnArr[] = $row->borrower_id;
+
+            }
+            $res = implode(",", $txnArr);
+            $res = "(" . $res . ")";
+
+            $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
+
+            // $this->db->query($sql)-result();
+            // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
+            // $trnn[]= $data->id;
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $this->db->query($result)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} //----------------------- partner_totalassignedleads ---------------------
+
+public function partner_totalapprovedprofiles()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "WITH borrowerTable as
+            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa ,fp_borrower_loanrequests bl WHERE b.slug ='borrower' AND b.id= bl.borrower_id AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND  b.created_by=pa.email AND bl.loan_request_status='CC Approved')
+            SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
+
+            $borrowerdetails = $this->db->query($sql)->result();
+            $data = $this->db->query($sql);
+            foreach ($data->result() as $row) {
+                $txnArr[] = $row->borrower_id;
+
+            }
+            $res = implode(",", $txnArr);
+            $res = "(" . $res . ")";
+
+            $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
+
+            // $this->db->query($sql)-result();
+            // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
+            // $trnn[]= $data->id;
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $this->db->query($result)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} //----------------------- partner_totalapprovedprofiles ---------------------
+// connector superadmin dashboard card start----------------------------
+
+public function totalborrowersleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "SELECT count(*) as Total_Borrower_Leads
+            FROM fpa_users fu,fpa_partners fp
+            WHERE fu.created_by = fp.email  AND 
+                  fu.slug ='borrower' and fu.status IN ('new','assigned','active') AND fp.partner_id='$where'";
+
+            // $sql = "SELECT count(*) as Total_Borrower_Leads FROM `fpa_users` WHERE
+            // slug ='borrower' and status IN ('new','assigned','active') ";
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+}
+
+public function totaldraftleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            // $sql="SELECT count(*) as Total_Borrower_Leads
+            // FROM fpa_users fu,fpa_partners fp
+            // WHERE fu.created_by = fp.email  AND
+            //     fu.slug ='borrower' and fu.status IN ('new','assigned','active')AND fu.rm_id IS NULL";
+
+            $sql = "SELECT count(*) as Total_Draft_Leads
+                            FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
+                            WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND bd.profilecomplete ='incomplete' AND fu.slug='borrower' AND fu.rm_id IS NULL AND fu.status IN ('new','assigned','active') AND fp.partner_id='$where'";
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+}
+
+public function totaleligibleleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "SELECT count(*) as Total_Eligible_Leads
+                        FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
+                        WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND  bd.profilecomplete ='completed' AND bd.profilecomplete_percentage=100 AND fu.slug='borrower' AND fu.rm_id IS NULL AND fp.partner_id='$where'";
+
+            // $sql = 'SELECT count(*) as Total_Eligible_Leads
+            // FROM fpa_users u,fp_borrower_user_details bd
+            // WHERE  u.id=bd.user_id and bd.company_name IS NOT NULL and u.slug="borrower" AND u.rm_id IS NULL';
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+}
+
+public function totalassignedleads()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            // $sql = "SELECT COUNT(*) as TotalAssigned_Leads FROM fpa_users u  WHERE u.slug='borrower' and status='assigned'";
+            $sql = "SELECT count(*) as TotalAssigned_Leads
+                        FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
+                        WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND fu.rm_id IS NOT NULL   AND fu.slug='borrower' AND fu.status ='assigned' AND fu.rm_id IS NOT NULL AND fp.partner_id='$where'";
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+}
+
+public function totalapprovedprofile()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "SELECT COUNT(*) as TotalApproved_Profile
+                                    FROM fpa_users fu,fpa_partners fp,fp_borrower_loanrequests bl
+                                    WHERE fp.email=fu.created_by AND fu.id= bl.borrower_id AND bl.loan_request_status='CC Approved' AND fp.partner_id='$where'";
+
+            // $sql = "SELECT count(*) as TotalApproved_Profile FROM `fp_borrower_loanrequests`
+            // WHERE loan_request_status ='ccapproved' or loan_request_workflow_status='ccapproved'";
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+            return json_output($respStatus, $resp);
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+}
+
+// connector superadmin dashboard summarycard end-----------------------
+ 
 
 } //--------------------end of class-------------------------------------------
