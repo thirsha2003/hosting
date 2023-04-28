@@ -206,7 +206,7 @@ class Connectorusers extends CI_Controller
                 
                 public function createpartner()
                 {
-                                $method     = $_SERVER['REQUEST_METHOD'];
+                                $method = $_SERVER['REQUEST_METHOD'];
                                 if($method != 'POST')
                                 {
                                         json_output(400,array('status' => 400,'message' => 'Bad request.'));
@@ -221,10 +221,7 @@ class Connectorusers extends CI_Controller
                                                 $params = json_decode(file_get_contents('php://input'), TRUE);
 
                                                 try
-                                                {
-                                               
-
-                                                  
+                                                {                                             
                                                         $name   = $params['data']['name'];
                                                         $email  = $params['data']['email'];
                                                         $phone  = $params['data']['mobile'];
