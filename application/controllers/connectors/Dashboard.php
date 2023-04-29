@@ -178,7 +178,7 @@ class Dashboard extends CI_Controller
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
             } else {
-                return json_output(400, array('status' => 400, 'message' => $checkToken));
+                return json_output(400, array('status' => 400, 'message' => "auth missing"));
             }
 
         } else {
@@ -1011,169 +1011,6 @@ class Dashboard extends CI_Controller
 // -----------------connector Superadmin API------------------------
 // connector superadmin dashboard summarycard end-----------------------
 
-public function totalborrowersleads()
-{
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == "POST") {
-        // $checkToken = $this->check_token();
-        if (true) {
-            $response['status'] = 200;
-            $respStatus = $response['status'];
-            $params = json_decode(file_get_contents('php://input'), true);
-
-            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
-            $join = isset($params['key']) ? $params['key'] : "";
-            $where = isset($params['where']) ? $params['where'] : "";
-
-            $sql = "SELECT count(*) as Total_Borrower_Leads
-            FROM fpa_users fu,fpa_partners fp
-            WHERE fu.created_by = fp.email  AND 
-                  fu.slug ='borrower' and fu.status IN ('new','assigned','active') AND fp.partner_id='$where'";
-
-            // $sql = "SELECT count(*) as Total_Borrower_Leads FROM `fpa_users` WHERE
-            // slug ='borrower' and status IN ('new','assigned','active') ";
-            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
-            return json_output($respStatus, $resp);
-        } else {
-            return json_output(400, array('status' => 400, 'message' => $checkToken));
-        }
-
-    } else {
-        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
-    }
-}
-
-public function totaldraftleads()
-{
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == "POST") {
-        // $checkToken = $this->check_token();
-        if (true) {
-            $response['status'] = 200;
-            $respStatus = $response['status'];
-            $params = json_decode(file_get_contents('php://input'), true);
-
-            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
-            $join = isset($params['key']) ? $params['key'] : "";
-            $where = isset($params['where']) ? $params['where'] : "";
-
-            // $sql="SELECT count(*) as Total_Borrower_Leads
-            // FROM fpa_users fu,fpa_partners fp
-            // WHERE fu.created_by = fp.email  AND
-            //     fu.slug ='borrower' and fu.status IN ('new','assigned','active')AND fu.rm_id IS NULL";
-
-            $sql = "SELECT count(*) as Total_Draft_Leads
-                            FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-                            WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND AND  bd.profilecomplete ='incomplete' AND bd.gst is null AND bd.pan is null AND bd.pincode is null AND fu.slug='borrower' AND fu.rm_id IS NULL AND fu.status IN ('new','assigned','active') AND fp.partner_id='$where'";
-
-            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
-            return json_output($respStatus, $resp);
-        } else {
-            return json_output(400, array('status' => 400, 'message' => $checkToken));
-        }
-
-    } else {
-        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
-    }
-}
-
-public function totaleligibleleads()
-{
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == "POST") {
-        // $checkToken = $this->check_token();
-        if (true) {
-            $response['status'] = 200;
-            $respStatus = $response['status'];
-            $params = json_decode(file_get_contents('php://input'), true);
-
-            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
-            $join = isset($params['key']) ? $params['key'] : "";
-            $where = isset($params['where']) ? $params['where'] : "";
-
-            $sql = "SELECT count(*) as Total_Eligible_Leads
-                        FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-                        WHERE fp.email = fu.created_by AND  bd.gst is not null AND bd.pan is not null AND bd.pincode is not null AND bd.rm_id is null AND fu.id = bd.user_id AND  bd.profilecomplete ='completed' AND bd.profilecomplete_percentage=100 AND fu.slug='borrower' AND fu.rm_id IS NULL AND fp.partner_id='$where'";
-
-            // $sql = 'SELECT count(*) as Total_Eligible_Leads
-            // FROM fpa_users u,fp_borrower_user_details bd
-            // WHERE  u.id=bd.user_id and bd.company_name IS NOT NULL and u.slug="borrower" AND u.rm_id IS NULL';
-
-            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
-            return json_output($respStatus, $resp);
-        } else {
-            return json_output(400, array('status' => 400, 'message' => $checkToken));
-        }
-
-    } else {
-        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
-    }
-}
-
-public function totalassignedleads()
-{
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == "POST") {
-        // $checkToken = $this->check_token();
-        if (true) {
-            $response['status'] = 200;
-            $respStatus = $response['status'];
-            $params = json_decode(file_get_contents('php://input'), true);
-
-            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
-            $join = isset($params['key']) ? $params['key'] : "";
-            $where = isset($params['where']) ? $params['where'] : "";
-
-            // $sql = "SELECT COUNT(*) as TotalAssigned_Leads FROM fpa_users u  WHERE u.slug='borrower' and status='assigned'";
-            $sql = "SELECT count(*) as TotalAssigned_Leads
-                        FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-                        WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND fu.rm_id IS NOT NULL   AND fu.slug='borrower' AND fu.status ='assigned' AND fu.rm_id IS NOT NULL AND fp.partner_id='$where'";
-
-            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
-            return json_output($respStatus, $resp);
-        } else {
-            return json_output(400, array('status' => 400, 'message' => $checkToken));
-        }
-
-    } else {
-        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
-    }
-}
-
-public function totalapprovedprofile()
-{
-    $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == "POST") {
-        // $checkToken = $this->check_token();
-        if (true) {
-            $response['status'] = 200;
-            $respStatus = $response['status'];
-            $params = json_decode(file_get_contents('php://input'), true);
-
-            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
-            $join = isset($params['key']) ? $params['key'] : "";
-            $where = isset($params['where']) ? $params['where'] : "";
-
-            $sql = "SELECT COUNT(*) as TotalApproved_Profile
-                                    FROM fpa_users fu,fpa_partners fp,fp_borrower_loanrequests bl
-                                    WHERE fp.email=fu.created_by AND fu.id= bl.borrower_id AND bl.loan_request_status='CC Approved' AND fp.partner_id='$where'";
-
-            // $sql = "SELECT count(*) as TotalApproved_Profile FROM `fp_borrower_loanrequests`
-            // WHERE loan_request_status ='ccapproved' or loan_request_workflow_status='ccapproved'";
-
-            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
-            return json_output($respStatus, $resp);
-        } else {
-            return json_output(400, array('status' => 400, 'message' => $checkToken));
-        }
-
-    } else {
-        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
-    }
-}
-//---------------------connector Superadmin count end-----------------------
-
-
 
 public function partner_totalborrowerleads()
 {
@@ -1196,20 +1033,29 @@ public function partner_totalborrowerleads()
 
             $borrowerdetails = $this->db->query($sql)->result();
             $data = $this->db->query($sql);
+			$$txnArr = [];
+			$result1 = "";
             foreach ($data->result() as $row) {
                 $txnArr[] = $row->borrower_id;
 
             }
+			if(!empty($txnArr)){
+
+		
             $res = implode(",", $txnArr);
             $res = "(" . $res . ")";
 
             $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
+			$result1 = $this->db->query($result)->result();
+		}
+
+			
 
             // $this->db->query($sql)-result();
             // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
             // $trnn[]= $data->id;
 
-            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $this->db->query($result)->result());
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $result1);
             return json_output($respStatus, $resp);
         } else {
             return json_output(400, array('status' => 400, 'message' => $checkToken));
