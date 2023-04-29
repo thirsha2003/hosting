@@ -510,14 +510,19 @@ class Connectorusers extends CI_Controller
          
                                                                  $old_password = $params['data']['old_password'];
                                                                  // $new_password = $params['data']['new_password'];
-                       $new_password = $params['data']['password'];
+                      						 $new_password = $params['data']['password'];
+
+								 $pwd_pattern = preg_match_all('$\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])(?=\S*[\W])\S*$', $new_password);
+
+								//  print_r($pwd_pattern);
+								//  exit;
          
                                                                  $iv_length = openssl_cipher_iv_length($this->ciphering);
                                                                  $old_password = openssl_encrypt($old_password, $this->ciphering, $this->key, $this->options, $this->_iv);
                                                                  // $new_password = openssl_encrypt($new_password, $this->ciphering, $this->key, $this->options, $this->_iv);
-                       $new_password = openssl_encrypt($new_password, $this->ciphering, $this->key, $this->options, $this->_iv);
+								 $new_password = openssl_encrypt($new_password, $this->ciphering, $this->key, $this->options, $this->_iv);
          
-                                                                 if($old_password != $new_password){
+                                                                 if($old_password != $new_password && $pwd_pattern == 1){
                                                                          $checkuser = array('email' => $params['data']['email'], 'password' => $old_password);
                                                                          $this->db->where($checkuser);
                                                                          $count = $this->db->count_all_results($params['tableName']);
@@ -525,7 +530,7 @@ class Connectorusers extends CI_Controller
                                                                          if($count==1){
          
                                                                                  // $flag = array('email' => $params['data']['email'], 'password' => $old_password, 'status' => 1);
-                                              $flag = array('email' => $params['data']['email'], 'password' => $old_password, 'password_status' => 1);
+                                              					$flag = array('email' => $params['data']['email'], 'password' => $old_password, 'password_status' => 1);
                                                                                  $this->db->where($flag);
                                                                                  $countflag = $this->db->count_all_results($params['tableName']);
                                                                          
@@ -548,13 +553,18 @@ class Connectorusers extends CI_Controller
                                                                                          json_output($respStatus,$resp);
                                                                                  }
                                                                          }else{
-                                                                                 json_output(400,array('status' => 401,'message' => 'Bad request.'));
+                                                                                 json_output(200,array('status' => 401,'message' => 'Invalid Password'));
                                                                          }
                                                                  }else if($old_password == $new_password){
                                                                          
-                                                                         $resp = array('status' => 401,'message' => 'old password and new password should not be same');
+                                                                         $resp = array('status' => 402,'message' => 'old password and new password should not be same');
                                                                          json_output($respStatus,$resp);
-                                                                 }else{
+                                                                 }else if($pwd_pattern != 1){
+									$resp = array('status' => 403,'message' => 'Password Pattern not match');
+									json_output($respStatus,$resp);
+
+								 }
+								 else{
                                                                          $resp = array('status' => 401,'message' => 'Something When Worng');
                                                                          json_output($respStatus,$resp);
                                                                  }

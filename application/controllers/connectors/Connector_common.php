@@ -122,7 +122,7 @@ class Connector_common extends CI_Controller
 													
 
 													$subject = "Dear ".$name." ,";
-													$message = "Dear ".$name.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/connectorlogin as a Super Admin, Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
+													$message = "Dear ".$name.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/connector/login as a Super Admin, Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
 															"Email :" . $email . "<br/>" .
 															"Password :" . $simple_string . "<br/>" .
 															// "Password :" . $userdata->password. "<br/>" .
