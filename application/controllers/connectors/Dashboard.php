@@ -144,7 +144,7 @@ class Dashboard extends CI_Controller
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
             } else {
-                return json_output(400, array('status' => 400, 'message' => $checkToken));
+                return json_output(400, array('status' => 400, 'message' => "auth missing"));
             }
 
         } else {
