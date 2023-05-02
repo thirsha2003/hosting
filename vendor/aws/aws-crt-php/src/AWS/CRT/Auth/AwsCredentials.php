@@ -21,10 +21,10 @@ final class AwsCredentials extends NativeResource {
 
     static function defaults() {
         return [
-            // 'access_key_id' => 'ASIAYRVTG64Z54WUOTHB', // local acess_key
-            'access_key_id' => 'AKIAWJIM4CKQMIAM5R5L',
-            // 'secret_access_key' => '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', // local api_key
-            'secret_access_key' => 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV',  
+             'access_key_id' => 'ASIAYRVTG64Z54WUOTHB', // local acess_key
+            // 'access_key_id' => 'AKIAWJIM4CKQMIAM5R5L',    // Live api_key
+             'secret_access_key' => '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', // local api_key
+            'secret_access_key' => 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV',    // live  access_key
 
             // 'session_token' => 'IQoJb3JpZ2luX2VjEFQaCmFwLXNvdXRoLTEiSDBGAiEApH/A5Pg+NaSMJmVtzoe7pzTHgyZMoZG84feqUux3YCwCIQDeHOYasoXY0MB+jBWjmmz1E8thq/T+tWJF31T6zY7r7SrrAQhNEAEaDDU4NzcxMjYyNDQzNSIMIUUPmCzGYKYlOaPcKsgBd730gGcoU5rJa7IKKJZVCDom90CBJDAV7OlzpdlabwQIbz3kBMOEPBsGZ5uKyfJgdP+K01JTZHqeEpvl1lRf687ASIE0jC/oIbBBJYBhn7cUwYJh1An9GCsHvUKyKRmeZisDYLSzR04oi3qtUg2sYWRgjf7WvXbXmpCdD28SGjA4hxazU0HcL6TQS5jn8wOF4gpgJRgMot9V4u+QLMpKh8ufQJmcrF0C6fwJnbmc1p5lJWVlzC7z9YFamsbihd9hqzgwdCGC+sAw5Mj2oQY6lwHLwyk09z2f6/erUoeO8SjrgAkd08W0lNvd4geVZZiLalZoGeLLrtYEYxv8pYNH1u1gUJWy5ZMYxhAkmZs4b13zgcHSVX9imHpsZxQ7YkvziMgW0M6mLaiXF7GXKkTZfeITMBEx7dsOi5lNj6ipoDPkr92LcWlg1dn6TPijXrJQrENlia147GBw3Ln0xMaOzFtP+lEc+S06',
             'expiration_timepoint_seconds' => 0,
