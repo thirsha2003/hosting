@@ -11,6 +11,7 @@ require 'vendor/autoload.php';
 defined('BASEPATH') OR exit('No direct script access allowed');
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -18,9 +19,9 @@ class Finbox extends CI_Controller
 {
 	public function __construct(){
 		parent::__construct();
-		$this->load->helper('json_output');
-        $this->load->library('S3_upload');
-        $this->load->library('S3');
+		$this->load->helper('json_output');  
+        // $this->load->library('S3_upload');
+        // $this->load->library('S3');
 	}
 
 public function  finboxapi(){
@@ -57,10 +58,10 @@ public function  finboxapi(){
                         CURLOPT_FOLLOWLOCATION => true,
                         CURLOPT_CUSTOMREQUEST => 'GET',
                         CURLOPT_HTTPHEADER => array(
-                            'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
-                            //  'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
-                             'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
-                            //  'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
+                            // 'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
+                              'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
+                            //  'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
+                             'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
                              'content-type: application/x-www-form-urlencoded'
                         ),
                         ));
@@ -77,15 +78,20 @@ public function  finboxapi(){
 							"statement_id"=>$responsedata['statement_id'],
 							"bank_name"=> $responsedata['bank_name'],
 							"pdf_password"=> $responsedata['pdf_password'],
-							"pdf_url"=> $responsedata['pdf_url'],
+							"pdf_url"=>   isset( $responsedata['pdf_url'] ) ?  $responsedata['pdf_url']:'',
 							"account_id"=> $responsedata['account_id'],
 							"source"=> $responsedata['source'],
                             "message"=> $responsedata['message'],
 							];
 
-                                $responseoutput = file_get_contents($finboxpdf['pdf_url']);
+                                 if($finboxpdf['pdf_url']!='' || $finboxpdf['pdf_url']!=null) {
+
+                                $responseoutput =   file_get_contents($finboxpdf['pdf_url']) ;
                         
-                                   $bucket = 'finnup';
+                                    //  $bucket = 'finnup';   // live bucketname
+                                   $bucket = 'bucketinfo';   // Local bucketname
+                                   
+
                                    
                                   $keyname = "FINNBID".$borrower_id."/".$finboxpdf['statement_id'];
                                    $Folder_name = 'FINBOXPDF/';
@@ -115,6 +121,9 @@ public function  finboxapi(){
                                 catch (S3Exception $e) {
                                     echo $e->getMessage() . PHP_EOL;
                                 }
+                                     
+                            }
+
 
                             $pdffinbox=[
                                 'borrower_id'=>$finboxpdf['borrower_id'],
@@ -126,7 +135,7 @@ public function  finboxapi(){
                                 'account_id'=>$finboxpdf['account_id'],
                                 'source'=>$finboxpdf['source'],
                                 'message'=>$finboxpdf['message'],
-                                's3_url'=>$url,               
+                                's3_url'=>  isset( $url) ? $url:null,               
                             ];
 
                             $sql="select t1.statement_id from fp_finbox_pdfs t1  where  t1.statement_id ='".$pdffinbox['statement_id']."' and t1.borrower_id = ".$pdffinbox['borrower_id'];
@@ -159,10 +168,10 @@ public function  finboxapi(){
                         CURLOPT_FOLLOWLOCATION => true,
                         CURLOPT_CUSTOMREQUEST => 'GET',
                         CURLOPT_HTTPHEADER => array(
-                         'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
-                        //  'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
-                         'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
-                        //  'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
+                        //  'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
+                      'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
+                        //  'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
+                         'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
                          'content-type: application/x-www-form-urlencoded'
                         ),
                         ));
@@ -175,13 +184,16 @@ public function  finboxapi(){
 						foreach($result['reports'] as $responsedata){
 							$finboxpdf=[
                             "borrower_id"=>$borrower_id,
-							"xlsxlink"=>$responsedata['link'],
+							"xlsxlink"=>   isset( $responsedata['link']) ? $responsedata['link']:" ",
 							"account_id"=> $responsedata['account_id'],
 							];
 
                             $responseoutput = file_get_contents($finboxpdf['xlsxlink']);
                         
-                            $bucket = 'finnup';
+                            // $bucket = 'finnup';     // live bucketname
+                            $bucket = 'bucketinfo';       // local bucketname
+
+
                             $keyname = "FINNBID".$borrower_id."/".$finboxpdf['account_id'];
                             $Folder_name = 'FINBOXXLSX/';
                             $Addkey_name = $Folder_name.$keyname.".xlsx";
@@ -243,10 +255,10 @@ public function  finboxapi(){
                         CURLOPT_FOLLOWLOCATION => true,
                         CURLOPT_CUSTOMREQUEST => 'GET',
                         CURLOPT_HTTPHEADER => array(
-                            'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
-                            //  'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
-                             'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
-                            //  'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
+                            // 'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
+                          'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
+                            //  'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
+                          'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
                              'content-type: application/x-www-form-urlencoded'
                         ),
                         ));

@@ -330,10 +330,10 @@ class CIBIL extends CI_Controller
                         }
 
 
-                        $fp_director_details = $this->db->get_where('fp_director_details', array('id' => $params['director_id']));
+                        // $fp_director_details = $this->db->get_where('fp_director_details', array('id' => $params['director_id']));
                           
 
-                        json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
+                        // json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
 
           }
         
@@ -342,10 +342,6 @@ class CIBIL extends CI_Controller
 
             json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!'));
           } 
-
-
-
-
                     else{
                       json_output(400, array('status' => 400,'message' => 'Bad request.'));
                     }

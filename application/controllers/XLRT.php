@@ -107,8 +107,9 @@ class XLRT extends CI_Controller
                             $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
                             $header = substr($response, 0, $header_size);
                             $body = substr($response, $header_size);
-                            curl_close($curl);
-                            print_r($header);
+                            curl_close($curl);    
+                                                         
+                            print_r($header);                   
                         }
                     catch(Exception $e)
 					{
