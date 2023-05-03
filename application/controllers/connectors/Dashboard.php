@@ -133,14 +133,13 @@ class Dashboard extends CI_Controller
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
+                $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
-                $sql = "SELECT count(*) as Total_Borrower_Leads
-						  FROM fpa_users fu,fpa_partners fp
-						  WHERE fu.created_by = fp.email  AND
-								fu.slug ='borrower' and fu.status IN ('new','assigned','active')";
+                $sql = "SELECT COUNT(*) as Total_Borrower_Leads
+                FROM fpa_users fu, fpa_partners fp
+                WHERE fu.created_by = '$where' AND fu.partner_id = '$partnerid' AND fp.email=fu.created_by AND fu.slug='borrower' AND
+                       fu.status IN ('new','assigned','active')";
 
-                // $sql = "SELECT count(*) as Total_Borrower_Leads FROM `fpa_users` WHERE
-                // slug ='borrower' and status IN ('new','assigned','active') ";
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
             } else {
@@ -165,6 +164,7 @@ class Dashboard extends CI_Controller
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
+                $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
                 // $sql="SELECT count(*) as Total_Borrower_Leads
                 // FROM fpa_users fu,fpa_partners fp
@@ -173,7 +173,7 @@ class Dashboard extends CI_Controller
 
                 $sql = "SELECT count(*) as Total_Draft_Leads
 								FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-								WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NULL AND bd.pincode IS NULL  AND fu.slug='borrower' AND fu.rm_id IS NULL AND fu.status IN ('new','assigned','active')";
+								WHERE fu.created_by = '$where' AND fu.partner_id = '$partnerid' AND fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NULL AND bd.pincode IS NULL  AND fu.slug='borrower' AND fu.rm_id IS NULL AND fu.status IN ('new','assigned','active')";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -199,14 +199,12 @@ class Dashboard extends CI_Controller
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
+                $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
-                $sql = 'SELECT count(*) as Total_Eligible_Leads
-							FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-							WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NOT NULL AND bd.pincode IS NOT NULL   AND fu.slug="borrower" AND fu.rm_id IS NULL';
-
-                // $sql = 'SELECT count(*) as Total_Eligible_Leads
-                // FROM fpa_users u,fp_borrower_user_details bd
-                // WHERE  u.id=bd.user_id and bd.company_name IS NOT NULL and u.slug="borrower" AND u.rm_id IS NULL';
+                $sql = "SELECT count(*) as Total_Eligible_Leads
+                FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
+                WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND  fu.created_by = '$where' AND fu.partner_id='$partnerid' AND bd.company_name IS NOT NULL AND bd.pincode IS NOT NULL   AND fu.slug='borrower' 
+                AND fu.rm_id IS NULL";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -232,11 +230,11 @@ class Dashboard extends CI_Controller
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
+                $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
-                // $sql = "SELECT COUNT(*) as TotalAssigned_Leads FROM fpa_users u  WHERE u.slug='borrower' and status='assigned'";
-                $sql = 'SELECT count(*) as TotalAssigned_Leads
-							FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-							WHERE fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NOT NULL AND bd.pincode IS NOT NULL   AND fu.slug="borrower" AND fu.status ="assigned" AND fu.rm_id IS NOT NULL';
+                        $sql = "SELECT count(*) as TotalAssigned_Leads
+                        FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
+                        WHERE fu.created_by = '$where' AND fu.partner_id='$partnerid' AND  fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NOT NULL AND bd.pincode IS NOT NULL   AND fu.slug='borrower' AND fu.status ='assigned' AND fu.rm_id IS NOT NULL";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -262,13 +260,11 @@ class Dashboard extends CI_Controller
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
+                $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
                 $sql = "SELECT COUNT(*) as TotalApproved_Profile
-										FROM fpa_users fu,fpa_partners fp,fp_borrower_loanrequests bl
-										WHERE fp.email=fu.created_by AND fu.id= bl.borrower_id AND bl.loan_request_status='CC Approved'";
-
-                // $sql = "SELECT count(*) as TotalApproved_Profile FROM `fp_borrower_loanrequests`
-                // WHERE loan_request_status ='ccapproved' or loan_request_workflow_status='ccapproved'";
+                FROM fpa_users fu,fpa_partners fp,fp_borrower_loanrequests bl
+                WHERE fu.created_by = '$where' AND fu.partner_id='$partnerid' AND fp.email=fu.created_by AND fu.id= bl.borrower_id AND bl.loan_request_status='CC Approved'";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -739,10 +735,10 @@ class Dashboard extends CI_Controller
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
+                $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
-                $sql = "WITH borrowerTable as
-								(SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id, bd.city, pa.email FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null AND b.created_by=pa.email)
-								SELECT bd.partner_id, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.email, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.email='$where'";
+                $sql = "WITH borrowerTable as (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id , bd.city, pa.email FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null AND b.created_by=pa.email AND b.partner_id=pa.partner_id)
+                SELECT bd.partner_id, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.email, bd.partner_id, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.email='$where' AND bd.partner_id='$partnerid'";
 
                 $borrowerdetails = $this->db->query($sql)->result();
                 $data = $this->db->query($sql);
@@ -810,7 +806,7 @@ class Dashboard extends CI_Controller
             return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
         }
 
-    } //----------------------- partner_totalborrowerleads ---------------------
+    } //----------------------- partner_catotalborrowerleads ---------------------
 
     public function partner_catotaldraftleads()
     {
@@ -855,7 +851,7 @@ class Dashboard extends CI_Controller
         }
 
     }
-    //----------------------- partner_totaldraftleads ---------------------
+    //----------------------- partner_catotaldraftleads ---------------------
     public function partner_catotaleligibleleads()
     {
         $method = $_SERVER['REQUEST_METHOD'];
@@ -907,7 +903,7 @@ class Dashboard extends CI_Controller
             return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
         }
 
-    } //----------------------- partner_totaleligibleleads ---------------------
+    } //----------------------- partner_catotaleligibleleads ---------------------
 
     public function partner_catotalassignedleads()
     {
@@ -958,7 +954,7 @@ class Dashboard extends CI_Controller
             return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
         }
 
-    } //----------------------- partner_totalassignedleads ---------------------
+    } //----------------------- partner_catotalassignedleads ---------------------
 
     public function partner_catotalapprovedprofiles()
     {
@@ -1003,7 +999,7 @@ class Dashboard extends CI_Controller
             return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
         }
 
-    } //----------------------- partner_totalapprovedprofiles ---------------------
+    } //----------------------- partner_catotalapprovedprofiles ---------------------
 
 
     
@@ -1028,7 +1024,7 @@ public function partner_totalborrowerleads()
                             $partner_id = isset($params['partner_id']) ? $params['partner_id'] : "";
 
             $sql = "WITH borrowerTable as
-            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null AND b.created_by=pa.email)
+            (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null AND b.partner_name is NOT null AND b.created_by=pa.email)
             SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany,bd.pid, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where' OR pid ='$partner_id'";
 
             $borrowerdetails = $this->db->query($sql)->result();

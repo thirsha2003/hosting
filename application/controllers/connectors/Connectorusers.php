@@ -59,7 +59,7 @@ class Connectorusers extends CI_Controller
                                                         $name   = $params['data']['name'];
                                                         $email  = $params['data']['email'];
                                                         $phone  = $params['data']['mobile'];
-                                                        $companyname  = $params['data']['company_name'];
+                                                        $companyname  = isset($params['data']['company_name'])?$params['data']['company_name']:null;
                                                         // ($params['tableName'] == "fpa_adminusers") {
                                                                 $simple_string = $params['data']['password'];
                                                                 $iv_length = openssl_cipher_iv_length($this->ciphering);
@@ -445,7 +445,9 @@ class Connectorusers extends CI_Controller
                                                                                                 'name'=>$row->name,
                                                                                                 'slug'=>$row->role_slug,
                                                                                                 'partner_id'=>$row->partner_id,
-                                                                                                'parent_id'=>$row->parent_id
+                                                                                                'parent_id'=>$row->parent_id,
+                                                                                                'company_name'=>$row->company_name,
+                                                                                                'finnup_spoc'=>$row->finnup_spoc
                                                                                         ];
                                                                                         
                                                                                 }
