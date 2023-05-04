@@ -34,15 +34,22 @@ public function  finboxapi(){
 	}
  else
 	{ 
-		if($response['status'] == 200)
+		if($response['status'] == 200 ) 
+
 				{
 					$params = json_decode(file_get_contents('php://input'), TRUE);
 
 					$entity_id = $params['entityid'];
 					$borrower_id = $params['borrower_id'];
 					$linked_id = $params['linkid'];
+ 
 
-                    try{
+                          sleep($this->config->item('sleeptime'));
+
+                $sleepcon=true;
+
+                    try
+                    {   
 
                            // This url is  get pdfs 
 
@@ -50,59 +57,80 @@ public function  finboxapi(){
                         $finboxendpoint ="/get_pdfs";  
                         $entityid=$entity_id;
                         $finbox_str = $Finboxapi.$entityid.$finboxendpoint;
-				
-						$curl = curl_init();
-                        curl_setopt_array($curl, array(
-                        CURLOPT_URL =>$finbox_str,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_CUSTOMREQUEST => 'GET',
-                        CURLOPT_HTTPHEADER => array(
-                            // 'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
-                              'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
-                            //  'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
-                             'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
+                        $curl = curl_init();
+
+                         print_r($finbox_str);
+
+                         print_r("-------------Url------------------");
+
+                         curl_setopt_array($curl, array(
+                           CURLOPT_URL => $finbox_str,
+                           CURLOPT_RETURNTRANSFER => true,
+                           CURLOPT_ENCODING => '',
+                           CURLOPT_MAXREDIRS => 10,
+                           CURLOPT_TIMEOUT => 0,
+                           CURLOPT_FOLLOWLOCATION => true,
+                           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                           CURLOPT_CUSTOMREQUEST => 'GET',
+                           CURLOPT_HTTPHEADER => array(
+                             'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB',
+                             'server-hash: df080304798e48b8a2a309d2d7ca4686',
                              'content-type: application/x-www-form-urlencoded'
-                        ),
-                        ));
-                     
-                        $response = curl_exec($curl);
-                        curl_close($curl);
-					    $result = json_decode ($response, true);
+                           ),
+                         ));
+                         
+                         $response = curl_exec($curl);
+                         curl_close($curl);
+					     $result = json_decode($response, true);
 
-						foreach($result['statements'] as $responsedata){
+                         print_r($result);
 
+                         print_r("--------result-----------");
+
+						 foreach($result['statements'] as $responsedata){
 							$finboxpdf=[
-                            "borrower_id"=>$borrower_id,
-                            "entity_id"=> $entity_id,
-							"statement_id"=>$responsedata['statement_id'],
-							"bank_name"=> $responsedata['bank_name'],
-							"pdf_password"=> $responsedata['pdf_password'],
-							"pdf_url"=>   isset( $responsedata['pdf_url'] ) ?  $responsedata['pdf_url']:'',
-							"account_id"=> $responsedata['account_id'],
-							"source"=> $responsedata['source'],
-                            "message"=> $responsedata['message'],
+                            "borrower_id"   => isset($borrower_id)                      ? $borrower_id:0,
+                            "entity_id"     => isset($entity_id)                        ? $entity_id:"Not Avaiable",
+							"statement_id"  => isset( $responsedata['statement_id'])    ? $responsedata['statement_id']:"Not Avaiable",
+							"bank_name"     => isset( $responsedata['bank_name'])       ? $responsedata['bank_name']:"Not Avaiable",
+							"pdf_password"  => isset( $responsedata['pdf_password'])    ? $responsedata['pdf_password']:"Not Avaiable",
+							"pdf_url"       => isset( $responsedata['pdf_url'] )        ? $responsedata['pdf_url']:
+                            "Not Avaiable",
+							"account_id"    => isset( $responsedata['account_id'])      ? $responsedata['account_id']:"Not Avaiable",
+							"source"        => isset( $responsedata['source'])          ? $responsedata['source']:"Not Avaiable",
+                            "message"       => isset( $responsedata['message'])         ? $responsedata['message']:"Not Avaiable",
 							];
 
-                                 if($finboxpdf['pdf_url']!='' || $finboxpdf['pdf_url']!=null) {
+                                    print_r($finboxpdf['pdf_url']);
+                                    print_r("-------pdf_url------------");
 
-                                $responseoutput =   file_get_contents($finboxpdf['pdf_url']) ;
-                        
-                                    //  $bucket = 'finnup';   // live bucketname
-                                   $bucket = 'bucketinfo';   // Local bucketname
-                                   
+                                    $responseoutput =   file_get_contents($finboxpdf['pdf_url']) ;
 
-                                   
-                                  $keyname = "FINNBID".$borrower_id."/".$finboxpdf['statement_id'];
-                                   $Folder_name = 'FINBOXPDF/';
                                 
-                                   $Addkey_name = $Folder_name.$keyname.".pdf";
-    
+
+                                    $bucket = 'finnup';   
+                                    $keyname = "FINNBID".$borrower_id."/".$finboxpdf['statement_id'];
+                                    $Folder_name = 'finboxpdf/';
+                                    $Addkey_name = $Folder_name.$keyname.".pdf";
+
+                                    print_r($Addkey_name);
+
+
+                                     
+
+                                    print_r("-------Keyname------------");
+
+                                    $credentials = new Aws\Credentials\Credentials('AKIAWJIM4CKQMIAM5R5L', 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV');
+
                                    $s3 = new S3Client([
-                                    'version' => 'latest',
-                                    'region'  => 'ap-south-1'
-                                ]);
-                                try {
+                                    'region'  => 'ap-south-1',
+                                    'version' => 'latest' ,
+                                    'credentials' => $credentials
+
+                                   
+                                   ]);
+                                   
+                                   try {
                                     // Upload data.
                                     $result = $s3->putObject([
                                         'Bucket' => $bucket,
@@ -110,19 +138,19 @@ public function  finboxapi(){
                                         'Body'   => $responseoutput ,
                                         'ACL'    => 'public-read'
                                     ]);
-                                
                                     // Print the URL to the object.
                                     // echo $result['ObjectURL'] . PHP_EOL; 
                                     $url = $result['ObjectURL'];
-                                   
+
+                                    print_r($url);
+
+                                    print_r("-------S3_url------------");
 
                                 // print_r("file upload successfully in s3 bucket in pdf");
                                 }
                                 catch (S3Exception $e) {
                                     echo $e->getMessage() . PHP_EOL;
                                 }
-                                     
-                            }
 
 
                             $pdffinbox=[
@@ -134,7 +162,7 @@ public function  finboxapi(){
                                 'pdf_url'=>$finboxpdf['pdf_url'],
                                 'account_id'=>$finboxpdf['account_id'],
                                 'source'=>$finboxpdf['source'],
-                                'message'=>$finboxpdf['message'],
+                                'message'=>  isset( $finboxpdf['message']) ? $finboxpdf['message']:"Not Avaiable",
                                 's3_url'=>  isset( $url) ? $url:null,               
                             ];
 
@@ -144,63 +172,83 @@ public function  finboxapi(){
 
                                 $this->db->insert("fp_finbox_pdfs", $pdffinbox);
 
+
+                                print_r("Data Insert into the Table");
+
                             }
                             else{ 
                                 $this->db->where('statement_id',$pdffinbox['statement_id']);
                                 $this->db->update('fp_finbox_pdfs',$pdffinbox);
-                            }
-
-							  
+                            }  
 						 }
                       
                         //    This Url is xlsx  End point 
 
-                         
+                        
+
+                        
                         $Finboxapi ="https://portal.finbox.in/bank-connect/v1/entity/";
                         $finboxendpoint ="/xlsx_report";  
                         $entityid=$entity_id;
                         $finbox_str = $Finboxapi.$entityid.$finboxendpoint;
-				
-						$curl = curl_init();
-                        curl_setopt_array($curl, array(
-                        CURLOPT_URL =>$finbox_str,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_CUSTOMREQUEST => 'GET',
-                        CURLOPT_HTTPHEADER => array(
-                        //  'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
-                      'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
-                        //  'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
-                         'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
-                         'content-type: application/x-www-form-urlencoded'
-                        ),
-                        ));
-                     
-                        $response = curl_exec($curl);
-                        curl_close($curl);
-					    $result = json_decode ($response, true);
+
+                        $curl = curl_init();
+
+
+                        print_r($finbox_str);
+                       
+                       curl_setopt_array($curl, array(
+                         CURLOPT_URL => $finbox_str,
+                         CURLOPT_RETURNTRANSFER => true,
+                         CURLOPT_ENCODING => '',
+                         CURLOPT_MAXREDIRS => 10,
+                         CURLOPT_TIMEOUT => 0,
+                         CURLOPT_FOLLOWLOCATION => true,
+                         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                         CURLOPT_CUSTOMREQUEST => 'GET',
+                         CURLOPT_HTTPHEADER => array(
+                           'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB',
+                           'server-hash: df080304798e48b8a2a309d2d7ca4686',
+                           'content-type: application/x-www-form-urlencoded'
+                         ),
+                       ));
+                       
+                       $response = curl_exec($curl);
+                       curl_close($curl);
+					   $result = json_decode ($response, true);
+
+                       print_r($result);
+
+
 
 
 						foreach($result['reports'] as $responsedata){
 							$finboxpdf=[
                             "borrower_id"=>$borrower_id,
 							"xlsxlink"=>   isset( $responsedata['link']) ? $responsedata['link']:" ",
-							"account_id"=> $responsedata['account_id'],
+							"account_id"=> $responsedata['account_id'] ? $responsedata['account_id']:" ",
 							];
 
+                            print_r($finboxpdf['xlsxlink']);
+
+                            if (isset($responsedata['link'])!="" && $responsedata['account_id']!=""){
                             $responseoutput = file_get_contents($finboxpdf['xlsxlink']);
+                          
                         
-                            // $bucket = 'finnup';     // live bucketname
-                            $bucket = 'bucketinfo';       // local bucketname
-
-
+                            $bucket = 'finnup';     
                             $keyname = "FINNBID".$borrower_id."/".$finboxpdf['account_id'];
-                            $Folder_name = 'FINBOXXLSX/';
+                            $Folder_name = 'finboxxlsx/'; 
                             $Addkey_name = $Folder_name.$keyname.".xlsx";
+
+                            print_r($Addkey_name);
+
+                            $credentials = new Aws\Credentials\Credentials('AKIAWJIM4CKQMIAM5R5L', 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV');
 
                             $s3 = new S3Client([
                              'version' => 'latest',
-                             'region'  => 'ap-south-1'
+                             'region'  => 'ap-south-1',
+                             'credentials' => $credentials
+
                          ]);
                          try {
                              // Upload data.
@@ -214,57 +262,77 @@ public function  finboxapi(){
                              // Print the URL to the object.
                              // echo $result['ObjectURL'] . PHP_EOL; 
                              $url = $result['ObjectURL'];
+
+                             print_r($url);
                             
                         //  print_r("file upload successfully in s3 bucket in xlsx ");
                          }
                          catch (S3Exception $e) {
                              echo $e->getMessage() . PHP_EOL;
                          }
+
+                        }
                 
                         $finboxxlsx=[
                             "borrower_id"=>$finboxpdf['borrower_id'],
                             "xlsxlink"=>$finboxpdf['xlsxlink'],
                             "account_id"=>$finboxpdf['account_id'],
-                            "s3_url"=>$url,
+                            "s3_url"=> isset($url) ? $url:" ",
                         ];
                         
                         $sql = "select t1.account_id from fp_finbox_xlsx_report t1  where t1.account_id = '". $finboxxlsx['account_id']."' and t1.borrower_id = ".$finboxxlsx['borrower_id'];
 
                         if(count($this->db->query($sql)->result())==0){
+
                             $this->db->insert('fp_finbox_xlsx_report',$finboxxlsx);
+
+                            print_r("Data insert Into the Table");
 
                         }
                         else{
                             $this->db->where('account_id',$finboxxlsx['account_id']);
-					      $this->db->update('fp_finbox_xlsx_report', $finboxxlsx);
+					        $this->db->update('fp_finbox_xlsx_report', $finboxxlsx);
 
+                        }
 
                         }
 
-                        }
                         // This url is monthlyanalysis
+
                         $Finboxapi ="https://portal.finbox.in/bank-connect/v1/entity/";
                         $finboxendpoint ="/monthly_analysis_updated";  
                         $entityid=$entity_id;
                         $finbox_str = $Finboxapi.$entityid.$finboxendpoint;
-				
-						$curl = curl_init();
+
+                        print_r($finbox_str);
+
+                    
+                        $curl = curl_init();
+
                         curl_setopt_array($curl, array(
-                        CURLOPT_URL =>$finbox_str,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_CUSTOMREQUEST => 'GET',
-                        CURLOPT_HTTPHEADER => array(
-                            // 'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB', // live Api_key
-                          'x-api-key: U1FGtOHm70i1bkXhzFFFymXA5PxXe5vGNfrET9sN',  // Local Api_key
-                            //  'server-hash: df080304798e48b8a2a309d2d7ca4686',   // live APi_key
-                          'server-hash: 182c41095f884c8f8355e9fe6829d2c2',   // Local APi_key
-                             'content-type: application/x-www-form-urlencoded'
-                        ),
+                          CURLOPT_URL => $finbox_str,
+                          CURLOPT_RETURNTRANSFER => true,
+                          CURLOPT_ENCODING => '',
+                          CURLOPT_MAXREDIRS => 10,
+                          CURLOPT_TIMEOUT => 0,
+                          CURLOPT_FOLLOWLOCATION => true,
+                          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                          CURLOPT_CUSTOMREQUEST => 'GET',
+                          CURLOPT_HTTPHEADER => array(
+                            'x-api-key: PimLidLKA52ihOAJDApmDsJjS2nU5eDivjt4WLcB',
+                            'server-hash: df080304798e48b8a2a309d2d7ca4686',
+                            'content-type: application/x-www-form-urlencoded'
+                          ),
                         ));
+                        
                         $response = curl_exec($curl);
+                        
                         curl_close($curl);
+
 					    $result = json_decode ($response, true);
+
+                        print_r($result);
+
 
                         $totalaccount = sizeof($result['accounts']);   
 
@@ -307,8 +375,8 @@ public function  finboxapi(){
                             else{
                                 $this->db->where("account_id",$accounts_details['account_id']);
                                 $this->db->update("fp_finbox_accounts_details", $accounts_details);
-
                             }
+
 
                             // $this->db->insert("fp_finbox_accounts_details", $accounts_details)
                         }
@@ -435,6 +503,8 @@ public function  finboxapi(){
                         }
                         json_output(200, array('status' => 200 , 'message'=> 'success'));  	
 					}
+
+
 					catch(Exception $e)
 					{
 						echo 'Caught exception: ',  $e->getMessage(), "\n";

@@ -572,6 +572,7 @@ $config['s3_bucket_name'] = 'bucketinfo';
 $config['s3_bucket_url'] = 'https://s3://bucketinfo/FINNUPBS/';
 
 
+$config['sleeptime'] = 90;
 
 
 
