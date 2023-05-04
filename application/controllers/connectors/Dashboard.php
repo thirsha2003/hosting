@@ -738,9 +738,10 @@ class Dashboard extends CI_Controller
                 $partnerid = isset($params['partnerid']) ? $params['partnerid'] : "";
 
                 $sql = "WITH borrowerTable as (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id , bd.city, pa.email FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null AND b.created_by=pa.email AND b.partner_id=pa.partner_id)
-                SELECT bd.partner_id, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.email, bd.partner_id, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.email='$where' AND bd.partner_id='$partnerid'";
+                SELECT bd.partner_id, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.email, bd.partner_id, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.email = '$where' AND bd.partner_id = '$partnerid'";
 
                 $borrowerdetails = $this->db->query($sql)->result();
+                $txnArr = [];
                 $data = $this->db->query($sql);
                 foreach ($data->result() as $row) {
                     $txnArr[] = $row->borrower_id;
@@ -782,6 +783,7 @@ class Dashboard extends CI_Controller
 								SELECT bd.partner_id, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.email, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.email='$where'";
 
                 $borrowerdetails = $this->db->query($sql)->result();
+                $txnArr = [];
                 $data = $this->db->query($sql);
                 foreach ($data->result() as $row) {
                     $txnArr[] = $row->borrower_id;
@@ -1029,7 +1031,7 @@ public function partner_totalborrowerleads()
 
             $borrowerdetails = $this->db->query($sql)->result();
             $data = $this->db->query($sql);
-			$$txnArr = [];
+			$txnArr = [];
 			$result1 = "";
             foreach ($data->result() as $row) {
                 $txnArr[] = $row->borrower_id;
@@ -1127,6 +1129,7 @@ public function partner_totaleligibleleads()
             SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM connectorTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
 
             $borrowerdetails = $this->db->query($sql)->result();
+            $txnArr = [];
             $data = $this->db->query($sql);
             foreach ($data->result() as $row) {
                 $txnArr[] = $row->borrower_id;
@@ -1172,6 +1175,7 @@ public function partner_totalassignedleads()
             SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
 
             $borrowerdetails = $this->db->query($sql)->result();
+            $txnArr = [];
             $data = $this->db->query($sql);
             foreach ($data->result() as $row) {
                 $txnArr[] = $row->borrower_id;
@@ -1217,6 +1221,7 @@ public function partner_totalapprovedprofiles()
             SELECT bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.partemail='$where'";
 
             $borrowerdetails = $this->db->query($sql)->result();
+            $txnArr = [];
             $data = $this->db->query($sql);
             foreach ($data->result() as $row) {
                 $txnArr[] = $row->borrower_id;
