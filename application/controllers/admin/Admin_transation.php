@@ -771,7 +771,7 @@ public function deal_sanctioned()
 			   $email = new \SendGrid\Mail\Mail();
 			   $email->setSubject($subject);
 			   $email->addContent("text/html", $message);
-			   $email->setFrom("support@finnup.in", 'FinnUp Team');
+			   $email->setFrom("platform@finnup.in", 'FinnUp Team');
 			   $email->addTo($to); 
 			   $email->addTo($tos);
 			   $sendgrid = new \SendGrid("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");
@@ -1301,13 +1301,13 @@ public function  borrowerloanrequest()
 							  "-----------------------------------------------<br/>
 							  Team Finnup";
 
-							  // $to = 'support@finnup.in';
+							  // $to = 'platform@finnup.in';
 							  //$to = 'rec2004@gmail.com';
 							  $to = 'parthiban24242000@gmail.com';
 							  $email = new \SendGrid\Mail\Mail();
 							  $email->setSubject($subject);
 							  $email->addContent("text/html", $message);
-							  $email->setFrom("support@finnup.in", 'FinnUp Team');
+							  $email->setFrom("platform@finnup.in", 'FinnUp Team');
 							  $email->addTo($to);							
 							  $sendgrid = new \SendGrid("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");
 

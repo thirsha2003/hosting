@@ -58,8 +58,8 @@ class Userverification extends CI_Controller
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team1');
-								// $email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team1');
+								// $email->setFrom('platform@finnup.in', 'FinnUp Team');
 								// $email->addBcc('saravanan@thesquaircle.com');
 								// $email->addBcc('sheik@thesquaircle.com');
 								// $email->addBcc('dhanasekarancse08@gmail.com');
@@ -131,7 +131,7 @@ class Userverification extends CI_Controller
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', $displayname);
+								$email->setFrom('platform@finnup.in', $displayname);
 								// $email->addTo($to);												
 								$sendgrid = new \SendGrid("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");
 								

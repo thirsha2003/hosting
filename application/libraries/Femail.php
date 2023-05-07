@@ -45,7 +45,7 @@ class Femail
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team');
 								$email->addTo($to);							
 								$sendgrid = new \SendGrid("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");
 								try {
@@ -87,7 +87,7 @@ class Femail
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team');
 								$email->addTo($to);							
 								$sendgrid = new \SendGrid("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");
 								try {

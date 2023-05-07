@@ -182,7 +182,7 @@ class Adminusers extends CI_Controller
                                 $email = new \SendGrid\Mail\Mail();
                                 $email->setSubject($subject);
                                 $email->addContent("text/html", $message);
-                                $email->setFrom("support@finnup.in", 'FinnUp Team');
+                                $email->setFrom("platform@finnup.in", 'FinnUp Team');
                                 $email->addTo($to);
                                 $sendgrid = new \SendGrid("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");
                                 try {
@@ -207,14 +207,14 @@ class Adminusers extends CI_Controller
                                 "-----------------------------------------------<br/>
                            Team Finnup";
 
-                                // $to = 'support@finnup.in';
+                                // $to = 'platform@finnup.in';
                                 // $to = 'rec2004@gmail.com';
                                 // $to = $userdata->email;
                                 $to = $useremail;
                                 $email = new \SendGrid\Mail\Mail();
                                 $email->setSubject($subject);
                                 $email->addContent("text/html", $message);
-                                $email->setFrom("support@finnup.in", 'FinnUp Team');
+                                $email->setFrom("platform@finnup.in", 'FinnUp Team');
                                 $email->addTo($to);
                                 $sendgrid = new \SendGrid("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");
                                 try {
@@ -381,8 +381,8 @@ class Adminusers extends CI_Controller
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
-								// $email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team');
+								// $email->setFrom('platform@finnup.in', 'FinnUp Team');
 								// $email->addBcc('saravanan@thesquaircle.com');
 								// $email->addBcc('sheik@thesquaircle.com');
 								// $email->addBcc('dhanasekarancse08@gmail.com');
@@ -453,8 +453,8 @@ class Adminusers extends CI_Controller
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
-								// $email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team');
+								// $email->setFrom('platform@finnup.in', 'FinnUp Team');
 								// $email->addBcc('saravanan@thesquaircle.com');
 								// $email->addBcc('sheik@thesquaircle.com');
 								// $email->addBcc('dhanasekarancse08@gmail.com');
@@ -602,11 +602,11 @@ class Adminusers extends CI_Controller
                    "link : app.finnup.in/#/admin."."<br/>"."<br/>".
                     "Thanks.";
                     
-                    $to = 'support@finnup.in';
+                    $to = 'platform@finnup.in';
                     $email = new \SendGrid\Mail\Mail();
                     $email->setSubject($subject);
                     $email->addContent("text/html", $message);
-                    $email->setFrom("support@finnup.in", 'FinnUp Team');
+                    $email->setFrom("platform@finnup.in", 'FinnUp Team');
                     // $email->addTo($to);
                     $email->addTo($tos);
                     $sendgrid = new \SendGrid("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");

@@ -73,7 +73,7 @@ class Common extends CI_Controller {
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team');
 					
 								// $email->addBcc('saravanan@thesquaircle.com');
 								// $email->addBcc('sheik@thesquaircle.com');
@@ -139,7 +139,7 @@ class Common extends CI_Controller {
 	// 							$email = new \SendGrid\Mail\Mail();
 	// 							$email->setSubject($subject);
 	// 							$email->addContent("text/html", $message);
-	// 							$email->setFrom('support@finnup.in', 'FinnUp Team');
+	// 							$email->setFrom('platform@finnup.in', 'FinnUp Team');
 	// 							$email->addBcc('saravanan@thesquaircle.com');
 	// 							$email->addBcc('sheik@thesquaircle.com');
 	// 							$email->addTo($to);		
@@ -180,7 +180,7 @@ class Common extends CI_Controller {
 
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('support@finnup.in', 'FinnUp Team');
+								$email->setFrom('platform@finnup.in', 'FinnUp Team');
 							
 								// $email->addBcc('saravanan@thesquaircle.com');
 								// $email->addBcc('sheik@thesquaircle.com');
@@ -276,7 +276,7 @@ class Common extends CI_Controller {
 	// 							"<br/>Maximum Tenor: : " .$params['data']['max_tenor'].
 	// 							"<br/><br/>"."Regards, <br/> Team Finnup";
 								
-	// 							//$to = 'support@finnup.in';
+	// 							//$to = 'platform@finnup.in';
 	// 							// $to = 'jagan.vijay.104@gmail.com';
 	// 							$to = 'rec2004@gmail.com';
 							
@@ -285,7 +285,7 @@ class Common extends CI_Controller {
 	// 							$email->setSubject($subject);
 	// 							$email->addContent("text/html", $message);
 	// 							// $email->setFrom($borr_dt[0]->email_id, 'FinnUp Team');
-	// 							$email->setFrom("support@finnup.in", 'FinnUp Team');
+	// 							$email->setFrom("platform@finnup.in", 'FinnUp Team');
 	// 							// $email->addBcc('saravanan@thesquaircle.com');
 	// 							// $email->addBcc('sheik@thesquaircle.com');
 							
@@ -723,7 +723,7 @@ class Common extends CI_Controller {
 					$email = new \SendGrid\Mail\Mail();
 					$email->setSubject($subject);
 					$email->addContent("text/html", $message);
-					$email->setFrom('support@finnup.in', 'FinnUp Team');
+					$email->setFrom('platform@finnup.in', 'FinnUp Team');
 					// $email->addBcc('saravanan@thesquaircle.com');
 					// $email->addBcc('sheik@thesquaircle.com');
 					$email->addTo($to);    
@@ -891,14 +891,14 @@ class Common extends CI_Controller {
 						   "Please visit the link to view the profile and changes"."<br/>".
 						   "link : app.finnup.in/#/admin.";
 			 
-							$to = 'support@finnup.in';
+							$to = 'platform@finnup.in';
 						   
 						
 						   
 							$email = new \SendGrid\Mail\Mail();
 							$email->setSubject($subject);
 							$email->addContent("text/html", $message);
-							$email->setFrom("support@finnup.in", 'FinnUp Team');
+							$email->setFrom("platform@finnup.in", 'FinnUp Team');
 							$email->addTo($to);
 							$sendgrid = new \SendGrid("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");
 							try {
@@ -1140,12 +1140,12 @@ public function myproposals(){
 									"-----------------------------------------------<br/>
 									Team Finnup";
 
-									//$to = 'support@finnup.in';
+									//$to = 'platform@finnup.in';
 									$to = 'rec2004@gmail.com';
 									$email = new \SendGrid\Mail\Mail();
 									$email->setSubject($subject);
 									$email->addContent("text/html", $message);
-									$email->setFrom("support@finnup.in", 'FinnUp Team');
+									$email->setFrom("platform@finnup.in", 'FinnUp Team');
 									$email->addTo($to);							
 									$sendgrid = new \SendGrid("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");
 									try {
@@ -1220,13 +1220,13 @@ public function myproposals(){
 									"-----------------------------------------------<br/>
 									Team Finnup";
 
-									$to = 'support@finnup.in';
+									$to = 'platform@finnup.in';
 									//$to = 'rec2004@gmail.com';
 									//$to = 'parthiban24242000@gmail.com';
 									$email = new \SendGrid\Mail\Mail();
 									$email->setSubject($subject);
 									$email->addContent("text/html", $message);
-									$email->setFrom("support@finnup.in", 'FinnUp Team');
+									$email->setFrom("platform@finnup.in", 'FinnUp Team');
 									$email->addTo($to);							
 									$sendgrid = new \SendGrid("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");
 
@@ -1279,13 +1279,13 @@ public function myproposals(){
 									"-----------------------------------------------<br/>
 									Team Finnup";
 
-									$to = 'support@finnup.in';
+									$to = 'platform@finnup.in';
 									//$to = 'rec2004@gmail.com';
 									//$to = 'parthiban24242000@gmail.com';
 									$email = new \SendGrid\Mail\Mail();
 									$email->setSubject($subject);
 									$email->addContent("text/html", $message);
-									$email->setFrom("support@finnup.in", 'FinnUp Team');
+									$email->setFrom("platform@finnup.in", 'FinnUp Team');
 									$email->addTo($to);							
 									$sendgrid = new \SendGrid("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");
 									try {
@@ -1349,12 +1349,12 @@ public function myproposals(){
 									"-----------------------------------------------<br/>
 									Team Finnup";
 
-									$to = 'support@finnup.in';
+									$to = 'platform@finnup.in';
 									//$to = 'rec2004@gmail.com';
 									$email = new \SendGrid\Mail\Mail();
 									$email->setSubject($subject);
 									$email->addContent("text/html", $message);
-									$email->setFrom("support@finnup.in", 'FinnUp Team');
+									$email->setFrom("platform@finnup.in", 'FinnUp Team');
 									$email->addTo($to);							
 									$sendgrid = new \SendGrid("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");
 									try {
@@ -1822,13 +1822,13 @@ public function  addborroweruser()
 							  "-----------------------------------------------<br/>
 							  Team Finnup";
 
-							  $to = 'support@finnup.in';
+							  $to = 'platform@finnup.in';
 							  //$to = 'rec2004@gmail.com';
 							//   $to = 'parthiban24242000@gmail.com';
 							  $email = new \SendGrid\Mail\Mail();
 							  $email->setSubject($subject);
 							  $email->addContent("text/html", $message);
-							  $email->setFrom("support@finnup.in", 'FinnUp Team');
+							  $email->setFrom("platform@finnup.in", 'FinnUp Team');
 							  $email->addTo($to);							
 							  $sendgrid = new \SendGrid("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");
 

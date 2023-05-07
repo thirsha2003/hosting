@@ -360,14 +360,14 @@ class Connectorusers extends CI_Controller
                                         "-----------------------------------------------<br/>
                                         Team Finnup";
                                                 
-                                // $to = 'support@finnup.in';
+                                // $to = 'platform@finnup.in';
                                 //$to = 'rec2004@gmail.com';
                                 //$to = 'vinothskumar4@gmail.com';
                                 $to = $email;
                                 $email = new \SendGrid\Mail\Mail();
                                 $email->setSubject($subject);
                                 $email->addContent("text/html", $message);
-                                $email->setFrom("support@finnup.in", 'FinnUp Team');
+                                $email->setFrom("platform@finnup.in", 'FinnUp Team');
                                 $email->addTo($to);
                                 $sendgrid = new \SendGrid("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");
                                 try {
@@ -456,7 +456,7 @@ class Connectorusers extends CI_Controller
         
                                                                         $this->db->where('email', $params['data']['email']);
                                                                         $update = $this->db->update("fpa_partners", array('token'=>$token));
-                                                                        $txnArr[] = [
+                                                                        $tokenArr[] = [
                                                                                 'token' => $token
                                                                                         
                                                                                 ];
@@ -626,8 +626,8 @@ class Connectorusers extends CI_Controller
                                                                         $email = new \SendGrid\Mail\Mail();
                                                                         $email->setSubject($subject);
                                                                         $email->addContent("text/html", $message);
-                                                                        $email->setFrom('support@finnup.in', 'FinnUp Team');
-                                                                        // $email->setFrom('support@finnup.in', 'FinnUp Team');
+                                                                        $email->setFrom('platform@finnup.in', 'FinnUp Team');
+                                                                        // $email->setFrom('platform@finnup.in', 'FinnUp Team');
                                                                         // $email->addBcc('saravanan@thesquaircle.com');
                                                                         // $email->addBcc('sheik@thesquaircle.com');
                                                                         // $email->addBcc('dhanasekarancse08@gmail.com');
@@ -939,8 +939,8 @@ class Connectorusers extends CI_Controller
 					$email = new \SendGrid\Mail\Mail();
 					$email->setSubject($subject);
 					$email->addContent("text/html", $message);
-					$email->setFrom('support@finnup.in', 'FinnUp Team');
-					// $email->setFrom('support@finnup.in', 'FinnUp Team');
+					$email->setFrom('platform@finnup.in', 'FinnUp Team');
+					// $email->setFrom('platform@finnup.in', 'FinnUp Team');
 					// $email->addBcc('saravanan@thesquaircle.com');
 					// $email->addBcc('sheik@thesquaircle.com');
 					// $email->addBcc('dhanasekarancse08@gmail.com');
@@ -1030,7 +1030,7 @@ class Connectorusers extends CI_Controller
 						$email = new \SendGrid\Mail\Mail();
 						$email->setSubject($subject);
 						$email->addContent("text/html", $message);
-						$email->setFrom('support@finnup.in', 'FinnUp Team');
+						$email->setFrom('platform@finnup.in', 'FinnUp Team');
 								
 								 $email->addTo($to);							
 								$sendgrid = new \SendGrid("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");

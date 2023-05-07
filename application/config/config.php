@@ -32,7 +32,7 @@ $config['base_url'] .= preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME']))
 
 define('define_auth_user','frontend-user');
 define('define_auth_key','finnup');
-define('define_otp_fromemail','support@finnup.in');
+define('define_otp_fromemail','platform@finnup.in');
 define('define_otp_displayname','Finnup Admin Team');
 define('define_otp_subject','OTP from Finnup!');
 
