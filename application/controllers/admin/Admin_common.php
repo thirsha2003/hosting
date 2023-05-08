@@ -1034,6 +1034,8 @@ class Admin_common extends CI_Controller
 				$borrowerdetails = $this->db->query($sql)->result(); 
 				$data = $this->db->query($sql);
 
+				if($data->num_rows() >= 1){
+
 				
 				foreach ($data->result() as $row){
 				  $txnArr[] = $row->borrower_id;					
@@ -1050,9 +1052,18 @@ class Admin_common extends CI_Controller
 				// $this->db->query($sql)-result();
 				// $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
 				// $trnn[]= $data->id;
+
+				$result_slug=$this->db->query($result)->result();
+			}
+			else{
+				$result_slug='';
+			}
   
-				$resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails,'data1' =>$this->db->query($result)->result());
+				// $resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails,'data1' =>$this->db->query($result)->result());
+				
+				$resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails,'data1' =>$result_slug);
 				return json_output($respStatus,$resp);
+
 			}
 			else
 			{

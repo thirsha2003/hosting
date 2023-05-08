@@ -154,6 +154,30 @@ if(!function_exists('GetBalanceSheetLineItem')) {
     }
 }
 
+if(!function_exists('GetBalanceSheetAnalysisLineItem')) {
+    function GetBalanceSheetAnalysisLineItem($lineitems, $itemtitle, $period)
+    {
+        foreach($lineitems as $item)
+		{
+			if($item["label"] == $itemtitle)
+			{
+				if($item["values"] != null)
+				{
+					foreach($item["values"] as $valItem)
+					{
+						if($valItem["key"] == $period)
+						{
+							return $valItem["value"];
+						}
+					}
+				}
+			}
+		}
+
+        return 0;
+    }
+}
+
 if(!function_exists('GetFinancialSummary')) 
 {
     function GetFinancialSummary($balanceSheet, $profitloss, $periods)
@@ -735,9 +759,131 @@ if(!function_exists('GetFinancialSummaryFromDB'))
 }
 
 
+if(!function_exists('GetCashFlowAnalysisFromDB')) {
+	function GetCashFlowAnalysisFromDB($cfPeriods, $cfDbData, $unit = "million"){
+			$prevLabel = "";	
+		
+			$cfAnalysis = null;
+
+			$netProfitBeforTax = array("label" => "Net profit before taxation", "values" => null);
+			$adjustmentFor = array("label" => "Adjustment for :", "values" => null);
+			$depriciation = array("label" => "Depreciation", "values" => null);
+			$dividendIncome = array("label" => "Dividend Income", "values" => null);
+			$interestExp = array("label" => "Interest Expenses", "values" => null);
+			$interestRecvd = array("label" => "Interest Income", "values" => null);
+			$plOnSaleOfFAI = array("label" => "Profit / Loss on sale of fixed assets / investments", "values" => null);
+			$forexGainLoss = array("label" => "Foreign exchange gain/loss", "values" => null);
+			$exIncomeExpenses = array("label" => "Extraordinary income / expenses", "values" => null);
+			$opBeforeWCChanges = array("label" => "Operating profit before working capital changes", "values" => null);
+
+			$changeInCurrentAssets = array("label" => "Change in current assets", "values" => null);
+			$changeInCurrentLiabilities = array("label" => "Change in current liabilities", "values" => null);
+
+			$netCashFromOperatingActivities = array("label" => "Net cash from operating activities", "values" => null);
+			$netCashFromInvestingActivities = array("label" => "Net cash from investing activities", "values" => null);
+			$netCashFromFinancingActivities = array("label" => "Net cash from financing activities", "values" => null);
+
+			$netIncreaseinCashBankBalance = array("label" => "Net increase in Cash/Bank balance", "values" => null);
+			$cashBankBalanceInBegining = array("label" => "Cash/Bank balance in the begining", "values" => null);
+			$cashBankBalanceAtEnd = array("label" => "Cash/Bank balance at End", "values" => null);
+
+			
+			
+			
+			for($i = 0 ; $i < count($cfPeriods); $i++)
+			{
+				$periodItem = $cfPeriods[$i];
+
+				foreach($cfDbData as $cfDataItem)
+				{
+					if($cfDataItem->year == $periodItem["year"] && $periodItem["ptype"] == $cfDataItem->period_type)
+					{
+						$netProfitBeforTax["values"][$i]["key"] = $periodItem["key"];
+						$netProfitBeforTax["values"][$i]["value"] =  DisplayAmount($cfDataItem->net_profit_before_taxation, $unit);
+
+						$depriciation["values"][$i]["key"] = $periodItem["key"];
+						$depriciation["values"][$i]["value"] =  DisplayAmount($cfDataItem->depreciation, $unit);
+
+						$dividendIncome["values"][$i]["key"] = $periodItem["key"];
+						$dividendIncome["values"][$i]["value"] =  DisplayAmount($cfDataItem->dividend_income, $unit);
+
+						$interestExp["values"][$i]["key"] = $periodItem["key"];
+						$interestExp["values"][$i]["value"] =  DisplayAmount($cfDataItem->interest_expense, $unit);
+
+						$interestRecvd["values"][$i]["key"] = $periodItem["key"];
+						$interestRecvd["values"][$i]["value"] =  DisplayAmount($cfDataItem->interest_received, $unit);
+
+						$plOnSaleOfFAI["values"][$i]["key"] = $periodItem["key"];
+						$plOnSaleOfFAI["values"][$i]["value"] =  DisplayAmount($cfDataItem->profit_loss_on_sale_of_fixed_assets, $unit);
+
+						$forexGainLoss["values"][$i]["key"] = $periodItem["key"];
+						$forexGainLoss["values"][$i]["value"] =  DisplayAmount($cfDataItem->foreign_exchange_gains_loss, $unit);
+
+						$exIncomeExpenses["values"][$i]["key"] = $periodItem["key"];
+						$exIncomeExpenses["values"][$i]["value"] =  DisplayAmount($cfDataItem->extraordinary_income_expense, $unit);
+
+						$opBeforeWCChanges["values"][$i]["key"] = $periodItem["key"];
+						$opBeforeWCChanges["values"][$i]["value"] =  DisplayAmount($cfDataItem->operating_profit_before_wc_changes, $unit);
+
+						$changeInCurrentAssets["values"][$i]["key"] = $periodItem["key"];
+						$changeInCurrentAssets["values"][$i]["value"] =  DisplayAmount($cfDataItem->changes_in_current_assets, $unit);
+
+						$changeInCurrentLiabilities["values"][$i]["key"] = $periodItem["key"];
+						$changeInCurrentLiabilities["values"][$i]["value"] =  DisplayAmount($cfDataItem->changes_in_current_liabilities, $unit);
+
+						$netCashFromOperatingActivities["values"][$i]["key"] = $periodItem["key"];
+						$netCashFromOperatingActivities["values"][$i]["value"] =  DisplayAmount($cfDataItem->net_cash_from_operating_activities, $unit);
+
+						$netCashFromInvestingActivities["values"][$i]["key"] = $periodItem["key"];
+						$netCashFromInvestingActivities["values"][$i]["value"] =  DisplayAmount($cfDataItem->net_cash_from_investing_activities, $unit);
+
+						$netCashFromFinancingActivities["values"][$i]["key"] = $periodItem["key"];
+						$netCashFromFinancingActivities["values"][$i]["value"] =  DisplayAmount($cfDataItem->net_cash_from_financing_activities, $unit);
+
+						$netIncreaseinCashBankBalance["values"][$i]["key"] = $periodItem["key"];
+						$netIncreaseinCashBankBalance["values"][$i]["value"] =  DisplayAmount($cfDataItem->net_increase_in_cash_bank_balance, $unit);
+
+						$cashBankBalanceInBegining["values"][$i]["key"] = $periodItem["key"];
+						$cashBankBalanceInBegining["values"][$i]["value"] =  DisplayAmount($cfDataItem->cash_bank_balance_in_begining, $unit);
+
+						$cashBankBalanceAtEnd["values"][$i]["key"] = $periodItem["key"];
+						$cashBankBalanceAtEnd["values"][$i]["value"] =  DisplayAmount($cfDataItem->cash_bank_balance_at_end, $unit);
+
+					}
+				}		
+			}
+
+			$cfAnalysis[] = $netProfitBeforTax;
+			$cfAnalysis[] = $adjustmentFor;
+			$cfAnalysis[] = $depriciation;
+			$cfAnalysis[] = $dividendIncome;
+			$cfAnalysis[] = $interestExp;
+			$cfAnalysis[] = $interestRecvd;
+			$cfAnalysis[] = $plOnSaleOfFAI;
+			$cfAnalysis[] = $forexGainLoss;
+			$cfAnalysis[] = $exIncomeExpenses;
+			$cfAnalysis[] = $opBeforeWCChanges;
+
+			$cfAnalysis[] = $changeInCurrentAssets;
+			$cfAnalysis[] = $changeInCurrentLiabilities;
+
+			$cfAnalysis[] = $netCashFromOperatingActivities;
+			$cfAnalysis[] = $netCashFromInvestingActivities;
+			$cfAnalysis[] = $netCashFromFinancingActivities;
+
+			$cfAnalysis[] = $netIncreaseinCashBankBalance;
+			$cfAnalysis[] = $cashBankBalanceInBegining;
+			$cfAnalysis[] = $cashBankBalanceAtEnd;
+
+			return $cfAnalysis;
+		}
+}
+
+
+
 if(!function_exists('GetCashFlowAnalysis')) 
 {
-    function GetCashFlowAnalysis($balanceSheet, $profitloss, $periods)
+    function GetCashFlowAnalysis($balanceSheet, $profitloss, $periods, $bsAnalysis)
 	{
 			$prevLabel = "";	
 		
@@ -754,6 +900,19 @@ if(!function_exists('GetCashFlowAnalysis'))
 			$forexGainLoss = array("label" => "Foreign exchange gain/loss", "values" => null);
 			$exIncomeExpenses = array("label" => "Extraordinary income / expenses", "values" => null);
 			$opBeforeWCChanges = array("label" => "Operating profit before working capital changes", "values" => null);
+
+			 
+			$changeInCurrentAssets = array("label" => "Change in current assets", "values" => null);
+			$changeInCurrentLiabilities = array("label" => "Change in current liabilities", "values" => null);
+
+			$netCashFromOperatingActivities = array("label" => "Net cash from operating activities", "values" => null);
+			$netCashFromInvestingActivities = array("label" => "Net cash from investing activities", "values" => null);
+			$netCashFromFinancingActivities = array("label" => "Net cash from financing activities", "values" => null);
+
+			$netIncreaseinCashBankBalance = array("label" => "Net increase in Cash/Bank balance", "values" => null);
+			$cashBankBalanceInBegining = array("label" => "Cash/Bank balance in the begining", "values" => null);
+			$cashBankBalanceAtEnd = array("label" => "Cash/Bank balance at End", "values" => null);
+
 			
 			
 			
@@ -761,7 +920,13 @@ if(!function_exists('GetCashFlowAnalysis'))
 			
 			for($i = 0 ; $i < count($periods); $i++)
 			{
+				$periodItemLastYear = null;
 				$periodItem = $periods[$i];
+
+				if(count($periods) > $i+1)
+				{
+					$periodItemLastYear = $periods[$i+1];
+				}
 
 				$netProfitBeforTax["values"][$i]["key"] = $periodItem["key"];
 				$netProfitBeforTax["values"][$i]["value"] =  GetProfitandLossLineItem($profitloss, "Profit Before tax", $periodItem["key"]); 
@@ -812,6 +977,29 @@ if(!function_exists('GetCashFlowAnalysis'))
 
 				$opBeforeWCChanges["values"][$i]["key"] = $periodItem["key"];
 				$opBeforeWCChanges["values"][$i]["value"] =  $opBeforeWCChangesAmt;
+
+
+				$totalCurrentAssets = GetBalanceSheetAnalysisLineItem($bsAnalysis, "Total current assets", $periodItem["key"]); 
+				$totalCurrentAssetsLastYear = 0;
+				if($periodItemLastYear != null)
+				{
+					$totalCurrentAssetsLastYear = GetBalanceSheetAnalysisLineItem($bsAnalysis, "Total current assets", $periodItemLastYear["key"]); 
+				}
+
+				$changeInCurrentAssets["values"][$i]["key"] = $periodItem["key"];
+				$changeInCurrentAssets["values"][$i]["value"] =  $totalCurrentAssets - $totalCurrentAssetsLastYear;
+
+
+				$totalCurrentLiabilities = GetBalanceSheetAnalysisLineItem($bsAnalysis, "Total Current Liabilities", $periodItem["key"]); 
+				$totalCurrentLiabilitiesLastYear = 0;
+				if($periodItemLastYear != null)
+				{
+					$totalCurrentLiabilitiesLastYear = GetBalanceSheetAnalysisLineItem($bsAnalysis, "Total Current Liabilities", $periodItemLastYear["key"]); 
+				}
+
+				$changeInCurrentLiabilities["values"][$i]["key"] = $periodItem["key"];
+				$changeInCurrentLiabilities["values"][$i]["value"] =  $totalCurrentLiabilities - $totalCurrentLiabilitiesLastYear;
+				
 			}
 
 			$cfAnalysis[] = $netProfitBeforTax;
@@ -824,6 +1012,8 @@ if(!function_exists('GetCashFlowAnalysis'))
 			$cfAnalysis[] = $forexGainLoss;
 			$cfAnalysis[] = $exIncomeExpenses;
 			$cfAnalysis[] = $opBeforeWCChanges;
+			$cfAnalysis[] = $changeInCurrentAssets;
+			$cfAnalysis[] = $changeInCurrentLiabilities;
 			
 
 
@@ -3294,6 +3484,7 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
         return $balanceSheet;
     }
   }
+
 
 
 
