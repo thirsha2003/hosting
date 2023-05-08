@@ -326,7 +326,8 @@ class Borrower extends CI_Controller {
 										$resp = array('status' => 200,'message' =>  'Deleted Success');
 										
 									}
-							}elseif($doc == 'aadhar'){
+							}
+							elseif($doc == 'aadhar'){
 								$sql = "SELECT * FROM fp_director_details WHERE borrower_id =".$br_id." and aadhar_url = '".$url."'";
 								if(count($this->db->query($sql)->result())==0){
 										json_output(400,array('status' => 400,'message' => 'Bad request.'));
@@ -336,7 +337,19 @@ class Borrower extends CI_Controller {
 										$resp = array('status' => 200,'message' =>  'Deleted Success');
 										
 									}
-							}else{
+							}
+							elseif($doc == 'address'){
+								$sql = "SELECT * FROM fp_director_details WHERE borrower_id =".$br_id." and address_url = '".$url."'";
+								if(count($this->db->query($sql)->result())==0){
+										json_output(400,array('status' => 400,'message' => 'Bad request.'));
+									}else{
+										$this->db->where(array('borrower_id'=>$br_id,"address_url"=>$url) );
+										$this->db->update('fp_director_details', array("address_url"=>null)); 
+										$resp = array('status' => 200,'message' =>  'Deleted Success');
+										
+									}
+							}
+							else{
 
 							}
 							
