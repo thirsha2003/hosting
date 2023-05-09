@@ -43,7 +43,7 @@ class Borrowerauth extends CI_Controller {
 					$this->db->update('fpa_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
 
 					$resp = array('status' => 200,'message' =>  'Success','data' => $token, 'key' => $txnArr);
-					json_output($respStatus,$resp);
+					json_output(200,$resp);
 				}else{
 					json_output(200,array('status' => 404,'message' => 'Field missing'));
 				}

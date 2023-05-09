@@ -53,6 +53,8 @@ class Userverification extends CI_Controller
 						$count = $this->db->query($sql)->num_rows();
 						if($count>0){
 								$num_str = $this->Otp->generate_customotp();
+
+
 							
 								$subject ="Finnup OTP";
 								$message = "Your otp is : " .$num_str;
@@ -72,13 +74,17 @@ class Userverification extends CI_Controller
 								} catch (Exception $e) {
 									echo 'Caught exception: ',  $e->getMessage(), "\n";
 								}
+
+
 								$alldata = $this->db->query($sql)->row();
 								$insert_array = array();
 								$insert_array['user_id'] = $alldata->id;
 								$insert_array['email'] = $alldata->email;
 								$insert_array['mobile'] = $alldata->mobile;
 								$insert_array['otp'] = $num_str;
-								$this->db->insert("fp_login_history", $insert_array);		
+								$this->db->insert("fp_login_history", $insert_array);	
+								
+								
 							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
 						}else{
 							$resp = array('status' => 201,'message' =>  'Success','data' => $this->db->query($sql)->row());
@@ -712,7 +718,7 @@ public function verifyemail1()
 											'phone'=>$mobile,
 											'email'=>$email,
 										];
-										$this->db->insert("fp_connector_user_details", $connector_details);
+										$this->db->insert("fp_connector_user_details", $conector_details);
 
 									}
                               
@@ -1215,7 +1221,7 @@ public function verifyemailconnector()
 									$lender_array['poc_name'] 	=$name;
 									$lender_array['mobile'] 	=$mobile;
 									$lender_array['email'] 		=$email;
-									$lender_array['lender_master_id'] =$lenderid;
+									// $lender_array['lender_master_id'] =$lenderid;
 									$lender_array['location_id'] =$location_id;
 									$lender_array['department_slug'] =$department_slug;
 									$this->db->insert("fp_lender_user_details", $lender_array);
