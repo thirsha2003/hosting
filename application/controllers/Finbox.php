@@ -120,20 +120,19 @@ class Finbox extends CI_Controller
 
           }
 
-        // $borrower_id=50;
+    
         try {
 
             // This url is  get pdfs 
 
             $Finboxapi = "https://portal.finbox.in/bank-connect/v1/entity/";
             $finboxendpoint = "/get_pdfs";
-            $entityid = $entity_id;
-            $entityid = "ad2281b8-b75b-4cfa-a532-798288aa6395";
+            $entityid = $entity_id; 
             $finbox_str = $Finboxapi . $entityid . $finboxendpoint;
             $curl = curl_init();
 
             // print_r($finbox_str);
-            // exit();
+            
 
             // print_r("-------------Url------------------");  
 
@@ -191,10 +190,6 @@ class Finbox extends CI_Controller
                 $Addkey_name = $Folder_name . $keyname . ".pdf";
 
                 // print_r($Addkey_name);
-
-
-
-
                 // print_r("-------Keyname------------");
 
                 $credentials = new Aws\Credentials\Credentials('AKIAWJIM4CKQMIAM5R5L', 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV');
@@ -294,9 +289,6 @@ class Finbox extends CI_Controller
             $result = json_decode($response, true);
 
             // print_r($result);
-
-
-
 
             foreach ($result['reports'] as $responsedata) {
                 $finboxpdf = [
@@ -507,7 +499,8 @@ class Finbox extends CI_Controller
                         $amt_credit_total = $amt_credit_total + $amt_credit_values[$i];
                     }
                     ;
-                    $amt_credit_totals = $amt_credit_total / $amt_credit_count;
+                    // $amt_credit_totals = $amt_credit_total / $amt_credit_count;   
+                    $amt_credit_totals = $amt_credit_total;  
 
                     //  print_r($amt_credit_totals);  
                     $amt_debit_total = 0;
@@ -515,7 +508,8 @@ class Finbox extends CI_Controller
                         $amt_debit_total = $amt_debit_total + $amt_debit_values[$i];
                     }
                     ;
-                    $amt_debit_totals = $amt_debit_total / $amt_debit_count;
+                    // $amt_debit_totals = $amt_debit_total / $amt_debit_count; 
+                    $amt_debit_totals = $amt_debit_total;
 
                     //  print_r($amt_debit_totals);  
 
@@ -524,7 +518,8 @@ class Finbox extends CI_Controller
                         $cnt_outward_cheque_bounce_debit_total = $cnt_outward_cheque_bounce_debit_total + $cnt_outward_cheque_bounce_debit_values[$i];
                     }
                     ;
-                    $cnt_outward_cheque_bounce_debit_totals = $cnt_outward_cheque_bounce_debit_total / $cnt_outward_cheque_bounce_debit_count;
+                    // $cnt_outward_cheque_bounce_debit_totals = $cnt_outward_cheque_bounce_debit_total / $cnt_outward_cheque_bounce_debit_count;
+                    $cnt_outward_cheque_bounce_debit_totals = $cnt_outward_cheque_bounce_debit_total;
 
                     // print_r($cnt_outward_cheque_bounce_debit_totals);  
                     $cnt_inward_cheque_bounce_credit_total = 0;
@@ -533,7 +528,9 @@ class Finbox extends CI_Controller
                     }
                     ;
 
-                    $cnt_inward_cheque_bounce_credit_totals = $cnt_inward_cheque_bounce_credit_total / $cnt_inward_cheque_bounce_credit_count;
+                    // $cnt_inward_cheque_bounce_credit_totals = $cnt_inward_cheque_bounce_credit_total / $cnt_inward_cheque_bounce_credit_count;
+                    $cnt_inward_cheque_bounce_credit_totals = $cnt_inward_cheque_bounce_credit_total;
+
                     //  print_r($cnt_outward_cheque_bounce_debit_totals); 
                     $avg_credit_transaction_size_total = 0;
 
