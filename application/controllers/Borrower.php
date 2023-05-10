@@ -93,7 +93,7 @@ class Borrower extends CI_Controller {
 				  {
 					//   $borrowerid = $params['data']['borrower_id'];
 					$id=$params['data'];
-					$sql = "SELECT fp_products.slug as product_slug, fp_products.name as product_name , fp_borrower_loanrequests.id, fp_borrower_loanrequests.loan_min , fp_borrower_loanrequests.loan_max , fp_borrower_loanrequests.tenor_min, fp_borrower_loanrequests.tenor_max, fp_borrower_loanrequests.roi_min, fp_borrower_loanrequests.roi_max, Date(fp_borrower_loanrequests.created_at) as reqdata, fp_borrower_loanrequests.lender_product_details_id ,fp_borrower_loanrequests.status as status, fp_borrower_loanrequests.borrower_id FROM fp_products, fp_borrower_loanrequests WHERE fp_borrower_loanrequests.product_slug = fp_products.slug and fp_borrower_loanrequests.borrower_id = ".$id ." ORDER BY fp_borrower_loanrequests.id DESC ". $where ;
+					$sql = "SELECT fp_products.slug as product_slug, fp_products.name as product_name , fp_borrower_loanrequests.id, fp_borrower_loanrequests.loan_min , fp_borrower_loanrequests.loan_max , fp_borrower_loanrequests.tenor_min, fp_borrower_loanrequests.tenor_max, fp_borrower_loanrequests.roi_min, fp_borrower_loanrequests.roi_max, Date(fp_borrower_loanrequests.created_at) as reqdata, fp_borrower_loanrequests.lender_product_details_id ,fp_borrower_loanrequests.loan_request_workflow_status as status, fp_borrower_loanrequests.borrower_id FROM fp_products, fp_borrower_loanrequests WHERE fp_borrower_loanrequests.product_slug = fp_products.slug and fp_borrower_loanrequests.borrower_id = ".$id ." ORDER BY fp_borrower_loanrequests.id DESC ". $where ;
 					$results = $this->db->query($sql)->result();
 					$num_results =sizeof($results);
 					  if($num_results >0){

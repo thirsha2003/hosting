@@ -18,6 +18,7 @@ class MTalkz
         $slugbl=$slug;
         $msgTemplateBorrower 	="Dear customer, use this One Time Password " .$otp. " to log in to your FinnUp Borrower account. This OTP will be valid for the next 2 mins.";
         $msgTemplateLender 		="Dear customer, use this One Time Password " .$otp. " to log in to your FinnUp Lender account. This OTP will be valid for the next 2 mins.";
+		$msgTemplateConnector     ="Dear customer, use this One Time Password " .$otp. " to log in to your FinnUp Connector account. This OTP will be valid for the next 2 mins.";
         $msgTemplateOthers		="Dear customer, use this One Time Password " .$otp. " to log in to your FinnUp account. This OTP will be valid for the next 2 mins.";
         
         //    $config              = config('config\mTalkzconfig');
