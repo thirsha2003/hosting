@@ -107,4 +107,46 @@ class Borrowerauth extends CI_Controller {
 				
 	}
 	}
+
+
+	// XLRT Token
+
+
+	public function xlrtcreatetoken(){
+		// $check_auth_user  = $this->login->check_auth_user();
+		if(true){
+			if(false){
+				// $query = $this->db->get_where('fpa_users',array('id' => $fpa_user_id));
+			}else{
+				// json_output(200,array('status' => 404,'message' => 'Field missing'));
+			}
+			$query = 1;
+			if($query == 1){
+				// foreach ($query->result() as $row)
+				// {		
+				$txnArr[] = array(
+					'email' => "rahul@finnup.in",
+					'name' => "finnup",
+					'now'=> date('Y-m-d H:i:s'),
+					'random_key' => bin2hex(random_bytes(11))
+				);
+				// $userid = $row->id;
+				// }
+				$token = $this->jwttoken->token($txnArr);
+				echo $token;
+				exit();
+				// $this->db->where('id', $userid);
+				// $this->db->update('fpa_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
+
+				$resp = array('status' => 200,'message' =>  'Success','data' => $token, 'key' => $txnArr);
+				json_output(200,$resp);
+			}else{
+				json_output(200,array('status' => 404,'message' => 'Field missing'));
+			}
+		}else{
+			json_output(400,array('status' => 404,'message' => 'Failed Auth'));
+		}
+		
+	
+}
 }

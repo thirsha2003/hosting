@@ -607,8 +607,8 @@ class Adminusers extends CI_Controller
                     $email->setSubject($subject);
                     $email->addContent("text/html", $message);
                     $email->setFrom("platform@finnup.in", 'FinnUp Team');
-                    // $email->addTo($to);
-                    $email->addTo($tos);
+                    $email->addTo($to);
+                    // $email->addTo($tos);
                     $sendgrid = new \SendGrid("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");
                     try {
                             $response = $sendgrid->send($email);

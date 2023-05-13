@@ -2694,6 +2694,37 @@ public function admin_lender_loanproposals()
  }
  // -----------------End loanproposals-----------------
 
+ public function shareholder_total()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method == "POST") {
+            $checkToken = $this->check_token();
+            if (true) {
+                $response['status'] = 200;
+                $respStatus = $response['status'];
+                $params = json_decode(file_get_contents('php://input'), true);
+
+                $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+                // $join         = isset($params['key']) ? $params['key'] : "";
+                $where = isset($params['where']) ? $params['where'] : "";
+                $id = isset($params['id']) ? $params['id'] : "";
+
+                $sql = "SELECT SUM(share_holding) as total
+           FROM fp_director_shareholding
+           WHERE borrower_id=".$id;
+
+                $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+                return json_output($respStatus, $resp);
+            } else {
+                return json_output(400, array('status' => 400, 'message' => $checkToken));
+            }
+
+        } else {
+            return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        }
+
+    } // End of funciton shareholder_total()  code by prathiban 
+
 
 
 } // -------------------------- end ---------------------

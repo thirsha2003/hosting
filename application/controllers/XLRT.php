@@ -11,15 +11,58 @@ include APPPATH . 'libraries/Femail.php';
 class XLRT extends CI_Controller 
 {
 
-	public function __construct()
-    {
+	      public function __construct()
+          {
 		parent::__construct();
 		$this->load->helper('json_output');
         $this->load->helper('finance');
         $this->load->library('encryption');
-    }
 
-    public function  xlrtlogin(){
+		$this->ci =& get_instance();
+		$this->ci->load->database();
+          }
+
+
+          public function xlrt_entityid_update()
+          {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        } else {
+
+            if (true) {
+                $response['status'] = 200;
+                $respStatus = $response['status'];
+                $params = json_decode(file_get_contents('php://input'), TRUE);
+                try {
+                    $borrower_id = $params['borrower_id'];
+                    $entity_id=$params['data']['entityid']; 
+                    $entity_name=$params['data']['entityname']; 
+
+                    $fp_borrower_details = array(
+                        'xlrt_entity_id' => $entity_id,
+                        'xlrt_custemer_name' => $entity_name,
+                        
+                    );
+
+                    $this->db->where('user_id', $borrower_id);
+                    $this->db->update('fp_borrower_user_details', $fp_borrower_details);
+                    // $result = $this->db->query($sql)->result();
+
+                    json_output(200, array('status' => 200, 'data'=>$entity_id,'data1'=>$entity_name, 'message' => 'successfully Added'));
+                } catch (Exception $e) {
+                    json_output(200, array('status' => 401, 'message' => $e->getMessage()));
+                }
+            } else {
+                json_output(200, array('status' => 401, 'message' => "Auth Failed "));
+            }
+
+        }
+
+          }   // xlrt_entityid_update
+
+        public function  xlrtlogin(){
 
         $response['status'] = 200;
         $respStatus = $response['status'];
@@ -119,14 +162,9 @@ class XLRT extends CI_Controller
 
                     }
                 }
-            }
-
-
-
-
-
-     function PostProcessingStatus()
-    {
+         }
+         public function PostProcessingStatus()
+         {
         $method = $_SERVER['REQUEST_METHOD'];
         if ($method == 'POST') {
             ///////////commented to skip the user login
@@ -181,10 +219,10 @@ class XLRT extends CI_Controller
             return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
 
         }
-    }
-
-    function authXLRT()
-    {
+         }
+   
+          function authXLRT()
+          {
 
         $response['status'] = 200;
         $respStatus = $response['status'];
@@ -257,10 +295,10 @@ class XLRT extends CI_Controller
 
 
      
-    }
+          }
 
-    function getExtractionResponse($dmsCode, $accesstoken)
-    {
+          function getExtractionResponse($dmsCode, $accesstoken)
+          {
         $url = 'https://finnupuat.xlrt.ai/fst-api/financialdocs/' + $dmsCode + '/extraction'; 
         $url = 'https://finnupuat.xlrt.ai/fst-api/financialdocs/' + 'ad2b3047236c42c382b0e599716a1eac' + '/extraction'; 
 
@@ -276,13 +314,13 @@ class XLRT extends CI_Controller
 
         $resp = curl_exec($curl);
 
-    }
+          }
 
-    function headersToArray($str)
-    {
-        $headers = array();
-        $headersTmpArray = explode("\r\n", $str);
-        for ($i = 0; $i < count($headersTmpArray); ++$i) {
+           function headersToArray($str)
+           {
+           $headers = array();
+           $headersTmpArray = explode("\r\n", $str);
+           for ($i = 0; $i < count($headersTmpArray); ++$i) {
             // we dont care about the two \r\n lines at the end of the headers
             if (strlen($headersTmpArray[$i]) > 0) {
                 // the headers start with HTTP status codes, which do not contain a colon so we can filter them out too
@@ -294,11 +332,10 @@ class XLRT extends CI_Controller
             }
         }
         return $headers;
-    }
- 
+           }
         
-    function DisplayAmount($amount, $unit)
-    {
+           function DisplayAmount($amount, $unit)
+           {
                 $displayAmount = 0;
         
                 switch($unit)
@@ -317,12 +354,12 @@ class XLRT extends CI_Controller
                 }
         
                 return number_format((float)$displayAmount, 2, '.', '');
-    }
-            
+           }
+                   
         
         
-    function GetBalanceSheetData11()
-    {
+           function GetBalanceSheetData11()
+           {
 					$method = $_SERVER['REQUEST_METHOD'];
 					if($method =="POST")
 					{
@@ -417,22 +454,18 @@ class XLRT extends CI_Controller
                                   }
                               }
                           }
-
-
                    }
                 //var_dump($bsData);
                 // return "SDS";
                 // return $bsData;
                 $resp = array('status' => 200,'message' =>  'Success','data' => $bsData);
                 json_output(200,$resp);
-               
-
                 // else{
                 //     json_output($respStatus,$resp);
                 // }
    
-    }
-         
+           }
+                
             // function GetIncomeStatementData($jsonData, $type)
             function GetBalanceSheetData()
             {
@@ -566,9 +599,679 @@ class XLRT extends CI_Controller
                         return json_output(200,array('status' => 400,'Message' => "Invalid Authentication"));
                     }
                 }
-            }
+            } // End of GetBalanceSheetdata
+
+            public function finnupxlrtwebhook()
+            {
+                $response['status'] = 200;
+                $respStatus = $response['status'];
+                $method = $_SERVER['REQUEST_METHOD'];  
+                if ($method != 'POST') {
+                    json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+                } else {
+
+                    $token   = $this->ci->input->get_request_header('XlrtToken', TRUE);
+                    $api_key   = $this->ci->input->get_request_header('Xlrt_Api_key', TRUE);
+
+                    $xlrt_token=$this->config->item('XlrtToken');
+                    $xlrt_api_key=$this->config->item('Xlrt_Api_key');
+
+                    if($xlrt_token==$token && $xlrt_api_key==$api_key){
+                        if ($response['status'] == 200) {
+                            $params = json_decode(file_get_contents('php://input'), TRUE);
+    
+                            $state = isset($params['state']) ? $params['state'] : " ";
+                            $dmscode = isset($params['dmscode']) ? $params['dmscode'] : " ";
+    
+                            if($state="ProcessingSuccess"){
+
+                                $this->xlrtgetExtractionResponse($dmscode);      
+                                json_output(200, array('status' => 200,'message' => 'Success!')); 
+            
+                            }
+                        }
+
+                    }
+                    else{
+                        json_output(400,array('status' => 404,'message' => 'Authentication credentials were not provided'));
+
+                    }  
+                    //json_output(200, array('status' => 200,'message' => 'Success!')); 
+                }
+        
+            }  
+            //  end of finnupxlrtwebhook
+            private function getborrowerid($dmscode){
+
+                $sql = "select  borrower_id,jwt_token from fp_xlrt_response where dmscode="."$dmscode";
+                 $result = $this->db->query($sql)->result();
+                 return $result[0]->borrower_id;
+            }  // End of getborrowerid 
+
+            private  function  xlrtgetExtractionResponse($dmscode){
+
+
+
+                $borrower_id = $this->getborrowerid($dmscode);
+
+                $extratin_url = "https://finnupuat.xlrt.ai/fst-api//financialdocs/";
+                $extration_url_end = "/extraction?checkpoints=true&children=true";
+                $dmscodes = $dmscode; 
+                $xlrt_str = $extratin_url . $dmscodes . $extration_url_end;
+
+               $ch = curl_init();
+
+                curl_setopt_array($ch, array(
+                CURLOPT_URL => $xlrt_str,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+                CURLOPT_HTTPHEADER => array(
+                    'accept: */*',
+                    'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmaW5udXB1YXQxIiwiaWF0IjoxNjgzODc0Nzc4LCJleHAiOjE2ODM5MzYwMDAsImF1dGhvcml0aWVzIjp7ImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1RFTkFOVF9BRE1JTiJ9XSwic3Vic2NyaXB0aW9uIjp7ImRvY3R5cGVzIjp7IkZTVCI6W119LCJzcHJlYWR0ZW1wbGF0ZXMiOlt7ImlkIjowLCJuYW1lIjoiU3RhbmRhcmRfREUiLCJjb2RlIjoiVF9ERVRBSUxFRF9TVEFOREFSRCJ9XSwibmFtZWFsaWFzZXMiOltdLCJzdWJmbGFncyI6Mywic3Vic2NyaXB0aW9uIjp7ImVsZW1lbnRzIjpbeyJyZXNvdXJjZXMiOlt7ImlkIjoiRlNUIn1dLCJyZXNvdXJjZXR5cGUiOiJET0NVTUVOVCJ9XX0sInRlbmFudElkIjoiMGY0N2M0ZmQtMzQxYi00NDgzLTg1YzQtYmY5ZDA3NDkzZDM0IiwidGVuYW50TmFtZSI6ImZpbm51cHVhdCIsImJ1Y2tldCI6ImRlbW8xLWJib3giLCJwZXJtaXNzaW9uIjoyMzMxNTEsImRlZmF1bHR2YWx1ZSI6bnVsbCwicG9ydGZvbGlvIjpudWxsfX19.mQRQ4FqsGEm48QZEfvlqmLV0C9fH66oyF2RlPg0_Ue8',
+                ),
+            )
+            );
+              $response_xlrt = curl_exec($ch);
+              curl_close($ch);
+              $xlrt_response= json_decode($response_xlrt, true);
+
+               $this->AnalyzeData($borrower_id,$xlrt_response) ;
+
+            }  // End of XlrtgetExtractionResponse
                 
-            function AnalyzeData()
+            private function AnalyzeData($borrower_id,$xlrt_response)
+            {
+                        $financejson 	= $xlrt_response;   
+                        $financialstype = "STA";
+
+                        $data["balancesheetdata"] = GetBalanceSheetData($financejson, $financialstype);
+                        $data["profitandloss"] = GetProfitAndLoss($financejson, $financialstype);
+                        
+                        
+                        $data["balancesheetL"] = GetBalanceSheetLiabilities($financejson, $financialstype);
+                        $data["balancesheetA"] = GetBalanceSheetAssets($financejson, $financialstype);
+        
+        
+                        $dataPeriods = $data["balancesheetdata"]["periods"];
+        
+                        $planalysis = GetProfitAndLossAnalysis($data["profitandloss"], $data["balancesheetdata"]["periods"]);
+                        $bsanalysis = GetBalanceSheetAnalysis($data["balancesheetdata"]["lineitems"], $data["balancesheetdata"]["periods"]);
+                        $financialsummary = GetFinancialSummary($data["balancesheetdata"]["lineitems"], $data["profitandloss"], $data["balancesheetdata"]["periods"]);
+                        $cfAnalysis = GetCashFlowAnalysis($data["balancesheetdata"]["lineitems"], $data["profitandloss"], $data["balancesheetdata"]["periods"], $bsanalysis);
+        
+                        $data["planalysis"] = array("periods" => $planalysis, "lineitems" => $planalysis);
+                        $data["bsanalysis"] = array("periods" => $data["balancesheetdata"]["periods"], "lineitems" => $bsanalysis);
+                        $data["financialsummary"] = array("periods" => $data["balancesheetdata"]["periods"], "lineitems" => $financialsummary);
+                        $data["cfanalysis"] = array("periods" => $data["balancesheetdata"]["periods"], "lineitems" => $cfAnalysis);
+        
+        
+                        $bsaInsertSql = " INSERT INTO `fp_borrower_financials_bsanalysis` (`borrower_id`, `period_type`, `month`, `year`, `result_type`, `equity_share_capital`, `reserve_and_surplus`, `total_equity`, `long_term_borrowings`, `deferred_tax_liability`, `other_liabilities`, `total_non_current_liabilities`, `short_term_borrowings`, `trade_payables`, `other_current_liabilities`, `total_current_liabilities`, `total_equity_and_liabilities`, `property_plant_equipments`, `intangible_assets`, `non_current_assets`, `total_non_current_assets`, `inventories`, `current_investments`, `trade_receivables`, `cash_bank_balance`, `other_current_assets`, `total_assets`, `total_current_assets`) ";
+                        $bsaInsertSql.= " VALUES ";
+                        
+                        
+                        // For Balance Sheet Analysis
+                        for($i = 0 ; $i < count($dataPeriods); $i++)
+                        {
+                            $currentDataPeriod = $dataPeriods[$i];
+        
+                            $period_type = $currentDataPeriod["ptype"];
+                            $pmonth = "0";
+                            $pyear = $currentDataPeriod["year"];
+                            $result_type = "";
+                            
+                            $equity_share_capital = 0;
+                            $reserve_and_surplus = 0;
+                            $total_equity = 0;
+                            $long_term_borrowings = 0;
+                            $deferred_tax_liability = 0;
+                            $other_liabilities = 0;
+                            $total_non_current_liabilities = 0;
+                            $short_term_borrowings = 0;
+                            $trade_payables = 0;
+                            $other_current_liabilities = 0;
+                            $total_current_liabilities = 0;
+                            $total_equity_and_liabilities = 0;
+        
+                            $property_plant_equipments = 0;
+                            $intangible_assets = 0;
+                            $non_current_assets = 0;
+                            $total_non_current_assets = 0;
+                            $inventories = 0;
+                            $current_investments = 0;
+                            $trade_receivables = 0;
+                            $cash_bank_balance = 0;
+                            $other_current_assets = 0;
+                            $total_current_assets = 0;
+                            $total_assets = 0;
+        
+                            foreach($bsanalysis as $lineitem)
+                            {
+                                if($lineitem["values"] != null && count($lineitem["values"]) > 0)
+                                {
+                                    foreach($lineitem["values"] as $valueItem)
+                                    {
+                                        if($valueItem["key"] == $currentDataPeriod["key"])
+                                        {
+                                            switch($lineitem["label"])
+                                            {
+                                                case "Equity Share Capital":
+                                                    $equity_share_capital = $valueItem["value"];
+                                                    break;
+                                                case "Reserves and Surplus":
+                                                    $reserve_and_surplus = $valueItem["value"];
+                                                    break;
+                                                case "Total Equity":
+                                                    $total_equity = $valueItem["value"];
+                                                    break;
+                                                case "Long Term Borrowings":
+                                                    $long_term_borrowings = $valueItem["value"];
+                                                    break;
+                                                case "Deferred tax liabilities":
+                                                    $deferred_tax_liability = $valueItem["value"];
+                                                    break;
+                                                case "Other liabilities":
+                                                    $other_liabilities = $valueItem["value"];
+                                                    break;
+                                                case "Total non current liabilities":
+                                                    $total_non_current_liabilities = $valueItem["value"];
+                                                    break;
+                                                case "Short term Borrowings":
+                                                    $short_term_borrowings = $valueItem["value"];
+                                                    break;
+                                                case "Trade payables":
+                                                    $trade_payables = $valueItem["value"];
+                                                    break;
+                                                case "Other Current Liabilities":
+                                                    $other_current_liabilities = $valueItem["value"];
+                                                    break;
+                                                case "Total Current Liabilities":
+                                                    $total_current_liabilities = $valueItem["value"];
+                                                    break;
+                                                case "Total Equity and liabilities":
+                                                    $total_equity_and_liabilities = $valueItem["value"];
+                                                    break;
+                                                case "Property, Plant & Equipments":
+                                                    $property_plant_equipments = $valueItem["value"];
+                                                    break;
+                                                case "Intangible assets":
+                                                    $intangible_assets = $valueItem["value"];
+                                                break;
+                                                case "Non current assets":
+                                                    $non_current_assets = $valueItem["value"];
+                                                    break;
+                                                case "Total Non current assets":
+                                                    $total_non_current_assets = $valueItem["value"];
+                                                    break;
+                                                case "Inventories":
+                                                    $inventories = $valueItem["value"];
+                                                    break;
+                                                case "Current Investments":
+                                                    $current_investments = $valueItem["value"];
+                                                break;
+                                                case "Trade Receivables":
+                                                    $trade_receivables = $valueItem["value"];
+                                                    break;
+                                                case "Cash & Bank Balances":
+                                                    $cash_bank_balance = $valueItem["value"];
+                                                    break;
+                                                case "Other  current assets":
+                                                    $other_current_assets = $valueItem["value"];
+                                                    break;
+                                                case "Total current assets":
+                                                    $total_current_assets = $valueItem["value"];
+                                                    break;
+                                                case "Total assets":
+                                                    $total_assets = $valueItem["value"];
+                                                    break;
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                
+        
+                            }
+        
+                            $bsaInsertSql.= " ('$borrower_id', '$period_type', '$pmonth', '$pyear', 'audited', '$equity_share_capital', '$reserve_and_surplus', '$total_equity', ";
+                            $bsaInsertSql.= " '$long_term_borrowings', '$deferred_tax_liability', '$other_liabilities', '$total_non_current_liabilities', ";
+                            $bsaInsertSql.= " '$short_term_borrowings', '$trade_payables', '$other_current_liabilities', ";
+                            $bsaInsertSql.= " '$total_current_liabilities', '$total_equity_and_liabilities', '$property_plant_equipments', '$intangible_assets', ";
+                            $bsaInsertSql.= " '$non_current_assets', '$total_non_current_assets', ";
+                            $bsaInsertSql.= " '$inventories', '$current_investments', '$trade_receivables', '$cash_bank_balance', '$other_current_assets', '$total_assets', '$total_current_assets') ";
+        
+                            if($i < count($dataPeriods) - 1)
+                            {
+                                $bsaInsertSql.= " , ";    
+                            }
+                            
+                        }
+        
+                        $this->db->query("Delete from `fp_borrower_financials_bsanalysis` where borrower_id = '$borrower_id' ");
+                        $data["bsaInsertSql"] = $bsaInsertSql;
+                        $this->db->query($bsaInsertSql);
+        
+                        // For Profit & Loss Analysis
+        
+                        $plaInsertSql = " INSERT INTO `fp_borrower_financials_planalysis` (`borrower_id`, `period_type`, `month`, `year`, `result_type`, `revenue_from_operations`, `cost_of_material_purchased`, `depriciation_and_amortisation_expense`, `changes_in_inventories`, `employee_benefits_expenses`, `finance_cost`, `other_income`, `total_income`, `other_expenses`, `total_expenses`, `profit_before_tax`, `current_tax`, `deferred_tax`, `profit_after_tax`) ";
+                        $plaInsertSql.= " VALUES ";
+                        for($i = 0 ; $i < count($dataPeriods); $i++)
+                        {
+                            $currentDataPeriod = $dataPeriods[$i];
+        
+                            $period_type = $currentDataPeriod["ptype"];
+                            $pmonth = "0";
+                            $pyear = $currentDataPeriod["year"];
+                            $result_type = "";
+                            
+                            $revenueFromOperations = 0;
+                            $costOfMaterialPurchased = 0;
+                            $depreciationAndAmortisationExpense = 0 ;
+                            $changesInInventories = 0 ;
+                            $employeeBenefitsExpense = 0;
+                            $financeCosts = 0;
+                            $otherIncome = 0;
+                            $totalIncome = 0;
+                            $otherExpenses = 0;
+                            $totalExpenses = 0;
+                            $profitBeforeTax = 0;
+                            $currentTax = 0;
+                            $deferredTax = 0;
+                            $profitAfterTax = 0;
+                            
+        
+                            foreach($planalysis as $lineitem)
+                            {
+                                if($lineitem["values"] != null && count($lineitem["values"]) > 0)
+                                {
+                                    foreach($lineitem["values"] as $valueItem)
+                                    {
+                                        if($valueItem["key"] == $currentDataPeriod["key"])
+                                        {
+                                            switch($lineitem["label"])
+                                            {
+                                                case "Revenue from Operations":
+                                                    $revenueFromOperations = $valueItem["value"];
+                                                    break;
+                                                case "Cost of Material Purchased":
+                                                    $costOfMaterialPurchased = $valueItem["value"];
+                                                    break;
+                                                case "Depreciation and amortisation expense":
+                                                    $depreciationAndAmortisationExpense = $valueItem["value"];
+                                                    break;
+                                                case "Changes in inventories of finished and semi-finished goods, stock in trade and work in progress":
+                                                    $changesInInventories = $valueItem["value"];
+                                                    break;                                            
+                                                case "Employee Benefits Expense":
+                                                    $employeeBenefitsExpense = $valueItem["value"];
+                                                    break;
+                                                case "Finance Costs":
+                                                    $financeCosts = $valueItem["value"];
+                                                    break;
+                                                case "Other Income":
+                                                    $otherIncome = $valueItem["value"];
+                                                    break;
+                                                case "Total Income":
+                                                    $totalIncome = $valueItem["value"];
+                                                    break;
+                                                case "Other Expenses":
+                                                    $otherExpenses = $valueItem["value"];
+                                                    break;
+                                                case "Total Expenses":
+                                                    $totalExpenses = $valueItem["value"];
+                                                    break;
+                                                case "Profit Before Tax":
+                                                    $profitBeforeTax = $valueItem["value"];
+                                                    break;
+                                                case "Current tax":
+                                                    $currentTax = $valueItem["value"];
+                                                    break;
+                                                case "Deferred tax":
+                                                    $deferredTax = $valueItem["value"];
+                                                    break;
+                                                case "Profit After Tax":
+                                                    $profitAfterTax = $valueItem["value"];
+                                                    break;
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                
+        
+                            }
+        
+                            $plaInsertSql.= " ('$borrower_id', '$period_type', '$pmonth', '$pyear', '$result_type', '$revenueFromOperations', '$costOfMaterialPurchased', ";
+                            $plaInsertSql.= " '$depreciationAndAmortisationExpense', '$changesInInventories', '$employeeBenefitsExpense', '$financeCosts', '$otherIncome', '$totalIncome', ";
+                            $plaInsertSql.= " '$otherExpenses', '$totalExpenses', '$profitBeforeTax', '$currentTax', '$deferredTax', '$profitAfterTax' ) ";
+        
+                            if($i < count($dataPeriods) - 1)
+                            {
+                                $plaInsertSql.= " , ";    
+                            }
+                            
+                        }
+        
+                        $this->db->query("Delete from `fp_borrower_financials_planalysis` where borrower_id = '$borrower_id' ");
+                        $data["plaInsertSql"] = $plaInsertSql;
+                        $this->db->query($plaInsertSql);
+        
+        
+                        // For Financial Summary
+        
+                        $fsInsertSql = " INSERT INTO `fp_borrower_financials_summary` (`borrower_id`, `period_type`, `month`, `year`, `result_type`, `net_sales`, `other_income`, `income`, `pbdita`, `pbdita_margin`, `interest`, `depriciation`, `operating_profit_after_interest`,  `income_expense`, `profit_before_tax`, `profit_after_tax`, `net_profit_margin`, `net_cash_accurals`, `fixed_assets_gross`, `fixed_assets_net`,                 `non_current_assets`, `tangible_networth`, `exposure_in_group_company`, `adjusted_tnw`, `long_term_debt`, `short_term_debt`, `working_capital_borrowing`, `total_outside_liabilities`, `ltw_tnw`, `tol_tnw`, `tol_atnw`, `total_current_assets`, `total_current_liabilities`, `net_working_capital`, `current_ratio`, `inventory_holding_period`, `debtor_holding_period`, `creditor_holding_period`, `debt_equity_ratio`, `debt_pbitda_ratio`, `interest_coverage_ratio`) ";
+                        $fsInsertSql.= " VALUES ";
+                        for($i = 0 ; $i < count($dataPeriods); $i++)
+                        {
+                            $currentDataPeriod = $dataPeriods[$i];
+        
+                            $period_type = $currentDataPeriod["ptype"];
+                            $pmonth = "0";
+                            $pyear = $currentDataPeriod["year"];
+                            $result_type = "";
+                            
+                            $netSales = 0;
+                            $otherIncome = 0;
+                            $income = 0;
+                            $pbdita = 0;
+                            $pbditaMargin = 0;
+                            $interest = 0;
+                            $depreciation = 0;
+                            $operatingProfitAfterInterest = 0;
+                            $incomeExpenses = 0;
+                            $profitBeforeTax = 0;
+                            $profitAfterTax = 0;
+                            $netProfitMargin = 0;
+                            $netCashAccruals = 0;
+                            $fixedAssetsGross = 0;
+                            $fixedAssetsNet = 0;
+                            $nonCurrentAssets = 0;
+                            $tangibleNetworth = 0;
+                            $exposureInGroupCo = 0;
+                            $adjustedTNW = 0;
+                            $longTermDebt = 0;
+                            $shortTermDebt = 0;
+                            $workingCapitalBorrowing = 0;
+                            $totalOutsideLiabilities = 0;
+                            $LTD_TNW = 0;
+                            $TOL_TNW = 0;
+                            $TOL_ATNW = 0;
+                            $totalCurrentAssets = 0;
+                            $totalCurrentLiabilities = 0;
+                            $netWorkingCapital = 0;
+                            $currentRatio = 0;
+                            $inventoryHoldingPeriod = 0;
+                            $debtorsHoldingPeriod = 0;
+                            $creditorsHoldingPeriod = 0;
+                            $debtEquityRatio = 0;
+                            $debt_PBITDARatio = 0;
+                            $interestCoverageRatio = 0;
+                            
+        
+                            foreach($financialsummary as $lineitem)
+                            {
+                                if($lineitem["values"] != null && count($lineitem["values"]) > 0)
+                                {
+                                    foreach($lineitem["values"] as $valueItem)
+                                    {
+                                        if($valueItem["key"] == $currentDataPeriod["key"])
+                                        {
+                                            switch($lineitem["label"])
+                                            {
+                                                case "Net Sales":
+                                                    $netSales = $valueItem["value"];
+                                                    break;
+                                                case "Other Income":
+                                                    $otherIncome = $valueItem["value"];
+                                                    break;
+                                                case "Income":
+                                                    $income = $valueItem["value"];
+                                                    break;
+                                                case "PBDITA":
+                                                    $pbdita = $valueItem["value"];
+                                                    break;
+                                                case "PBDITA Margin (%)":
+                                                    $pbditaMargin = $valueItem["value"];
+                                                    break;
+                                                case "Interest":
+                                                    $interest = $valueItem["value"];
+                                                    break;
+                                                case "Depreciation":
+                                                    $depreciation = $valueItem["value"];
+                                                    break;
+                                                case "Operating Profit After Interest":
+                                                    $operatingProfitAfterInterest = $valueItem["value"];
+                                                    break;
+                                                case "Income / Expenses":
+                                                    $incomeExpenses = $valueItem["value"];
+                                                    break;
+                                                case "Profit Before Tax":
+                                                    $profitBeforeTax = $valueItem["value"];
+                                                    break;
+                                                case "Profit After Tax":
+                                                    $profitAfterTax = $valueItem["value"];
+                                                    break;
+                                                case "Net Profit Margin (%)":
+                                                    $netProfitMargin = $valueItem["value"];
+                                                    break;
+                                                case "Net Cash Accruals (NCA)":
+                                                    $netCashAccruals = $valueItem["value"];
+                                                    break;
+                                                case "Fixed Assets Gross":
+                                                    $fixedAssetsGross = $valueItem["value"];
+                                                    break;
+                                                case "Fixed Assets Net":
+                                                    $fixedAssetsNet = $valueItem["value"];
+                                                    break;
+                                                case "Non Current Assets (Ex. Fixed assets)":
+                                                    $nonCurrentAssets = $valueItem["value"];
+                                                    break;
+                                                case "Tangible Networth (TNW)":
+                                                    $tangibleNetworth = $valueItem["value"];
+                                                    break;
+                                                case "Exposure in Group Co./Subsidairies":
+                                                    $exposureInGroupCo = $valueItem["value"];
+                                                    break;
+                                                case "Adjusted T N W (ATNW)":
+                                                    $adjustedTNW = $valueItem["value"];
+                                                    break;
+                                                case "Long Term Debt (LTD)":
+                                                    $longTermDebt = $valueItem["value"];
+                                                    break;
+                                                case "Short Term Debt (LTD)":
+                                                    $shortTermDebt = $valueItem["value"];
+                                                    break;
+                                                case "Working Capital Borrowing":
+                                                    $workingCapitalBorrowing = $valueItem["value"];
+                                                    break;
+                                                case "TOTAL OUTSIDE LIABILITIES":
+                                                    $totalOutsideLiabilities = $valueItem["value"];
+                                                    break;
+                                                case "LTD/TNW":
+                                                    $LTD_TNW = $valueItem["value"];
+                                                    break;
+                                                case "TOL/TNW":
+                                                    $TOL_TNW = $valueItem["value"];
+                                                    break;
+                                                case "TOL/ATNW":
+                                                    $TOL_ATNW = $valueItem["value"];
+                                                    break;
+                                                case "Total Current Assets":
+                                                    $totalCurrentAssets = $valueItem["value"];
+                                                    break;
+                                                case "Total Current Liabilities":
+                                                    $totalCurrentLiabilities = $valueItem["value"];
+                                                    break;
+                                                case "Net Working Capital":
+                                                    $netWorkingCapital = $valueItem["value"];
+                                                    break;
+                                                case "Current Ratio":
+                                                    $currentRatio = $valueItem["value"];
+                                                    break;
+                                                case "Inventory Holding period (days)":
+                                                    $inventoryHoldingPeriod = $valueItem["value"];
+                                                    break;
+                                                case "Debtors Holding Period (days)":
+                                                    $debtorsHoldingPeriod = $valueItem["value"];
+                                                    break;
+                                                case "Creditors Holding Period (days)":
+                                                    $creditorsHoldingPeriod = $valueItem["value"];
+                                                    break;
+                                                case "Debt Equity Ratio":
+                                                    $debtEquityRatio = $valueItem["value"];
+                                                    break;
+                                                case "Debt/PBITDA Ratio":
+                                                    $debt_PBITDARatio = $valueItem["value"];
+                                                    break;
+                                                case "Interest Coverage Ratio":
+                                                    $interestCoverageRatio = $valueItem["value"];
+                                                    break;
+                                                
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                
+        
+                            }
+        
+                            $fsInsertSql.= " ('$borrower_id', '$period_type', '$pmonth', '$pyear', '$result_type', '$netSales', '$otherIncome', ";
+                            $fsInsertSql.= " '$income', '$pbdita', '$pbditaMargin', '$interest', '$depreciation', '$operatingProfitAfterInterest', ";
+                            $fsInsertSql.= " '$incomeExpenses', '$profitBeforeTax', '$profitAfterTax', '$netProfitMargin', '$netCashAccruals',  ";
+                            $fsInsertSql.= " '$fixedAssetsGross', '$fixedAssetsNet', '$nonCurrentAssets', '$tangibleNetworth', '$exposureInGroupCo', '$adjustedTNW', ";
+                            $fsInsertSql.= " '$longTermDebt', '$shortTermDebt', '$workingCapitalBorrowing', '$totalOutsideLiabilities', '$LTD_TNW', '$TOL_TNW', ";
+                            $fsInsertSql.= " '$TOL_ATNW', '$totalCurrentAssets', '$totalCurrentLiabilities', '$netWorkingCapital', '$currentRatio', '$inventoryHoldingPeriod', ";
+                            $fsInsertSql.= " '$debtorsHoldingPeriod', '$creditorsHoldingPeriod', '$debtEquityRatio', '$debt_PBITDARatio ', '$interestCoverageRatio' ) ";
+                            
+        
+                            if($i < count($dataPeriods) - 1)
+                            {
+                                $fsInsertSql.= " , ";    
+                            }
+                            
+                        }
+        
+                        $this->db->query("Delete from `fp_borrower_financials_summary` where borrower_id = '$borrower_id' ");
+        
+                        $data["fsInsertSql"] = $fsInsertSql;
+                        $this->db->query($fsInsertSql);
+        
+        
+        
+                         
+        
+        
+                        $cfaInsertSql = " INSERT INTO `fp_borrower_financials_cfanalysis` (`borrower_id`, `period_type`, `month`, `year`, `result_type`, `net_profit_before_taxation`, `depreciation`, `dividend_income`, `interest_expense`, `interest_received`, `profit_loss_on_sale_of_fixed_assets`, `foreign_exchange_gains_loss`, `extraordinary_income_expense`, `operating_profit_before_wc_changes`, `changes_in_current_assets`, `changes_in_current_liabilities`, `net_cash_from_operating_activities`, `net_cash_from_investing_activities`, `net_cash_from_financing_activities`, `net_increase_in_cash_bank_balance`, `cash_bank_balance_in_begining`, `cash_bank_balance_at_end`) ";
+                        $cfaInsertSql.= " VALUES ";
+                        
+                        
+                        // For Balance Sheet Analysis
+                        for($i = 0 ; $i < count($dataPeriods); $i++)
+                        {
+                            $currentDataPeriod = $dataPeriods[$i];
+        
+                            $period_type = $currentDataPeriod["ptype"];
+                            $pmonth = "0";
+                            $pyear = $currentDataPeriod["year"];
+                            $result_type = "";
+                            
+        
+                            $net_profit_before_taxation = 0;
+                            $depriciation = 0;
+                            $dividend_income = 0;
+                            $interest_expenses = 0;
+                            $interest_received = 0;
+                            $pl_on_sale_of_fa = 0;
+                            $forex_gain_loss = 0;
+                            $ex_income_expenses = 0;
+                            $op_before_wc_changes = 0;
+        
+                            $changes_in_current_assets = 0;
+                            $changes_in_current_liabilities = 0;
+                            $net_cash_from_operating_activities = 0;
+                            $net_cash_from_investing_activities = 0;
+                            $net_cash_from_financing_activities = 0;
+                            $net_increase_in_cash_bank_balance = 0;
+                            $cash_bank_balance_in_begining = 0;
+                            $casg_bank_balance_at_end = 0;
+        
+                            foreach($cfAnalysis as $lineitem)
+                            {
+                                if($lineitem["values"] != null && count($lineitem["values"]) > 0)
+                                {
+                                    foreach($lineitem["values"] as $valueItem)
+                                    {
+                                        if($valueItem["key"] == $currentDataPeriod["key"])
+                                        {
+                                            switch($lineitem["label"])
+                                            {
+                                                case "Net profit before taxation":
+                                                    $net_profit_before_taxation = $valueItem["value"];
+                                                    break;
+                                                case "Depreciation":
+                                                    $depriciation = $valueItem["value"];
+                                                    break;
+                                                case "Dividend Income":
+                                                    $dividend_income = $valueItem["value"];
+                                                    break;
+                                                case "Interest Expenses":
+                                                    $interest_expenses = $valueItem["value"];
+                                                    break;
+                                                case "Interest Income":
+                                                    $interest_received = $valueItem["value"];
+                                                    break;
+                                                case "Profit / Loss on sale of fixed assets / investments":
+                                                    $pl_on_sale_of_fa = $valueItem["value"];
+                                                    break;
+                                                case "Foreign exchange gain/loss":
+                                                    $forex_gain_loss = $valueItem["value"];
+                                                    break;
+                                                case "Extraordinary income / expenses":
+                                                    $ex_income_expenses = $valueItem["value"];
+                                                    break;
+                                                case "Operating profit before working capital changes":
+                                                    $op_before_wc_changes = $valueItem["value"];
+                                                    break;
+                                                case "Change in current assets":
+                                                    $changes_in_current_assets = $valueItem["value"];
+                                                    break;
+                                                case "Change in current liabilities":
+                                                    $changes_in_current_liabilities = $valueItem["value"];
+                                                    break;
+                                            }
+                                            
+                                        }
+                                    }
+                                }
+                                
+        
+                            }
+        
+                            $cfaInsertSql.= " ('$borrower_id', '$period_type', '$pmonth', '$pyear', '$result_type', '$net_profit_before_taxation', ";
+                            $cfaInsertSql.= " '$depriciation', '$dividend_income', '$interest_expenses', '$interest_received', '$pl_on_sale_of_fa', '$forex_gain_loss', "; 
+                            $cfaInsertSql.= " '$ex_income_expenses', '$op_before_wc_changes', '$changes_in_current_assets', '$changes_in_current_liabilities', '$net_cash_from_operating_activities', ";
+                            $cfaInsertSql.= " '$net_cash_from_investing_activities', '$net_cash_from_financing_activities', '$net_increase_in_cash_bank_balance', '$cash_bank_balance_in_begining', '$casg_bank_balance_at_end') ";
+                            
+        
+                            if($i < count($dataPeriods) - 1)
+                            {
+                                $cfaInsertSql.= " , ";    
+                            }
+                            
+                        }
+        
+                        $this->db->query("Delete from `fp_borrower_financials_cfanalysis` where borrower_id = '$borrower_id' ");
+                        $data["cfaInsertSql"] = $cfaInsertSql;
+                        $this->db->query($cfaInsertSql);      
+                
+            }  //  End of AnalyzeData
+
+            function AnalyzeDataold()
             {
                 $method = $_SERVER['REQUEST_METHOD'];
                 $method = $_SERVER['REQUEST_METHOD'];

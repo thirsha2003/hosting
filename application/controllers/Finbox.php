@@ -49,6 +49,8 @@ class Finbox extends CI_Controller
 
                 if($progress="completed"){
                     $this->finboxapi_pdfxlsx_ma($entity_id, $statement_id, $linked_id, $progress, $reason);
+
+
                     json_output(200, array('status' => 200,'message' => 'Success!')); 
 
                 }
@@ -79,9 +81,11 @@ class Finbox extends CI_Controller
                     $borrower_id = $params['borrower_id'];
                     $linked_id = $params['linkid'];
 
+
                     $fp_borrower_details = array(
                         'finbox_entity_id' => $entity_id,
                         'finbox_link_id' => $linked_id,
+                        'finbox_processing'=>"Before",
                     );
 
                     $this->db->where('user_id', $borrower_id);
@@ -103,7 +107,7 @@ class Finbox extends CI_Controller
     {
         $sql = "select  user_id from fp_borrower_user_details where finbox_link_id = '" . $linked_id . "' and finbox_entity_id= '" . $entity_id . "'";
         $result = $this->db->query($sql)->result();
-        // print_r();    
+          
         return $result[0]->user_id;
 
     } // getborrowerid End 
@@ -114,15 +118,15 @@ class Finbox extends CI_Controller
 
         $borrower_id = $this->getborrowerid($entity_id, $linked_id);
 
+        $complete = "UPDATE fp_borrower_user_details
+					SET finbox_processing ='After'  WHERE  fp_borrower_user_details.user_id=".$borrower_id;
+		$percentages = $this->db->query($complete);
 
           if ($borrower_id==null){
               return json_output(200,array('status' => 401, 'data'=>$entity_id,'message' => "Something went wrong"));
-
           }
 
-    
         try {
-
             // This url is  get pdfs 
 
             $Finboxapi = "https://portal.finbox.in/bank-connect/v1/entity/";
