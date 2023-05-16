@@ -1898,6 +1898,51 @@ public function  addborroweruser()
     }
 
 
+	public function allupdatenew()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        } else {
+
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            if ($response['status'] == 200) {
+                $params = json_decode(file_get_contents('php://input'), true);
+                if ($params['tableName'] == "") {
+                    $respStatus = 400;
+                    $resp = array('status' => 400, 'message' => 'Fields Missing');
+                } else {
+                    $d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
+
+                    $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "";
+                    $sql = "SELECT * FROM " . $params['tableName'] . " WHERE id =" . $d_id;
+                   
+                   
+
+                    if (count($this->db->query($sql)->result()) == 0) {
+                        $this->db->insert($params['tableName'], $params['data']);
+
+                       
+                        $share_holdingdate = array('share_date' => $params['data']['share_date']);
+
+                        $this->db->where('borrower_id', $params['data']['borrower_id']);
+                        $this->db->update('fp_director_shareholding', $share_holdingdate);
+
+                    } else {
+                        $this->db->where('id', $params['data']['id']);
+                        $this->db->update($params['tableName'], $params['data']);
+
+                    }
+                    $resp = array('status' => 200, 'message' => 'success', 'data' => $this->db->insert_id());
+                }
+                json_output($respStatus, $resp);
+            }
+            // }
+        }
+    }
+
+
 
 
 }//------------------end of class------------------------------------------
