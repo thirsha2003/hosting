@@ -215,126 +215,126 @@ public function verifymobile()
   }
   
     // ------------- verifyemail for connector---------------------
-public function verifyemailconnector()
-  {
-
-	$response['status'] = 200;
-	$respStatus = $response['status'];
-	$method = $_SERVER['REQUEST_METHOD'];
-	if($method != 'POST'){
-			json_output(400,array('status' => 400,'message' => 'Bad request.'));
-	}else
+	public function verifyemailconnector()
 	{
-			$check_auth_user	= $this->login->check_auth_user();
-			if($check_auth_user == true)
-			{
-				$params = json_decode(file_get_contents('php://input'), TRUE);
-				if($params['key'] != '' )
-				{
-						$sql = "SELECT * FROM ".$params['tableName']." WHERE ".$params['key'] ."&& emailotp_status = 1 && email='".$params['data']['email'] ."'";
-						$count = $this->db->query($sql)->num_rows();
-						//$count=1;
-						if($count>0) // Success call
-						{	
-							// OTP Verified
-							$slug 		= $params['data']['slug'];	
-							$email		= $params['data']['email'];
-							$mobile 	= isset($params['data']['mobile']) ? $params['data']['mobile'] : null; 
-							$is_whatsapp_notification = isset($params['data']['is_whatsapp']) ? $params['data']['is_whatsapp'] : null; 
-							$name 		    = $params['data']['name'];
-							// $lenderid 	    = $params['data']['lender_master_id'];
-							$location_id 	= $params['data']['location_id'];
-							
-							$u_id=null;
-							$slug_name  = $params['data']['slug'];
-							 if($slug_name == "815102354141513"){
-								$slug = 'connector';
-							}
-							//--------------------------Check user email once again before insert 815102354141513
-							$sql = "SELECT * FROM fp_connector_users WHERE email='".$params['data']['email']."'";
-							$count = $this->db->query($sql)->num_rows();
-							if($count==0)
-							{
-								$fpausers_array =array();
-								$fpausers_array['name']=$name;
-								$fpausers_array['slug']=$slug;
-								$fpausers_array['email']=$email;
-								$fpausers_array['mobile']=$mobile;
-								$fpausers_array['is_email_verified']=1;
-								
-								$this->db->insert("fp_connector_users",$fpausers_array);
-								$u_id = $this->db->insert_id();
-								
-								
-								
-								 if($slug=="connector")
-								{
-									$company_name = $params['data']['company_name'];
-									$connector_array =array();
-									$connector_array['user_id'] 			=$u_id;
-									$connector_array['name'] 			=$name;
-									$connector_array['phone'] 			=$mobile;
-									$connector_array['email'] 			=$email;
-									// $connector_array['company_name'] 	=$company_name;
-									// $connector_array['is_whatsapp']=$is_whatsapp_notification;
-									$this->db->insert("fp_connector_user_details", $connector_array);
-
-								}
-
-								$query = $this->db->get_where('fp_connector_users',array('email' => $params['data']['email']));
-											foreach ($query->result() as $row)
-											{		
-												$txnArr[] = array(
-													'email' => $row->email,
-													'name' =>  $row->name,
-													'id' =>  $row->id,
-													'slug' =>  $row->slug,
-													'now'=> date('Y-m-d H:i:s'),
-													'random_key' => bin2hex(random_bytes(11))
-												);
-											$userid = $row->id;
-											}
-											$token = $this->jwttoken->token($txnArr);
-											$this->db->where('id', $userid);
-											$this->db->update('fp_connector_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
-							
-								$sql = "UPDATE fp_connector_login_history SET emailotp_status = 0, connector_id ='".$u_id ."'"."WHERE ".$params['key'];
-								$this->db->query($sql);
-								//----------------------transaction complete----------------------------------//
-								$sql= "SELECT * FROM fp_connector_users WHERE id=".$u_id;
-
-							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
-							}else
-							{
-								$resp = array('status' => 201,'message' =>  'Something went wrong!','data' => $this->db->query($sql)->row());
-								return json_output($respStatus,$resp);
-							}
-						}
-						else
-						{
-							$resp = array('status' => 201,'message' =>  'Failed! User not found!','data' => $this->db->query($sql)->row());
-							return json_output($respStatus,$resp);
-						}
-				}else
-				{
-					$resp = array('status' => 201,'message' =>  'Success','data' => '');
-					return json_output($respStatus,$resp);
-				}
-
-				$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
-				return json_output($respStatus,$resp);
-
-
-
-			}else
-			{
-				return json_output(403, array('status' => 403,'message' => 'Unknown access'));
-			}//-----end of user authentication check----------//
-
-	}//-------end of post check----------//
-
-  }
-
+  
+	  $response['status'] = 200;
+	  $respStatus = $response['status'];
+	  $method = $_SERVER['REQUEST_METHOD'];
+	  if($method != 'POST'){
+			  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+	  }else
+	  {
+			  $check_auth_user	= $this->login->check_auth_user();
+			  if($check_auth_user == true)
+			  {
+				  $params = json_decode(file_get_contents('php://input'), TRUE);
+				  if($params['key'] != '' )
+				  {
+						  $sql = "SELECT * FROM ".$params['tableName']." WHERE ".$params['key'] ."&& emailotp_status = 1 && email='".$params['data']['email'] ."'";
+						  $count = $this->db->query($sql)->num_rows();
+						  //$count=1;
+						  if($count>0) // Success call
+						  {	
+							  // OTP Verified
+							  $slug 		= $params['data']['slug'];	
+							  $email		= $params['data']['email'];
+							  $mobile 	= isset($params['data']['mobile']) ? $params['data']['mobile'] : null; 
+							  $is_whatsapp_notification = isset($params['data']['is_whatsapp']) ? $params['data']['is_whatsapp'] : null; 
+							  $name 		    = $params['data']['name'];
+							  // $lenderid 	    = $params['data']['lender_master_id'];
+							  $location_id 	= $params['data']['location_id'];
+							  
+							  $u_id=null;
+							  $slug_name  = $params['data']['slug'];
+							   if($slug_name == "815102354141513"){
+								  $slug = 'connector';
+							  }
+							  //--------------------------Check user email once again before insert 815102354141513
+							  $sql = "SELECT * FROM fp_connector_users WHERE email='".$params['data']['email']."'";
+							  $count = $this->db->query($sql)->num_rows();
+							  if($count==0)
+							  {
+								  $fpausers_array =array();
+								  $fpausers_array['name']=$name;
+								  $fpausers_array['slug']=$slug;
+								  $fpausers_array['email']=$email;
+								  $fpausers_array['mobile']=$mobile;
+								  $fpausers_array['is_email_verified']=1;
+								  
+								  $this->db->insert("fp_connector_users",$fpausers_array);
+								  $u_id = $this->db->insert_id();
+								  
+								  
+								  
+								   if($slug=="connector")
+								  {
+									  $company_name = $params['data']['company_name'];
+									  $connector_array =array();
+									  $connector_array['user_id'] 			=$u_id;
+									  $connector_array['name'] 			=$name;
+									  $connector_array['phone'] 			=$mobile;
+									  $connector_array['email'] 			=$email;
+									  // $connector_array['company_name'] 	=$company_name;
+									  // $connector_array['is_whatsapp']=$is_whatsapp_notification;
+									  $this->db->insert("fp_connector_user_details", $connector_array);
+  
+								  }
+  
+								  $query = $this->db->get_where('fp_connector_users',array('email' => $params['data']['email']));
+											  foreach ($query->result() as $row)
+											  {		
+												  $txnArr[] = array(
+													  'email' => $row->email,
+													  'name' =>  $row->name,
+													  'id' =>  $row->id,
+													  'slug' =>  $row->slug,
+													  'now'=> date('Y-m-d H:i:s'),
+													  'random_key' => bin2hex(random_bytes(11))
+												  );
+											  $userid = $row->id;
+											  }
+											  $token = $this->jwttoken->token($txnArr);
+											  $this->db->where('id', $userid);
+											  $this->db->update('fp_connector_users',array('token'=>$token, 'token_time'=>date('Y-m-d H:i:s')));
+							  
+								  $sql = "UPDATE fp_connector_login_history SET emailotp_status = 0, connector_id ='".$u_id ."'"."WHERE ".$params['key'];
+								  $this->db->query($sql);
+								  //----------------------transaction complete----------------------------------//
+								  $sql= "SELECT * FROM fp_connector_users WHERE id=".$u_id;
+  
+							  $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
+							  }else
+							  {
+								  $resp = array('status' => 201,'message' =>  'Something went wrong!','data' => $this->db->query($sql)->row());
+								  return json_output($respStatus,$resp);
+							  }
+						  }
+						  else
+						  {
+							  $resp = array('status' => 201,'message' =>  'Failed! User not found!','data' => $this->db->query($sql)->row());
+							  return json_output($respStatus,$resp);
+						  }
+				  }else
+				  {
+					  $resp = array('status' => 201,'message' =>  'Success','data' => '');
+					  return json_output($respStatus,$resp);
+				  }
+  
+				  $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
+				  return json_output($respStatus,$resp);
+  
+  
+  
+			  }else
+			  {
+				  return json_output(403, array('status' => 403,'message' => 'Unknown access'));
+			  }//-----end of user authentication check----------//
+  
+	  }//-------end of post check----------//
+  
+	}
+  
 
   public function finuserlogincheck()
   {
