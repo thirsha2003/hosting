@@ -674,5 +674,41 @@ class Adminusers extends CI_Controller
 			  }
 	}
 
+	public function connector()
+	{
+			$method = $_SERVER['REQUEST_METHOD'];
+			if($method =="POST")
+			{
+					// $checkToken = $this->check_token();
+					if(true)
+					{
+							$response['status']=200;
+							$respStatus = $response['status'];
+							$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+							$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+							$join 		= isset($params['key']) ? $params['key'] : "";
+							$where 		= isset($params['where']) ? $params['where'] : "";	
+
+							$sql = "SELECT * FROM fp_connector_users";
+
+
+							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+							return json_output($respStatus,$resp);
+					}
+					else
+					{
+						return json_output(400,array('status' => 400,'message' => $checkToken));
+					}
+				
+			}
+			else
+			{
+					return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}
+		
+	} 
+	
+
 
 } // -------------------------- end ---------------------

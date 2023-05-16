@@ -53,6 +53,7 @@ class Connector_user_verification extends CI_Controller
                     $isEmailSuccess = true;
                     $slug = isset($params['data']['slug']) ? $params['data']['slug'] : null;
                     $mobile = isset($params['data']['mobile']) ? $params['data']['mobile'] : null;
+                    $connector = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
                     $sql = "SELECT * FROM " . $params['tableName'] . " WHERE email='" . $email_id . "'" . " || mobile=" . $mobile;
                     $count = $this->db->query($sql)->num_rows();
                     $otpvalid = 2;
@@ -172,6 +173,7 @@ public function verifymobile()
 													'name' =>  $row->name,
 													'id' =>  $row->id,
 													'slug' =>  $row->slug,
+													'company_name' => $row->company_name,
 													'now'=> date('Y-m-d H:i:s'),
 													'random_key' => bin2hex(random_bytes(11))
 												);
@@ -239,7 +241,8 @@ public function verifymobile()
 							  // OTP Verified
 							  $slug 		= $params['data']['slug'];	
 							  $email		= $params['data']['email'];
-							  $mobile 	= isset($params['data']['mobile']) ? $params['data']['mobile'] : null; 
+							  $mobile 	= isset($params['data']['mobile']) ? $params['data']['mobile'] : null;
+							  $connector = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
 							  $is_whatsapp_notification = isset($params['data']['is_whatsapp']) ? $params['data']['is_whatsapp'] : null; 
 							  $name 		    = $params['data']['name'];
 							  // $lenderid 	    = $params['data']['lender_master_id'];
@@ -260,6 +263,7 @@ public function verifymobile()
 								  $fpausers_array['slug']=$slug;
 								  $fpausers_array['email']=$email;
 								  $fpausers_array['mobile']=$mobile;
+								  $fpausers_array['company_name']=$connector;
 								  $fpausers_array['is_email_verified']=1;
 								  
 								  $this->db->insert("fp_connector_users",$fpausers_array);
@@ -275,6 +279,7 @@ public function verifymobile()
 									  $connector_array['name'] 			=$name;
 									  $connector_array['phone'] 			=$mobile;
 									  $connector_array['email'] 			=$email;
+									//   $connector_array['company_name'] 			=$connector;
 									  // $connector_array['company_name'] 	=$company_name;
 									  // $connector_array['is_whatsapp']=$is_whatsapp_notification;
 									  $this->db->insert("fp_connector_user_details", $connector_array);
@@ -289,6 +294,7 @@ public function verifymobile()
 													  'name' =>  $row->name,
 													  'id' =>  $row->id,
 													  'slug' =>  $row->slug,
+													  'company_name' =>  $row->company_name,
 													  'now'=> date('Y-m-d H:i:s'),
 													  'random_key' => bin2hex(random_bytes(11))
 												  );
@@ -448,6 +454,7 @@ public function verifymobile()
 													'name' =>  $row->name,
 													'id' =>  $row->id,
 													'slug' =>  $row->slug,
+													'company_name' =>  $row->company_name,
 													'now'=> date('Y-m-d H:i:s'),
 													'random_key' => bin2hex(random_bytes(11))
 												);
