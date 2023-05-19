@@ -117,6 +117,11 @@ class Connector_common extends CI_Controller
 												'finnup_spoc'=> $finnupspoc,
 												'created_by'=>$created_by));
 
+												 
+
+												$fpa_users = "UPDATE fp_connector_users 
+												SET status =0  WHERE email=".$email;
+
 
 												if($params['data']['emailsent'] == 1){
 													

@@ -35,6 +35,10 @@ class Connector_user_verification extends CI_Controller
      {
         $mailer = new \App\Libraries\Femail;
         $MTalkMobOtp = new \App\ThirdParty\MTalkz;
+		// $isEmailSuccess = $mailer->sendOTPemail("parthibangnc51@gmail.com", "878787", "connector", "2");
+		// print_r($isEmailSuccess);
+		// exit();
+		
         $response['status'] = 200;
         $respStatus = $response['status'];
         $method = $_SERVER['REQUEST_METHOD'];
@@ -65,7 +69,6 @@ class Connector_user_verification extends CI_Controller
                         $slug = 'connector';
                     } 
 
-                    //    print_r($slug);die;
 
                     if ($count == 0) {
                         //Sending an email OTP

@@ -1061,7 +1061,161 @@ class Connectorusers extends CI_Controller
 		}
 
 	}
-         
+
+
+        public function gettotalsuperadmin()
+	{
+			$method = $_SERVER['REQUEST_METHOD'];
+			if($method =="POST")
+                        {
+				// $checkToken = $this->check_token();
+				if(True)
+				{
+				$response['status']=200;
+			        $respStatus = $response['status'];
+				$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+				$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+				$join 		= isset($params['key']) ? $params['key'] : "";
+				$where 		= isset($params['where']) ? $params['where'] : "";	
+
+				$sql = "SELECT * FROM fpa_adminusers WHERE fpa_adminusers.role_slug='sa'";
+				
+        			$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+				return json_output($respStatus,$resp);
+				}
+				else
+				{
+					return json_output(400,array('status' => 400,'message' => "Auth Missing!"));
+					
+						
+				}
+                        }                
+			else
+			{
+				return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}
+				
+			
+        }
+
+
+                
+	public function sa_taskassign()
+        {
+                $method = $_SERVER['REQUEST_METHOD'];
+                if($method != 'POST'){
+                        json_output(400,array('status' => 400,'message' => 'Bad request.'));
+                        }else{
+                            // $checkToken = $this->check_token(); 
+                        if(true){
+                          $response['status']=200;
+                          $respStatus = $response['status'];
+                        $params = json_decode(file_get_contents('php://input'), TRUE);
+                         
+                        try{ 
+                         
+                         $id='';
+                 
+                        $task_details = $this->db->insert("fpa_sa_taskdetails", $params['data']);
+                        $id = $this->db->insert_id();  
+                         
+                                          
+                        $sql =  "select borrower_id,id,task_assigned_to
+                        from fpa_sa_taskdetails where fpa_sa_taskdetails.id=".$id; 
+                        $taskdata = $this->db->query($sql)->row();
+                          
+                 
+                        $assigndata =  "select name,email,id
+                          from fpa_adminusers where fpa_adminusers.id=".$taskdata->task_assigned_to;
+                 
+                        $rmdata = $this->db->query($assigndata)->row();
+                                               $task_details_worklog =$this->db->insert("fpa_sa_taskdetails_worklog",array('sa_taskdetail_id'=>$taskdata->id)); 
+                                               $fpa_users = "UPDATE fpa_users 
+                          SET status ='assigned', sa_id='".$rmdata->id."',".
+                          "sa_name='".$rmdata->name."',".
+                          "sa_email='".$rmdata->email."' WHERE fpa_users.id=".$taskdata->borrower_id;
+       
+       
+                          
+                        $rm_name=$rmdata->name;
+                        $company_name = $params['company_name'];
+       
+                               
+                         $checkdata = $this->db->query($fpa_users);
+                                        
+                         if($task_details && $task_details_worklog && $fpa_users){
+       
+       
+                                        $subject = "Dear ".$rm_name.",";
+                               $message = "Dear ".$rm_name.","."<br/><br/>"."A new application for ".$company_name." has been assigned to you by the Superadmin.<br/>
+                               Please click on the below link to view ".$company_name.".<br/><br/>".
+                               "link : app.finnup.in/#/admin.";
+                               
+                               $to = "rahul@finnup.in";
+                               $tos = "aisha@finnup.in";
+                               $email = new \SendGrid\Mail\Mail();
+                               $email->setSubject($subject);
+                               $email->addContent("text/html", $message);
+                               $email->setFrom("platform@finnup.in", 'FinnUp Team');
+                               $email->addTo($to);
+                               $email->addTo($tos);
+                               $sendgrid = new \SendGrid("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");
+                               try {
+                                   $response = $sendgrid->send($email);
+                               } catch (Exception $e) {
+                                   echo 'Caught exception: ', $e->getMessage(), "\n";
+                               }
+       
+       
+       
+                          json_output(200,array('status' => 200,'message' => 'Task assigned successfully!'));
+                         }else{
+                          json_output(200,array('status' => 400,'message' => 'Bad request.'));
+                         }
+                        }catch(Exception $e){
+                         json_output(200,array('status' => 401,'message' => $e->getMessage()));
+                        }
+                        }else{
+                         json_output(400,array('status' => 400,'message' => 'Bad request.'));
+                        }
+                         }
+        } 
+        // ---------------------End of taskassign 
+
+        
+        public function assigntosa_email()
+        {
+                        $method = $_SERVER['REQUEST_METHOD'];
+                        if($method =="POST")
+                        {
+                                        // $checkToken = $this->check_token();
+                                        if(true)
+                                        {
+                                                        $response['status']=200;
+                                                        $respStatus = $response['status'];
+                                                        $params 	= json_decode(file_get_contents('php://input'), TRUE);
+       
+                                                        $selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+                                                        $join 		= isset($params['key']) ? $params['key'] : "";
+                                                        $where 		= isset($params['where']) ? $params['where'] : "";	
+       
+                                                        $sql=" SELECT t1.email,t1.name FROM fpa_adminusers t1 WHERE t1.id=".$where;
+       
+                                                        $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+                                                        return json_output($respStatus,$resp);
+                                        }
+                                        else
+                                        {
+                                                return json_output(400,array('status' => 400,'message' => $checkToken));
+                                        }
+                        }
+                        else
+                        {
+                                        return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+                        }
+        } //------------------ end  of assigntosa_email  -----------------------
+       
         
 
 

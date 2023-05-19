@@ -100,71 +100,69 @@ class Admin_common extends CI_Controller
 						}
 			 
 		}  //profilecompletionstatusupdate
-			public function addborrower()
-			{
-				$method = $_SERVER['REQUEST_METHOD'];
-				if($method != 'POST'){
-				json_output(400,array('status' => 400,'message' => 'Bad request.'));
-				}else{
+		public function addborrower()
+		{
+			$method = $_SERVER['REQUEST_METHOD'];
+			if ($method != 'POST') {
+				json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+			} else {
 				$checkToken = $this->check_token();
-				if($checkToken){
-				$response['status']=200;
-				$respStatus = $response['status'];
-				$params = json_decode(file_get_contents('php://input'), TRUE);
-				try{
-				$name = $params['data']['name'];
-				$email = $params['data']['email'];
-				$phone = $params['data']['mobile'];
-				$entity_type = $params ['data']['entity_type'];
-				$created_by =  $params['data']['created_by'];
-				$company_name = isset($params['data']['company_name'])?$params['data']['company_name']:null;
-				$emailandmobileverified =1;
-				$add_user = $this->db->insert("fpa_users",array('name'=>$name,'email'=>$email, 'mobile'=>$phone ,'slug'=>'borrower', 'company_name'=>$company_name,'created_by'=>$created_by,'is_email_verified'=>$emailandmobileverified,'is_mobile_verified'=>$emailandmobileverified));
-				$id = $this->db->insert_id();
-				
-				
-				$add_borrower =$this->db->insert("fp_borrower_user_details", array('user_id'=>$id,'name'=>$name,'email'=>$email, 'phone'=>$phone,'company_name'=>$company_name,'company_type'=>$entity_type));
-				if($add_user && $add_borrower){
-				json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$id));
-               
-				        $subject = "Dear Superadmin,";
-                        $message = "Dear Superadmin,"."<br/>"."<br/>"."<br/>"."A new application for ".$name." has been created by the ".$created_by." .
-                        Please click on the below link to view ".$name." or assign the same ."."<br/>"."<br/>".
-                        "link : app.finnup.in/#/admin.";
-                       
-                        
-                        // $to = 'aisha@finnup.in'; 
-                        $to = 'parthibangnc51@gmail.com'; 
-
-                        // $tos = "rahul@finnup.in";
-
-                        $email = new \SendGrid\Mail\Mail();
-                        $email->setSubject($subject);
-                        $email->addContent("text/html", $message);
-                        $email->setFrom("platform@finnup.in", 'FinnUp Team');
-                        $email->addTo($to);
-                        // $email->addTo($tos);
-                        $sendgrid = new \SendGrid("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");
-                        try {
-                            $response = $sendgrid->send($email);
-                        } catch (Exception $e) {
-                            echo 'Caught exception: ', $e->getMessage(), "\n";
-                        }
-                   
-
-
-
-				}else{
-				json_output(200,array('status' => 400,'message' => 'Bad request.'));
+				if ($checkToken) {
+					$response['status'] = 200;
+					$respStatus = $response['status'];
+					$params = json_decode(file_get_contents('php://input'), true);
+					try {
+						$name = $params['data']['name'];
+						$email = $params['data']['email'];
+						$phone = $params['data']['mobile'];
+						$created_by = $params['data']['created_by'];
+						$company_name = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
+						$emailandmobileverified = 1;
+						$add_user = $this->db->insert("fpa_users", array('name' => $name, 'email' => $email, 'mobile' => $phone, 'slug' => 'borrower', 'company_name' => $company_name, 'created_by' => $created_by, 'is_email_verified' => $emailandmobileverified, 'is_mobile_verified' => $emailandmobileverified));
+						$id = $this->db->insert_id();
+	
+	
+						$add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name));
+	
+						if ($add_user && $add_borrower) {
+							json_output(200, array('status' => 200, 'message' => 'successfully Added', "data" => $id));
+								
+								$results = "SELECT email
+								FROM fpa_adminusers
+								WHERE role_slug = 'sa'";
+								$emailtest = $this->db->query($results)->result();
+								foreach ($emailtest as $row) {
+	
+									$subject = "Dear Superadmin,";
+									$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $name . " has been created by the " . $created_by . " .
+									Please click on the below link to view " . $name . " or assign the same ." . "<br/>" . "<br/>" .
+										"link : app.finnup.in/#/admin.";
+								$email = new \SendGrid\Mail\Mail();
+								$email->setSubject("$subject");
+								$email->addContent("text/html", $message);
+								$email->setFrom("support@finnup.in", 'FinnUp Team');
+						
+								$email->addTo($row->email);
+								$sendgrid = new \SendGrid ("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");
+								try {
+									$response = $sendgrid->send($email);
+								} catch (Exception $e) {
+									echo 'Caught exception: ', $e->getMessage(), "\n";
+								}
+						 }
+							
+	
+						} else {
+							json_output(200, array('status' => 400, 'message' => 'Bad request.'));
+						}
+					} catch (Exception $e) {
+						json_output(200, array('status' => 401, 'message' => $e->getMessage()));
+					}
+				} else {
+					json_output(400, array('status' => 400, 'message' => 'Bad request.'));
 				}
-				}catch(Exception $e){
-				json_output(200,array('status' => 401,'message' => $e->getMessage()));
-				}
-				}else{
-				json_output(400,array('status' => 400,'message' => 'Bad request.'));
-				}
-				}
-			}	 // addborrower
+			}
+		} // addborrower
 
 			public function addborrowerold(){
 				$method = $_SERVER['REQUEST_METHOD'];
@@ -557,101 +555,92 @@ class Admin_common extends CI_Controller
 		}
 	       } // taskassign_old 
 
-	       public function taskassign()
-	{
-		    $method = $_SERVER['REQUEST_METHOD'];
-		    if($method != 'POST'){
-		     json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		    }else{
-		     // $checkToken = $this->check_token(); 
-		 if(true){
-		   $response['status']=200;
-		   $respStatus = $response['status'];
-		 $params = json_decode(file_get_contents('php://input'), TRUE);
-		  
-		 try{ 
-		  
-		  //  $this->db->trans_start(); 
-	  
-		  // $this->db->trans_begin();  
-		  $id='';
-	  
-				   $task_details = $this->db->insert("fpa_taskdetails", $params['data']);
-				   $id = $this->db->insert_id();  
-		  
-				   
-		   $sql =  "select borrower_id,id,task_assigned_to
-		   from fpa_taskdetails where fpa_taskdetails.id=".$id; 
-					$taskdata = $this->db->query($sql)->row();
-		   
-	  
-		   $assigndata =  "select name,email,id
-		   from fpa_adminusers where fpa_adminusers.id=".$taskdata->task_assigned_to;
-	  
-		   $rmdata = $this->db->query($assigndata)->row();
-					$task_details_worklog =$this->db->insert("fpa_taskdetails_worklog",array('taskdetail_id'=>$taskdata->id)); 
-					$fpa_users = "UPDATE fpa_users 
-		   SET status ='assigned', rm_id='".$rmdata->id."',".
-		   "rm_name='".$rmdata->name."',".
-		   "rm_email='".$rmdata->email."' WHERE fpa_users.id=".$taskdata->borrower_id;
-
-
-		   
-                 $rm_name=$rmdata->name;
-                 $company_name = $params['company_name'];
-
-			
-		  $checkdata = $this->db->query($fpa_users);
-		
-		  // if ($this->db->trans_status() === FALSE)
-		  // {
-		  //   $this->db->trans_rollback();
-		  // }
-		  // else
-		  // {
-		  //   $this->db->trans_commit();
-		  // }
-			  
-		   
-		  //  $this->db->trans_complete();
-	  
-		  if($task_details && $task_details_worklog && $fpa_users){
-
-
-			         $subject = "Dear ".$rm_name.",";
-                        $message = "Dear ".$rm_name.","."<br/><br/>"."A new application for ".$company_name." has been assigned to you by the Superadmin.<br/>
-                        Please click on the below link to view ".$company_name.".<br/><br/>".
-                        "link : app.finnup.in/#/admin.";
-                        
-                        $to = "rahul@finnup.in";
-                        $tos = "aisha@finnup.in";
-                        $email = new \SendGrid\Mail\Mail();
-                        $email->setSubject($subject);
-                        $email->addContent("text/html", $message);
-                        $email->setFrom("platform@finnup.in", 'FinnUp Team');
-                        $email->addTo($to);
-                        $email->addTo($tos);
-                        $sendgrid = new \SendGrid("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");
-                        try {
-                            $response = $sendgrid->send($email);
-                        } catch (Exception $e) {
-                            echo 'Caught exception: ', $e->getMessage(), "\n";
-                        }
-
-
-
-		   json_output(200,array('status' => 200,'message' => 'Task assigned successfully!'));
-		  }else{
-		   json_output(200,array('status' => 400,'message' => 'Bad request.'));
-		  }
-		 }catch(Exception $e){
-		  json_output(200,array('status' => 401,'message' => $e->getMessage()));
-		 }
-		 }else{
-		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		 }
-		  }
-    } // taskassign 
+		   public function taskassign()
+		   {
+			   $method = $_SERVER['REQUEST_METHOD'];
+			   if ($method != 'POST') {
+				   json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+			   } else {
+				   // $checkToken = $this->check_token();
+				   if (true) {
+					   $response['status'] = 200;
+					   $respStatus = $response['status'];
+					   $params = json_decode(file_get_contents('php://input'), true);
+	   
+					   try {
+	   
+						   $id = '';
+	   
+						   $task_details = $this->db->insert("fpa_taskdetails", $params['data']);
+						   $id = $this->db->insert_id();
+	   
+						   $sql = "select borrower_id,id,task_assigned_to
+			  from fpa_taskdetails where fpa_taskdetails.id=" . $id;
+						   $taskdata = $this->db->query($sql)->row();
+	   
+						   $assigndata = "select name,email,id
+			  from fpa_adminusers where fpa_adminusers.id=" . $taskdata->task_assigned_to;
+	   
+						   $rmdata = $this->db->query($assigndata)->row();
+	   
+						   $task_details_worklog = $this->db->insert("fpa_taskdetails_worklog", array('taskdetail_id' => $taskdata->id));
+	   
+						   $fpa_users = "UPDATE fpa_users
+			  SET status ='assigned', rm_id='" . $rmdata->id . "'," .
+						   "rm_name='" . $rmdata->name . "'," .
+						   "rm_email='" . $rmdata->email . "' WHERE fpa_users.id=" . $taskdata->borrower_id;
+	   
+						   $rm_name = $rmdata->name;
+						   $company_name = $params['company_name'];
+	   
+						   $checkdata = $this->db->query($fpa_users);
+	   
+						   // if ($this->db->trans_status() === FALSE)
+						   // {
+						   //   $this->db->trans_rollback();
+						   // }
+						   // else
+						   // {
+						   //   $this->db->trans_commit();
+						   // }
+	   
+						   //  $this->db->trans_complete();
+	   
+						   if ($task_details && $task_details_worklog && $fpa_users) {
+							   json_output(200, array('status' => 200, 'message' => 'Task assigned successfully!'));
+	   
+							   $subject = "Dear " . $rm_name . ",";
+							   $message = "Dear " . $rm_name . "," . "<br/><br/>" . "A new application for " . $company_name . " has been assigned to you by the Superadmin.<br/>
+							   Please click on the below link to view " . $company_name . ".<br/><br/>" .
+								   "link : app.finnup.in/#/admin.";
+	   
+							   // $to = 'support@finnup.in';
+								$to = $rmdata->email;
+							   $email = new \SendGrid\Mail\Mail ();
+							   $email->setSubject($subject);
+							   $email->addContent("text/html", $message);
+							   $email->setFrom("support@finnup.in", 'FinnUp Team');
+							   $email->addTo($to);
+							   
+							   $sendgrid = new \SendGrid ("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");
+							   try {
+								   $response = $sendgrid->send($email);
+							   } catch (Exception $e) {
+								   echo 'Caught exception: ', $e->getMessage(), "\n";
+							   }
+	   
+						   } else {
+							   json_output(200, array('status' => 400, 'message' => 'Bad request.'));
+						   }
+					   } catch (Exception $e) {
+						   json_output(200, array('status' => 401, 'message' => $e->getMessage()));
+					   }
+				   } else {
+					   json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+				   }
+			   }
+		   } 
+	// taskassign 
 
 
 
@@ -1685,72 +1674,73 @@ class Admin_common extends CI_Controller
 
 
 	public function addlender()
-	{
-		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'POST'){
-		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		}else{
-		 $checkToken = $this->check_token();
-		 if($checkToken){
-		   $response['status']=200;
-		   $respStatus = $response['status'];
-		 $params = json_decode(file_get_contents('php://input'), TRUE);
-		 try{
-		  $name = $params['data']['name'];
-		  $email = $params['data']['email'];
-		  $phone = $params['data']['mobile'];
-          $created_by = $params['data']['created_by'];
-		  $institution=$params['data']['lender_id'];
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        } else {
+            $checkToken = $this->check_token();
+            if ($checkToken) {
+                $response['status'] = 200;
+                $respStatus = $response['status'];
+                $params = json_decode(file_get_contents('php://input'), true);
+                try {
 
-		  $add_user = $this->db->insert("fpa_users",array('name'=>$name,'email'=>$email, 'mobile'=>$phone ,'slug'=>'lender','created_by'=>$params['data']['created_by'],'lender_master_id'=>$institution));
-		  
-		  $id = $this->db->insert_id();
-		  $department= $params['data']['lender_departments'];
-		  $location=$params['data']['lender_location'];
-		  $institution=$params['data']['lender_id'];
-		  $designation=$params['data'] ['designation'];
-		  $branch=$params['data']['Branch'];
-		
-		
-		  $add_borrower =$this->db->insert("fp_lender_user_details", array('user_id'=>$id,'poc_name'=>$name,'email'=>$email, 'mobile'=>$phone,'department_slug'=>$department,'location_id'=>$location,'lender_master_id'=>$institution,'designation'=>$designation,'branch'=>$branch));
-		  if($add_user && $add_borrower){
+                    $name = $params['data']['name'];
+                    $email = $params['data']['email'];
+                    $phone = $params['data']['mobile'];
+                    $created_by = $params['data']['created_by'];
+                    $add_user = $this->db->insert("fpa_users", array('name' => $name, 'email' => $email, 'mobile' => $phone, 'slug' => 'lender', 'created_by' => $created_by));
 
-			// Email Notification
-			$subject = "Dear ". $created_by.",";
-			$message = "Dear ". $created_by.","."<br/>"."<br/>"."<br/>"."A new Lender Partner ".$name."  has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria."."<br/>"."<br/>".
-		   "Looking forward to building a portfolio with them.";
+                    $id = $this->db->insert_id();
+                    $department = $params['data']['lender_departments'];
+                    $location = $params['data']['lender_location'];
+                    $institution = $params['data']['lender_id'];
+                    $designation = $params['data']['designation'];
+                    $branch = $params['data']['Branch'];
 
-			
-		   
-		    $to = 'rahul@finnup.in';
-		    $tos = 'aisha@finnup.in';
-		   
+                    $add_borrower = $this->db->insert("fp_lender_user_details", array('user_id' => $id, 'poc_name' => $name, 'email' => $email, 'mobile' => $phone, 'department_slug' => $department, 'location_id' => $location, 'lender_master_id' => $institution, 'designation' => $designation, 'branch' => $branch));
+                    if ($add_user && $add_borrower) {
+                        json_output(200, array('status' => 200, 'message' => 'successfully Added'));
 
-			$email = new \SendGrid\Mail\Mail();
-			$email->setSubject($subject);
-			$email->addContent("text/html", $message);
-			$email->setFrom("platform@finnup.in", 'FinnUp Team');
-			$email->addTo($to);
-			$email->addTo($tos);
-			$sendgrid = new \SendGrid("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");
-			try {
-				$response = $sendgrid->send($email);
-			} catch (Exception $e) {
-				echo 'Caught exception: ', $e->getMessage(), "\n";
-			}
-			
-		   json_output(200,array('status' => 200,'message' => 'successfully Added'));
-		  }else{
-		   json_output(200,array('status' => 400,'message' => 'Bad request.'));
-		  }
-		 }catch(Exception $e){
-		  json_output(200,array('status' => 401,'message' => $e->getMessage()));
-		 }
-		 }else{
-		  json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		 }
-		}
-	}  // addlender 
+                        // Email Notification
+                        $results = "SELECT email
+                            FROM fpa_adminusers
+                            WHERE role_slug = 'sa'";
+                            $emailtest = $this->db->query($results)->result();
+                            foreach ($emailtest as $row) {
+
+                                $name = $params['data']['name'];
+                                $created_by = $params['data']['created_by'];
+                                $subject = "Dear " . $created_by . ",";
+                              $message = "Dear " . $created_by . "," . "<br/>" . "<br/>" . "<br/>" . "A new Lender Partner " . $name . "  has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria." . "<br/>" . "<br/>" .
+                              "Looking forward to building a portfolio with them.";
+                            $email = new \SendGrid\Mail\Mail();
+                            $email->setSubject("$subject");
+                            $email->addContent("text/html", $message);
+                            $email->setFrom("support@finnup.in", 'FinnUp Team');
+                    
+                            $email->addTo($row->email);
+                            $sendgrid = new \SendGrid ("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");
+                            try {
+                                $response = $sendgrid->send($email);
+                            } catch (Exception $e) {
+                                echo 'Caught exception: ', $e->getMessage(), "\n";
+                            }
+                     }
+                        
+
+                    } else {
+                        json_output(200, array('status' => 400, 'message' => 'Bad request.'));
+                    }
+                } catch (Exception $e) {
+                    json_output(200, array('status' => 401, 'message' => $e->getMessage()));
+                }
+            } else {
+                json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+            }
+        }
+    } //addlender
 
 		 public function taskassignlender()
 	{

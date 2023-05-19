@@ -25,6 +25,7 @@ class Femail
                                $messagetolender   ="Dear customer, use this One Time Password ".$otp
                                ." to verify your email to complete the FinnUp Lender account signup process. 
                                This OTP will be valid for the next ".$otpvalid." mins.";
+                               $messagetoconnector     ="Dear customer, use this One Time Password " .$otp. " to log in to your FinnUp Connector account. This OTP will be valid for the next 2 mins.";
                                $messagetoothers   ="Dear customer, use this One Time Password ".$otp
                                ." to log in to your FinnUp account. 
                                This OTP will be valid for the next ".$otpvalid." mins.";
@@ -36,7 +37,12 @@ class Femail
                                else if($emailslug=='lender')
                                {
                                     $message = $messagetolender;
-                               }else
+                               } else if ($emailslug=="connector"){
+
+                                   $message =$messagetolender;
+                       
+                               }
+                               else
                                {
                                    $message = $messagetoothers;
                                }                                 
@@ -45,7 +51,7 @@ class Femail
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('platform@finnup.in', 'FinnUp Team');
+								$email->setFrom('support@finnup.in', 'FinnUp Team');
 								$email->addTo($to);							
 								$sendgrid = new \SendGrid("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");
 								try {
@@ -65,8 +71,10 @@ class Femail
                                                     This OTP will be valid for the next ".$otpvalid." mins.";
 
                                $messagetolender   ="Dear customer, use this One Time Password ".$otp
-                               ." to log in to your FinnUp Borrower account. 
+                               ." to log in to your FinnUp Lender account. 
                                This OTP will be valid for the next".$otpvalid." mins.";
+
+                               $messagetoconnector     ="Dear customer, use this One Time Password " .$otp. " to log in to your FinnUp Connector account. This OTP will be valid for the next".$otpvalid." mins.";
 
                                $messagetoothers   ="Dear customer, use this One Time Password ".$otp
                                ." to log in to your FinnUp account. 
@@ -77,6 +85,10 @@ class Femail
                                } else if($emailslug=='lender')
                                {
                                    $message = $messagetolender;
+                               } else if ($emailslug=="connector"){
+
+                                   $message =$messagetolender;
+                       
                                }
                                else 
                                {
@@ -87,7 +99,7 @@ class Femail
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject($subject);
 								$email->addContent("text/html", $message);
-								$email->setFrom('platform@finnup.in', 'FinnUp Team');
+								$email->setFrom('support@finnup.in', 'FinnUp Team');
 								$email->addTo($to);							
 								$sendgrid = new \SendGrid("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");
 								try {
