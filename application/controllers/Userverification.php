@@ -1132,7 +1132,57 @@ public function verifymobile()
 				$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
 				json_output($respStatus,$resp);
 
+  // Email Notification
+	if($row->slug=='borrower'){
+		
+		$results = "SELECT email FROM fpa_adminusers
+    WHERE role_slug = 'sa'";
+    $emailtest = $this->db->query($results)->result();
+    foreach ($emailtest as $row){
+		$name 	= isset($params['data']['name']) ? $params['data']['name'] : null;
+		$subject = "Dear Superadmin,";
+		$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new Borrower application for " . $name . " has been created by the " . $name . " .
+		Please click on the below link to view " . $name ."" . "<br/>" . "<br/>" .
+		"link : app.finnup.in/#/admin.";
+		
+		$email = new \SendGrid\Mail\Mail();
+		$email->setSubject($subject);
+		$email->addContent("text/html", $message);
+		$email->setFrom("support@finnup.in", 'FinnUp Team');
+		$email->addTo($row->email);
+		
+		$sendgrid = new \SendGrid("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");
+		try {
+				$response = $sendgrid->send($email);
+		} catch (Exception $e) {
+				echo 'Caught exception: ', $e->getMessage(), "\n";
+		}
+	}
+	}
 
+elseif($row->slug=='lender'){
+		$results = "SELECT email FROM fpa_adminusers
+    WHERE role_slug = 'sa'";
+    $emailtest = $this->db->query($results)->result();
+    foreach ($emailtest as $row){
+			$name 	= isset($params['data']['name']) ? $params['data']['name'] : null;
+	$subject = "Dear Superadmin,";
+	$message = "Dear Superadmin,"."<br/>"."<br/>"."<br/>"."A new Lender Partner ".$name." has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria."."<br/>"."<br/>".
+ "Looking forward to building a portfolio with them.";
+
+	$email = new \SendGrid\Mail\Mail();
+	$email->setSubject($subject);
+	$email->addContent("text/html", $message);
+	$email->setFrom("support@finnup.in", 'FinnUp Team');
+	$email->addTo($row->email);
+	$sendgrid = new \SendGrid("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");
+	try {
+			$response = $sendgrid->send($email);
+	} catch (Exception $e) {
+			echo 'Caught exception: ', $e->getMessage(), "\n";
+	}
+}
+}
 
 			}
 			else
@@ -1142,7 +1192,6 @@ public function verifymobile()
 
 	}//-------end of post check----------//
 }// End of function--------------------------------------------------------
-
 
 
 public function verifyemailconnector()
