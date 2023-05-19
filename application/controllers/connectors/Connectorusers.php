@@ -7,7 +7,7 @@ header("HTTP/1.1 200 OK");
 
 defined('BASEPATH') or exit('No direct script access allowed');
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
-include APPPATH . 'ThirdParty/MTalkz.php';
+include APPPATH . 'ThirdParty/mTalkz.php';
 include APPPATH . 'libraries/Femail.php';
 // include APPPATH . 'controllers/BorrowerAuth.php';
 // include APPPATH . 'ThirdParty/probeapi.php';
