@@ -5,7 +5,7 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //metho
 header("HTTP/1.1 200 OK");
 defined('BASEPATH') OR exit('No direct script access allowed');
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
-include APPPATH . 'ThirdParty/MTalkz.php';
+include APPPATH . 'ThirdParty/mTalkz.php';
 include APPPATH . 'libraries/Femail.php';
 
 class XLRT extends CI_Controller 
@@ -601,6 +601,73 @@ class XLRT extends CI_Controller
                 }
             } // End of GetBalanceSheetdata
 
+            public function xlrt_fileupload_response(){
+                $method = $_SERVER['REQUEST_METHOD'];
+                if($method =="POST")
+                { 
+                           if(True)
+                           {
+                                       $response['status']=200;
+                                       $respStatus = $response['status'];
+                                       $params  = json_decode(file_get_contents('php://input'), TRUE);
+                                       $borrower_id =($params['borrower_id']);
+                                       $documenttype = isset($params['data']['documenttype']) ?  $params['data']['documenttype']:"";
+                                       $dmscode = isset($params['data']['dmscode']) ?  $params['data']['dmscode']:"";
+                                       $filename = isset($params['data']['filename']) ?  $params['data']['filename']:"";
+                                       $entityid = isset($params['data']['entityid']) ?  $params['data']['entityid']:"";
+                                       $jwt_token = isset($params['jwt_token']) ?  $params['jwt_token']:"";
+                                                                                   
+                                       $inarr = array('borrower_id'=>$borrower_id,'documenttype'=> $documenttype,'dmscode'=>$dmscode,'filename'=> $filename,'entity_id'=> $entityid,'jwt_token'=> $jwt_token);
+                                       $this->db->insert("fp_xlrt_response", $inarr);
+                                       $id = $this->db->insert_id();
+
+                                       return json_output(200,array('status' => 200,'message' => 'Successfully Insert','data'=>$id));                                     
+                           }
+                           else
+                           {
+                               return json_output(400,array('status' => 400,'message' => 'Bad request'));
+                           }
+               }
+               else
+               {
+                            return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+               }
+    
+            }    // end of xlrt_fileupload_response
+            public function fp_xlrt_wrongresponse(){
+                $method = $_SERVER['REQUEST_METHOD'];
+                if($method =="POST")
+                { 
+                           if(True)
+                           {
+                                       $response['status']=200;
+                                       $respStatus = $response['status'];
+                                       $params  = json_decode(file_get_contents('php://input'), TRUE);
+                                       $borrower_id =($params['borrower_id']);
+                                       $documenttype = isset($params['data']['documenttype']) ?  $params['data']['documenttype']:"";
+                                       $dmscode = isset($params['data']['dmscode']) ?  $params['data']['dmscode']:"";
+                                       $filename = isset($params['data']['filename']) ?  $params['data']['filename']:"";
+                                       $entityid = isset($params['data']['entityid']) ?  $params['data']['entityid']:"";
+                                       $jwt_token = isset($params['jwt_token']) ?  $params['jwt_token']:"";
+                                                                                   
+                                       $inarr = array('borrower_id'=>$borrower_id,'documenttype'=> $documenttype,'dmscode'=>$dmscode,'filename'=> $filename,'entity_id'=> $entityid,'jwt_token'=> $jwt_token);
+                                       $this->db->insert("fp_xlrt_wrongresponse", $inarr);
+                                       $id = $this->db->insert_id();
+
+                                       return json_output(200,array('status' => 200,'message' => 'Successfully Insert','data'=>$id));                                     
+                           }
+                           else
+                           {
+                               return json_output(400,array('status' => 400,'message' => 'Bad request'));
+                           }
+               }
+               else
+               {
+                            return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+               }
+    
+            }     // fp_xlrt_wrongresponse   
+
             public function finnupxlrtwebhook()
             {
                 $response['status'] = 200;
@@ -611,53 +678,49 @@ class XLRT extends CI_Controller
                 } else {
 
                     $token   = $this->ci->input->get_request_header('XlrtToken', TRUE);
-                    $api_key   = $this->ci->input->get_request_header('Xlrt_Api_key', TRUE);
-
+                     
                     $xlrt_token=$this->config->item('XlrtToken');
-                    $xlrt_api_key=$this->config->item('Xlrt_Api_key');
-
-                    if($xlrt_token==$token && $xlrt_api_key==$api_key){
+                    
+                    if($xlrt_token==$token){
                         if ($response['status'] == 200) {
+                            print_r("data");
                             $params = json_decode(file_get_contents('php://input'), TRUE);
-    
                             $state = isset($params['state']) ? $params['state'] : " ";
                             $dmscode = isset($params['dmscode']) ? $params['dmscode'] : " ";
-    
                             if($state="ProcessingSuccess"){
-
-                                $this->xlrtgetExtractionResponse($dmscode);      
+                                // $this->xlrtgetExtractionResponse($dmscode);      
                                 json_output(200, array('status' => 200,'message' => 'Success!')); 
-            
                             }
                         }
-
                     }
                     else{
                         json_output(400,array('status' => 404,'message' => 'Authentication credentials were not provided'));
-
                     }  
                     //json_output(200, array('status' => 200,'message' => 'Success!')); 
                 }
-        
             }  
             //  end of finnupxlrtwebhook
             private function getborrowerid($dmscode){
-
-                $sql = "select  borrower_id,jwt_token from fp_xlrt_response where dmscode="."$dmscode";
+                $arr = array();
+                $sql = "select  borrower_id,jwt_token from fp_xlrt_response where dmscode = '"."$dmscode"."'";
                  $result = $this->db->query($sql)->result();
-                 return $result[0]->borrower_id;
+             
+                    $arr = [$result[0]->borrower_id,$result[0]->jwt_token
+                    ];
+                 return $arr;
+
             }  // End of getborrowerid 
 
             private  function  xlrtgetExtractionResponse($dmscode){
 
-
-
-                $borrower_id = $this->getborrowerid($dmscode);
+                $borrower_data = $this->getborrowerid($dmscode);
+                $borrower_id =  $borrower_data[0];
+                $jwt_token =  $borrower_data[1];
 
                 $extratin_url = "https://finnupuat.xlrt.ai/fst-api//financialdocs/";
                 $extration_url_end = "/extraction?checkpoints=true&children=true";
                 $dmscodes = $dmscode; 
-                $xlrt_str = $extratin_url . $dmscodes . $extration_url_end;
+                $xlrt_str = $extratin_url.$dmscodes.$extration_url_end;
 
                $ch = curl_init();
 
@@ -672,7 +735,7 @@ class XLRT extends CI_Controller
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'accept: */*',
-                    'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmaW5udXB1YXQxIiwiaWF0IjoxNjgzODc0Nzc4LCJleHAiOjE2ODM5MzYwMDAsImF1dGhvcml0aWVzIjp7ImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJST0xFX1RFTkFOVF9BRE1JTiJ9XSwic3Vic2NyaXB0aW9uIjp7ImRvY3R5cGVzIjp7IkZTVCI6W119LCJzcHJlYWR0ZW1wbGF0ZXMiOlt7ImlkIjowLCJuYW1lIjoiU3RhbmRhcmRfREUiLCJjb2RlIjoiVF9ERVRBSUxFRF9TVEFOREFSRCJ9XSwibmFtZWFsaWFzZXMiOltdLCJzdWJmbGFncyI6Mywic3Vic2NyaXB0aW9uIjp7ImVsZW1lbnRzIjpbeyJyZXNvdXJjZXMiOlt7ImlkIjoiRlNUIn1dLCJyZXNvdXJjZXR5cGUiOiJET0NVTUVOVCJ9XX0sInRlbmFudElkIjoiMGY0N2M0ZmQtMzQxYi00NDgzLTg1YzQtYmY5ZDA3NDkzZDM0IiwidGVuYW50TmFtZSI6ImZpbm51cHVhdCIsImJ1Y2tldCI6ImRlbW8xLWJib3giLCJwZXJtaXNzaW9uIjoyMzMxNTEsImRlZmF1bHR2YWx1ZSI6bnVsbCwicG9ydGZvbGlvIjpudWxsfX19.mQRQ4FqsGEm48QZEfvlqmLV0C9fH66oyF2RlPg0_Ue8',
+                    "Authorization: ".$jwt_token,
                 ),
             )
             );

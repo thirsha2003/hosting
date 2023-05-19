@@ -574,7 +574,7 @@ $config['s3_bucket_url'] = 'https://s3://bucketinfo/FINNUPBS/';
 
 $config['XlrtToken'] = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.W3siZW1haWwiOiJyYWh1bEBmaW5udXAuaW4iLCJuYW1lIjoiZmlubnVwIiwibm93IjoiMjAyMy0wNS0xMiAwOToyMzo0OSIsInJhbmRvbV9rZXkiOiJlMDYyYWEzNzVjN2ZhYWIyNDRjNGVhIn1d.R5qHmY7jYai3VJRZKGyHimSdpInTc0QTHLZsB-ah1M8';
 
-$config['Xlrt_Api_key']='finnupxlrtsk';
+$config['XlrtApikey']='finnupxlrtsk';
 
 
 
