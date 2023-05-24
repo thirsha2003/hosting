@@ -169,7 +169,7 @@ class Admin_common extends CI_Controller
 	
 	
 						$add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name,'company_type'=>$entity_type));
-	
+						$company_names = isset($params['data']['company_name']) ? $params['data']['company_name'] : $name;
 						if ($add_user && $add_borrower) {
 							json_output(200, array('status' => 200, 'message' => 'successfully Added', "data" => $id));
 								
@@ -183,7 +183,7 @@ class Admin_common extends CI_Controller
 									
 									$subject = "Dear Superadmin,";
 									$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $name . " has been created by the " . $created_by . " .
-									Please click on the below link to view " .$company_name. " or assign the same ." . "<br/>" . "<br/>" .
+									Please click on the below link to view " .$company_names. " or assign the same ." . "<br/>" . "<br/>" .
 										"link : app.finnup.in/#/admin.";
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject("$subject");
@@ -1027,6 +1027,7 @@ class Admin_common extends CI_Controller
   
 				$sql = "SELECT 
 				BO.company_name, 
+				LR.created_at AS created_at,
 				LR.id AS loanrequest_id, 
 				LA.id As loanapplication_id, 
 				LR.borrower_id, 
@@ -1947,10 +1948,10 @@ class Admin_common extends CI_Controller
 					if($loan_req =='')	{
 					
 					
-					$sql="WITH borrowerTable as (SELECT b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city ,bd.user_id,b.status
+					$sql="WITH borrowerTable as (SELECT b.created_at as created_at,b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city ,bd.user_id,b.status
 					FROM fpa_users b, fp_borrower_user_details bd 
 					WHERE b.slug ='borrower' AND b.status in ('assigned','active') AND b.id = bd.user_id AND bd.company_name is not null )  
-					SELECT bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth 
+					SELECT bd.created_at,bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth 
 					FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  ".$where." ";
 					}
 
@@ -2422,7 +2423,7 @@ class Admin_common extends CI_Controller
 							$join 		= isset($params['key']) ? $params['key'] : "";
 							$where 		= isset($params['where']) ? $params['where'] : "";	
 
-							$sql = "WITH borrowerTable as (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, b.rm_id, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.rm_id, bd.rm_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.rm_id=".$where;
+							$sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, b.rm_id, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.created_at,bd.rm_id, bd.rm_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.rm_id=".$where;
 
 							$borrowerdetails = $this->db->query($sql)->result(); 
 							$data = $this->db->query($sql);
