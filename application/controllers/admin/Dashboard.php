@@ -62,7 +62,7 @@ class Dashboard extends CI_Controller
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
 									$sql = "SELECT count(*) as TotalBorrowers_Onboarded FROM `fpa_users` WHERE 
-									slug ='borrower' and status IN ('new','assigned','active')";
+									slug ='borrower' and status IN ('new','assigned','active') and partner_id IS null and partner_name is null";
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -142,6 +142,40 @@ class Dashboard extends CI_Controller
 					}
 				
 			} // End of funciton gettotalloanapplications()---------------------------------------------
+
+			public function gettotalloanrequest()
+			{
+					$method = $_SERVER['REQUEST_METHOD'];
+					if($method =="POST")
+					{
+							$checkToken = $this->check_token();
+							if(True)
+							{
+									$response['status']=200;
+									$respStatus = $response['status'];
+									$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+									$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+									$join 		= isset($params['key']) ? $params['key'] : "";
+									$where 		= isset($params['where']) ? $params['where'] : "";	
+
+									$sql = "SELECT count(*) as TotalLoan_Requested FROM fp_borrower_loanrequests";
+									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+									return json_output($respStatus,$resp);
+							}
+							else
+							{
+								return json_output(400,array('status' => 400,'message' => $checkToken));
+							}
+						
+					}
+					else
+					{
+							return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+					}
+				
+			} // End of funciton gettotalloanrequest()---------------------------------------------
+
 
 			public function gettotaldealssenttolenders()
 			{

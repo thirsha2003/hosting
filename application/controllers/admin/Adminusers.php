@@ -690,7 +690,7 @@ class Adminusers extends CI_Controller
 							$join 		= isset($params['key']) ? $params['key'] : "";
 							$where 		= isset($params['where']) ? $params['where'] : "";	
 
-							$sql = "SELECT * FROM fp_connector_users";
+							$sql = "SELECT * FROM fp_connector_users where fp_connector_users.status='not created'";
 
 
 							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
@@ -698,7 +698,7 @@ class Adminusers extends CI_Controller
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' => "Unauthorized"));
 					}
 				
 			}

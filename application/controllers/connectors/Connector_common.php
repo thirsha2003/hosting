@@ -123,33 +123,28 @@ class Connector_common extends CI_Controller
 												SET status =0  WHERE email=".$email;
 
 
-												if($params['data']['emailsent'] == 1){
-													
+$subject = "Dear ".$name." ,";
+$message = "Dear ".$name.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/connector/login as a Super Admin, Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
+"Email :" . $email . "<br/>" .
+"Password :" . $simple_string . "<br/>" .
+// "Password :" . $userdata->password. "<br/>" .
+                            "-----------------------------------------------<br/>
+Team Finnup";  
+ $to =$email;
+$email = new \SendGrid\Mail\Mail ();
+$email->setSubject($subject);
+$email->addContent("text/html", $message);
+$email->setFrom("support@finnup.in", 'FinnUp Team');
+$email->addTo($to);
 
-													$subject = "Dear ".$name." ,";
-													$message = "Dear ".$name.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/connector/login as a Super Admin, Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
-															"Email :" . $email . "<br/>" .
-															"Password :" . $simple_string . "<br/>" .
-															// "Password :" . $userdata->password. "<br/>" .
-															"-----------------------------------------------<br/>
-															Team Finnup";	
-													// $to = 'platform@finnup.in';
-													//$to = 'rec2004@gmail.com';
-													//$to = 'vinothskumar4@gmail.com';
-													$to = $email;
-													$email = new \SendGrid\Mail\Mail();
-													$email->setSubject($subject);
-													$email->addContent("text/html", $message);
-													$email->setFrom("platform@finnup.in", 'FinnUp Team');
-													$email->addTo($to);
-													$sendgrid = new \SendGrid("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");
-													try {
-															$response = $sendgrid->send($email);
-													} catch (Exception $e) {
-															echo 'Caught exception: ', $e->getMessage(), "\n";
-													}
-													
-												}
+$sendgrid = new \SendGrid ("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");
+try {
+  $response = $sendgrid->send($email);
+} catch (Exception $e) {
+  echo 'Caught exception: ', $e->getMessage(), "\n";
+}
+
+                        json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$userid));
 											json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$userid));
 										   
 									}
