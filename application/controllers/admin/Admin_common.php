@@ -179,7 +179,7 @@ class Admin_common extends CI_Controller
 	
 									$subject = "Dear Superadmin,";
 									$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $name . " has been created by the " . $created_by . " .
-									Please click on the below link to view " . $name . " or assign the same ." . "<br/>" . "<br/>" .
+									Please click on the below link to view " . $company_name . " or assign the same ." . "<br/>" . "<br/>" .
 										"link : app.finnup.in/#/admin.";
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject("$subject");
