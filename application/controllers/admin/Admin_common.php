@@ -159,6 +159,8 @@ class Admin_common extends CI_Controller
 						$email = $params['data']['email'];
 						$phone = $params['data']['mobile'];
 						$created_by = $params['data']['created_by'];
+
+						$entity_type = $params['data']['entity_type'];
 						$company_name = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
 						$rm_id = isset($params['data']['id']) ? $params['data']['id'] : null;
 						$emailandmobileverified = 1;
@@ -166,7 +168,7 @@ class Admin_common extends CI_Controller
 						$id = $this->db->insert_id();
 	
 	
-						$add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name));
+						$add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name,'company_type'=>$entity_type));
 	
 						if ($add_user && $add_borrower) {
 							json_output(200, array('status' => 200, 'message' => 'successfully Added', "data" => $id));
@@ -176,10 +178,12 @@ class Admin_common extends CI_Controller
 								WHERE role_slug = 'sa'";
 								$emailtest = $this->db->query($results)->result();
 								foreach ($emailtest as $row) {
+
 	
+									
 									$subject = "Dear Superadmin,";
 									$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $name . " has been created by the " . $created_by . " .
-									Please click on the below link to view " . $company_name . " or assign the same ." . "<br/>" . "<br/>" .
+									Please click on the below link to view " .$company_name. " or assign the same ." . "<br/>" . "<br/>" .
 										"link : app.finnup.in/#/admin.";
 								$email = new \SendGrid\Mail\Mail();
 								$email->setSubject("$subject");

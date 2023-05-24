@@ -354,7 +354,7 @@ class Connectorusers extends CI_Controller
                                 $subject = "Dear ".$name." ,";
                                 $message = "Dear ".$name.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/connectorlogin as a ". $role_name.", Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
                                         "Email :" . $email . "<br/>" .
-                                        "Password :" . $password . "<br/>" .
+                                        // "Password :" . $password . "<br/>" .
                                         // "Password :" . $userdata->password. "<br/>" .
 
                                         "-----------------------------------------------<br/>
@@ -833,7 +833,7 @@ class Connectorusers extends CI_Controller
 							}
 							else
 							{
-								return json_output(400,array('status' => 400,'message' => $checkToken));
+								return json_output(400,array('status' => 400,'message' => 'success'));
 							}
 						
 					}
@@ -845,91 +845,95 @@ class Connectorusers extends CI_Controller
         } 
 
 
-	public function get_fpa_partnerusers()	{
-		$response['status'] = 200;
-		$respStatus = $response['status'];
-		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'POST')
-		{
-			json_output(400,array('status' => 400,'message' => 'Bad request.'));
-		}
+	// public function get_fpa_partnerusers()	{
+	// 	$response['status'] = 200;
+	// 	$respStatus = $response['status'];
+	// 	$method = $_SERVER['REQUEST_METHOD'];
+	// 	if($method != 'POST')
+	// 	{
+	// 		json_output(400,array('status' => 400,'message' => 'Bad request.'));
+	// 	}
 
-		else{
+	// 	else{
 
-			$check_auth_user  = $this->login->check_auth_user();
-			if($check_auth_user)
-			{
-			if($response['status'] == 200)
-			{
-				$d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
-				if ($params['tableName'] == "fpa_partners" ) 
-				{
-					// $simple_string = $params['data']['password'];
-					$iv_length = openssl_cipher_iv_length($this->ciphering);
-					if($params['where']){
-						$query = $this->db->get_where('fpa_partners', array('id' => $params['where']));
-					}else{
-						$query = $this->db->get('fpa_partners');
-					}
-					foreach ($query->result() as $row)
-					{
+	// 		$check_auth_user  = $this->login->check_auth_user();
+	// 		if($check_auth_user)
+	// 		{
+	// 		if($response['status'] == 200)
+	// 		{
+
+
+	// 			$d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
+
+
+	// 			if ($params['tableName'] == "fpa_partners" ) 
+	// 			{
+	// 				// $simple_string = $params['data']['password'];
+	// 				$iv_length = openssl_cipher_iv_length($this->ciphering);
+	// 				if($params['where']){
+	// 					$query = $this->db->get_where('fpa_partners', array('id' => $params['where']));
+	// 				}else{
+	// 					$query = $this->db->get('fpa_partners');
+	// 				}
+	// 				foreach ($query->result() as $row)
+	// 				{
 						
-						$txnArr[] = [
-							'id'=>$row->id,
-							'email'=>$row->email,
-							'mobile'=>$row->mobile,
-							'name'=>$row->name,
-							'role_slug'=>$row->role_slug,
-							'location_id'=>$row->location_id,
-							'password'=>openssl_decrypt ($row->password, $this->ciphering, $this->key, $this->options, $this->_iv),
+	// 					$txnArr[] = [
+	// 						'id'=>$row->id,
+	// 						'email'=>$row->email,
+	// 						'mobile'=>$row->mobile,
+	// 						'name'=>$row->name,
+	// 						'role_slug'=>$row->role_slug,
+	// 						'location_id'=>$row->location_id,
+	// 						'password'=>openssl_decrypt ($row->password, $this->ciphering, $this->key, $this->options, $this->_iv),
 							
-						];
-					}
-					$subject ="Finnup Admin Team ";
-					$message = "Hello Finnup Admin! <br/><br/>" . "Please find the login credential below <br/><br/>" .
-					"Email :" . $row->email . "<br/>" .
-					"Password :" .openssl_decrypt ($row->password, $this->ciphering, $this->key, $this->options, $this->_iv) . "<br/>" . 
-					// $to =  $row->email;
-					$to='parthiban24242000@gmail.com';
-					// echo "$to";
-					$email = new \SendGrid\Mail\Mail();
-					$email->setSubject($subject);
-					$email->addContent("text/html", $message);
-					$email->setFrom('platform@finnup.in', 'FinnUp Team');
-					// $email->setFrom('platform@finnup.in', 'FinnUp Team');
-					// $email->addBcc('saravanan@thesquaircle.com');
-					// $email->addBcc('sheik@thesquaircle.com');
-					// $email->addBcc('dhanasekarancse08@gmail.com');
-					$email->addTo($to);							
-					$sendgrid = new \SendGrid("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");
-					try {
-						$response = $sendgrid->send($email);
-						// $txnArr[]=['otp' => $num_str];
+	// 					];
+	// 				}
+	// 				$subject ="Finnup Admin Team ";
+	// 				$message = "Hello Finnup Admin! <br/><br/>" . "Please find the login credential below <br/><br/>" .
+	// 				"Email :" . $row->email . "<br/>" .
+	// 				"Password :" .openssl_decrypt ($row->password, $this->ciphering, $this->key, $this->options, $this->_iv) . "<br/>" . 
+	// 				// $to =  $row->email;
+	// 				$to='parthiban24242000@gmail.com';
+	// 				// echo "$to";
+	// 				$email = new \SendGrid\Mail\Mail();
+	// 				$email->setSubject($subject);
+	// 				$email->addContent("text/html", $message);
+	// 				$email->setFrom('platform@finnup.in', 'FinnUp Team');
+	// 				// $email->setFrom('platform@finnup.in', 'FinnUp Team');
+	// 				// $email->addBcc('saravanan@thesquaircle.com');
+	// 				// $email->addBcc('sheik@thesquaircle.com');
+	// 				// $email->addBcc('dhanasekarancse08@gmail.com');
+	// 				$email->addTo($to);							
+	// 				$sendgrid = new \SendGrid("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");
+	// 				try {
+	// 					$response = $sendgrid->send($email);
+	// 					// $txnArr[]=['otp' => $num_str];
 						
-					} catch (Exception $e) {
-						echo 'Caught exception: ',  $e->getMessage(), "\n";
-						json_output(400,array('status' => 400,'message' => 'Invalid Email Id.'));
-					}
+	// 				} catch (Exception $e) {
+	// 					echo 'Caught exception: ',  $e->getMessage(), "\n";
+	// 					json_output(400,array('status' => 400,'message' => 'Invalid Email Id.'));
+	// 				}
 					
-					$resp = array('status' => 200,'message' =>  'success','data' => $txnArr);
+	// 				$resp = array('status' => 200,'message' =>  'success','data' => $txnArr);
 					
-				} else 
-				{
-					$respStatus = 400;
-					$resp = array('status' => 400,'message' =>  'Fields Missing');
-				}
-				json_output($respStatus,$resp);
-				$params = json_decode(file_get_contents('php://input'), TRUE);
-						}
-			else
-			{
-				json_output(400,array('status' => 400,'message' => 'Bad request.'));
-			}
-		}
+	// 			} else 
+	// 			{
+	// 				$respStatus = 400;
+	// 				$resp = array('status' => 400,'message' =>  'Fields Missing');
+	// 			}
+	// 			json_output($respStatus,$resp);
+	// 			$params = json_decode(file_get_contents('php://input'), TRUE);
+	// 					}
+	// 		else
+	// 		{
+	// 			json_output(400,array('status' => 400,'message' => 'Bad request.'));
+	// 		}
+	// 	}
 
-		}
+	// 	}
 
-	}
+	// }
 
 
 	public function get_fpa_partners()	{
@@ -1163,7 +1167,7 @@ class Connectorusers extends CI_Controller
                                         }
                                         else
                                         {
-                                                return json_output(400,array('status' => 400,'message' => $checkToken));
+                                                return json_output(400,array('status' => 400,'message' => ''));
                                         }
                         }
                         else

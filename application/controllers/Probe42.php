@@ -361,7 +361,7 @@ public function probeapi()
                                   'open_charges_id'=>isset($apishareholder['id']) ? $apishareholder['id']:null,
                                   'date'=>isset($apishareholder['date']) ? $apishareholder['date']:null,
                                   'holder_name'=>isset($apishareholder['holder_name']) ? $apishareholder['holder_name']:null,
-                                  'amount'=>isset($apishreholder['amount']) ? $apishreholder['amount']:null,
+                                  'amount'=>isset($apishareholder['amount']) ? $apishareholder['amount']:null,
                                   'type'=>isset($apishareholder['type']) ? $apishareholder['type']:null,
   
                                 ];
@@ -397,7 +397,7 @@ public function probeapi()
                             $responseData = $result['data'];
                             $companydetails = $responseData['llp']; 
 
-                            $incorporation_date=$companyDetails['incorporation_date'] ;
+                            $incorporation_date=$companydetails['incorporation_date'] ;
 
                             $date_parts = date_parse($incorporation_date);
 
@@ -460,15 +460,15 @@ public function probeapi()
                               'api_city'=>isset($companydetails['registered_address']['city'])?$companydetails['registered_address']['city']:null,
                               'api_pincode'=>isset($companydetails['registered_address']['pincode'])?$companydetails['registered_address']['pincode']:null,
                               'api_state'=>isset($companydetails['registered_address']['state'])?$companydetails['registered_address']['state']:null,
-                              'api_country'=> isset($directors['address']['country'])? $directors['address']['country']:null,
+                              'api_country'=> isset($companydetails['address']['country'])? $companydetails['address']['country']:null,
                               'classification'=>isset($companydetails['classification'])?$companydetails['classification']:null,
                               'api_email'=>isset($companydetails['email'])?$companydetails['email']:null,
                               'last_agm_date'=>isset($companydetails['last_financial_reporting_date'])?$companydetails['last_financial_reporting_date']:null,
                               'last_filing_date'=>isset($companydetails['last_annual_returns_filed_date'])?$companydetails['last_annual_returns_filed_date']:null,
                               // 'total_obligation_of_contribution'=>isset($companydetails['total_obligation_of_contribution'])?$companydetails['total_obligation_of_contribution']:null,
 
-                              'active_compliance'=>isset( $companyDetails['active_compliance']) ?  $companyDetails['active_compliance'] :null ,
-                              'status'=>isset( $companyDetails['status']) ? $companyDetails['status'] :null,
+                              'active_compliance'=>isset( $companyDetails['active_compliance']) ?  $companydetails['active_compliance'] :null ,
+                              'status'=>isset( $companyDetails['status']) ? $companydetails['status'] :null,
                             ];
                               
                            
@@ -682,7 +682,7 @@ public function probeapi()
                                 'open_charges_id'=>$apishareholder['id'],
                                 'date'=>isset($apishareholder['date'])?$apishareholder['date']:null,
                                 'holder_name'=>isset($apishareholder['holder_name'])?$apishareholder['holder_name']:null,
-                                'amount'=>isset($apishreholder['amount'])?$apishreholder['amount']:null,
+                                'amount'=>isset($apishareholder['amount'])?$apishareholder['amount']:null,
                                 'type'=>isset($apishareholder['type'])?$apishareholder['type']:null,
 
                               ];

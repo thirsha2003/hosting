@@ -196,7 +196,7 @@ public function verifymobile()
 						else
 						{
 							$respStatus=201;
-							$resp = array('status' => 201,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
+							// $resp = array('status' => 201,'message' =>  'Success','data' => $this->db->query($sql)->row(),'fintoken'=>$token);
 							return json_output($respStatus,$resp);
 						}
 				}else

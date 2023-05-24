@@ -58,7 +58,7 @@ class Connector extends CI_Controller {
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' => "Bad Request"));
 					}
 				
 			}
@@ -94,7 +94,7 @@ class Connector extends CI_Controller {
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' => 'Bad Request'));
 					}
 				
 			}
@@ -130,7 +130,7 @@ class Connector extends CI_Controller {
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' => "Bad Request"));
 					}
 				
 			}
@@ -164,7 +164,7 @@ class Connector extends CI_Controller {
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' =>'Bad Request'));
 					}
 				
 			}
@@ -198,7 +198,7 @@ class Connector extends CI_Controller {
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' =>"Bad Request"));
 					}
 				
 			}
@@ -249,7 +249,7 @@ class Connector extends CI_Controller {
       }
       else
       {
-        return json_output(400,array('status' => 400,'message' => $checkToken));
+        return json_output(400,array('status' => 400,'message' => 'Bad Request'));
       }
       
     }
@@ -285,7 +285,7 @@ class Connector extends CI_Controller {
 		   }
 		   else
 		   {
-			   return json_output(400,array('status' => 400,'message' => $checkToken));
+			   return json_output(400,array('status' => 400,'message' => 'Bad Request'));
 		   }
 	   
            }
@@ -392,7 +392,7 @@ public function connectorspocdetails()
 					}
 					else
 					{
-						return json_output(400,array('status' => 400,'message' => $checkToken));
+						return json_output(400,array('status' => 400,'message' => 'Bad Request'));
 					}
 			}
 			else
