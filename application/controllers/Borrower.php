@@ -478,9 +478,151 @@ class Borrower extends CI_Controller {
 
 
 
+	public function doc_upload_xlrt(){
+
+		$method = $_SERVER['REQUEST_METHOD'];
+			  if($method != 'POST')
+			  {
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			  }else
+			  {
+				  
+					  $response['status'] = 200;
+					  $respStatus = $response['status'];
+					  if($response['status'] == 200)
+					  {
+						  $params = json_decode(file_get_contents('php://input'), TRUE);
+						  if (isset($params['data']) && isset($params['doc_type']) && isset($params['url']))  
+						  {
+
+							
+							$br_id = $params['data'];
+							$doc_type = $params['doc_type'];
+							$url = $params['url'] ;
+							$file_name = $params['file_name'] ;
+							
+
+							
+							$sql = "SELECT * FROM fp_borrower_docs WHERE delete_status = 1 and borrower_id =".$br_id." and doc_type = '".$doc_type."'";
+								
+									if(count($this->db->query($sql)->result())==0){
+										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url));
+										$doc_insert_id = $this->db->insert_id();
+										$resp = array('status' => 200,'message' =>  'success','data' => $doc_insert_id);
+									}else{
+										$this->db->where(array('borrower_id'=>$br_id,"doc_type"=>$doc_type) );
+										$this->db->update('fp_borrower_docs', array("delete_status"=>"0")); 
+										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url));
+										$doc_insert_id = $this->db->insert_id();
+										$resp = array('status' => 200,'message' =>  'success','data' => $doc_insert_id);
+									}
+
+									$xlrt_file_log=[
+										"borrower_id"=>$br_id,
+										"doc_type"=>$doc_type,
+										"analysis"=>"no",
+										"file_name"=>$file_name,
+										"file_url"=>$url,
+										"borrower_docs_id"=>$doc_insert_id,
+									];
+
+									$this->db->insert('fp_xlrt_file_log',$xlrt_file_log);
+									$this->notifyadmin($br_id, $doc_type);
+
+						  } else 
+						  {
+							$respStatus = 200;
+							$resp = array('status' => 400,'message' =>  'Fields Missing');
+						}
+						  json_output($respStatus,$resp);
+					  }
+				  // }
+			  }
 	
 
+	}   // doc_upload_xlrt 
+
 	
+
+	public function check_analysis(){
+
+		$method = $_SERVER['REQUEST_METHOD'];
+			  if($method != 'POST')
+			  {
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			  }else
+			  {
+				  
+					  $response['status'] = 200;
+					  $respStatus = $response['status'];
+					  if($response['status'] == 200)
+					  {
+						  $params = json_decode(file_get_contents('php://input'), TRUE);
+						  if (isset($params['borrower_id']))  
+						  {
+							$br_id = $params['borrower_id'];
+							$sql = "SELECT count(*) as count FROM fp_xlrt_file_log xfl, fp_borrower_docs bd WHERE bd.id = xfl.borrower_docs_id and bd.delete_status = 1 and bd.borrower_id = $br_id and analysis = 'no' ";
+							$count = $this->db->query($sql)->result();
+							$number = $count[0]->count;
+							if($number>=1){
+								$analysis = true;
+							}else{
+								$analysis =  false;
+							}
+							$resp = array('status' => 200,"analysis"=>$analysis);
+						  } else 
+						{
+						  $respStatus = 200;
+						  $resp = array('status' => 400,'message' =>  'Fields Missing');
+					  }
+						  json_output($respStatus,$resp);
+					  }
+				  // }
+			  }
+
+	} 
+
+
+	public function xlrt_analyse_file(){
+
+		$method = $_SERVER['REQUEST_METHOD'];
+			  if($method != 'POST')
+			  {
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			  }else
+			  {
+					  $response['status'] = 200;
+					  $respStatus = $response['status'];
+					  if($response['status'] == 200)
+					  {
+						  $params = json_decode(file_get_contents('php://input'), TRUE);
+						  if (isset($params['borrower_id']))  
+						  {
+							$br_id = $params['borrower_id'];
+							$sql = "SELECT bd.doc_type,bd.file_name,xfl.id FROM fp_xlrt_file_log xfl, fp_borrower_docs bd WHERE bd.id = xfl.borrower_docs_id && (bd.doc_type LIKE '%AF%' or bd.doc_type LIKE '%YTD%' ) && bd.delete_status='1' && xfl.analysis = 'no' &&  bd.borrower_id= ".$br_id;
+
+							$result = $this->db->query($sql)->result();
+
+						
+
+							foreach($result as $row){
+								$this->db->where(array('id'=>$row->id));
+								$this->db->update('fp_xlrt_file_log', array("analysis"=>'yes'));
+							}
+							
+							$resp = array('status' => 200,"data"=>$result);
+						  } else 
+						{
+						  $respStatus = 200;
+						  $resp = array('status' => 400,'message' =>  'Fields Missing');
+					  }
+						  json_output($respStatus,$resp);
+					  }
+				  // }
+			  }
+
+	} 
+
 
 
 

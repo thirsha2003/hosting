@@ -670,6 +670,10 @@ class XLRT extends CI_Controller
 
             public function finnupxlrtwebhook()
             {
+
+                
+
+
                 $response['status'] = 200;
                 $respStatus = $response['status'];
                 $method = $_SERVER['REQUEST_METHOD'];  
@@ -687,9 +691,14 @@ class XLRT extends CI_Controller
                             $params = json_decode(file_get_contents('php://input'), TRUE);
                             $state = isset($params['state']) ? $params['state'] : " ";
                             $dmscode = isset($params['dmscode']) ? $params['dmscode'] : " ";
+
+                            $logs=array("dmscode"=> $dmscode,"state"=>$state);
+                            $this->db->insert('fp_xlrt_log',$logs);
+                            
                             if($state="ProcessingSuccess"){
-                                // $this->xlrtgetExtractionResponse($dmscode);      
                                 json_output(200, array('status' => 200,'message' => 'Success!')); 
+                                $this->xlrtgetExtractionResponse($dmscode);      
+                               
                             }
                         }
                     }
@@ -711,16 +720,19 @@ class XLRT extends CI_Controller
 
             }  // End of getborrowerid 
 
-            private  function  xlrtgetExtractionResponse($dmscode){
+            public  function  xlrtgetExtractionResponse($dmscode){
 
                 $borrower_data = $this->getborrowerid($dmscode);
-                $borrower_id =  $borrower_data[0];
-                $jwt_token =  $borrower_data[1];
+                 $borrower_id =  $borrower_data[0];
+                 $jwt_token =  $borrower_data[1];
 
                 $extratin_url = "https://finnupuat.xlrt.ai/fst-api//financialdocs/";
-                $extration_url_end = "/extraction?checkpoints=true&children=true";
-                $dmscodes = $dmscode; 
+                $extration_url_end = "/extraction?checkpoints=true&children=true&unitType=ACTUALS";
+                $dmscodes = $dmscode;  
+                // $dmscodes = "cf169c82bc2e4643a859a391114c6367"; 
                 $xlrt_str = $extratin_url.$dmscodes.$extration_url_end;
+
+                
 
                $ch = curl_init();
 
@@ -735,23 +747,23 @@ class XLRT extends CI_Controller
                 CURLOPT_CUSTOMREQUEST => 'GET',
                 CURLOPT_HTTPHEADER => array(
                     'accept: */*',
-                    "Authorization: ".$jwt_token,
+                    "Authorization:".$jwt_token,
                 ),
             )
             );
+
               $response_xlrt = curl_exec($ch);
               curl_close($ch);
               $xlrt_response= json_decode($response_xlrt, true);
-
-               $this->AnalyzeData($borrower_id,$xlrt_response) ;
+               $this->AnalyzeData($borrower_id,$xlrt_response) ; 
 
             }  // End of XlrtgetExtractionResponse
                 
             private function AnalyzeData($borrower_id,$xlrt_response)
-            {
+            { 
+                
                         $financejson 	= $xlrt_response;   
                         $financialstype = "STA";
-
                         $data["balancesheetdata"] = GetBalanceSheetData($financejson, $financialstype);
                         $data["profitandloss"] = GetProfitAndLoss($financejson, $financialstype);
                         
