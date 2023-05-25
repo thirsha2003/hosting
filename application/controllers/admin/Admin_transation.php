@@ -1399,8 +1399,9 @@ public function  borrowerloanrequest()
       $where     = isset($params['where']) ? $params['where'] : "";  
       $borrower_id     = isset($params['borrower_id']) ? $params['borrower_id'] : "";  
  
-      $sql = "SELECT tdw.created_at as created, tdw.taskdetail_id,tdw.activity as work, tdw.activity_remarks as comment, td.borrower_id, bu.name as borrower, ad.name as rmname FROM fpa_taskdetails_worklog tdw, fpa_taskdetails as td, fp_borrower_user_details bu, fpa_adminusers ad WHERE tdw.taskdetail_id = td.id AND td.borrower_id=bu.user_id and td.rm_email=ad.email and td.borrower_id = "  . $borrower_id;
-      $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+      $sql = "SELECT taskdetail_id,activity as work,activity_remarks as comment,created_at as created,created_by as rmname FROM `fpa_taskdetails_worklog` WHERE borrower_id = ".$borrower_id;
+     
+			$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
       return json_output($respStatus,$resp);
      }
      else
