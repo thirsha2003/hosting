@@ -690,7 +690,7 @@ class Adminusers extends CI_Controller
 							$join 		= isset($params['key']) ? $params['key'] : "";
 							$where 		= isset($params['where']) ? $params['where'] : "";	
 
-							$sql = "SELECT * FROM fp_connector_users where fp_connector_users.status='not created'";
+							$sql = "SELECT * FROM fp_connector_users where fp_connector_users.status='not created' and fp_connector_users.connector_status=1";
 
 
 							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
@@ -708,7 +708,165 @@ class Adminusers extends CI_Controller
 			}
 		
 	} 
+
+	public function partner_data()
+	{
+			$method = $_SERVER['REQUEST_METHOD'];
+			if($method =="POST")
+			{
+					// $checkToken = $this->check_token();
+					if(true)
+					{
+							$response['status']=200;
+							$respStatus = $response['status'];
+							$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+							$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+							$join 		= isset($params['key']) ? $params['key'] : "";
+							$where 		= isset($params['where']) ? $params['where'] : "";	
+
+							$sql = "SELECT pa.id, pa.name, pa.email, pa.mobile, pa.password,pa.company_name, pa.role_slug, pa.partner_id, pa.created_at, pr.name as rolename, pr.slug FROM fpa_partners pa, fpa_partner_roles pr WHERE pa.role_slug=pr.slug";
+
+
+							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+							return json_output($respStatus,$resp);
+					}
+					else
+					{
+						return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+					}
+				
+			}
+			else
+			{
+					return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}
+		
+	} 
+	// ------End of partner_data
+
+
+	public function rejectedpartner_data()
+	{
+			$method = $_SERVER['REQUEST_METHOD'];
+			if($method =="POST")
+			{
+					// $checkToken = $this->check_token();
+					if(true)
+					{
+							$response['status']=200;
+							$respStatus = $response['status'];
+							$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+							$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*";
+
+							$sql = "SELECT * FROM fp_connector_users cu WHERE cu.status='not created' AND cu.connector_status=0";
+
+
+							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+							return json_output($respStatus,$resp);
+					}
+					else
+					{
+						return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+					}
+				
+			}
+			else
+			{
+					return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}
+		
+	} 
+	// ------End of rejectedpartner_data
+
+
 	
+	public function get_fpa_partners()	{
+		$response['status'] = 200;
+		$respStatus = $response['status'];
+		$method = $_SERVER['REQUEST_METHOD'];
+		if($method != 'POST')
+		{
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		}
+
+		else{
+
+			$check_auth_user  = $this->login->check_auth_user();
+			if($check_auth_user)
+			{
+						if($response['status'] == 200)
+						{
+							$params = json_decode(file_get_contents('php://input'), TRUE);
+							$d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
+							if ($params['tableName'] == "fpa_partners" ) 
+							{
+								// $simple_string = $params['data']['password'];
+								$iv_length = openssl_cipher_iv_length($this->ciphering);
+								if($params['where']){
+									$query = $this->db->get_where('fpa_partners', array('id' => $params['where']));
+								}else{
+									$query = $this->db->get('fpa_partners');
+								}
+								foreach ($query->result() as $row)
+									{
+									    
+										$txnArr[] = [
+											'id'=>$row->id,
+											'email'=>$row->email,
+											'mobile'=>$row->mobile,
+											'name'=>$row->name,
+											'role_slug'=>$row->role_slug,
+											'company_name'=>$row->company_name,
+											'password'=>openssl_decrypt ($row->password, $this->ciphering, $this->key, $this->options, $this->_iv),
+									
+									];
+									}
+                                    $subject ="Finnup Admin Team ";
+									$message = "Hello Finnup Admin! <br/><br/>" . "Please find the login credential below <br/><br/>" .
+									"Email :" . $row->email . "<br/>" .
+									 "Password :" .openssl_decrypt ($row->password, $this->ciphering, $this->key, $this->options, $this->_iv) . "<br/>" . 
+								$to =  $row->email;
+								// $to='parthiban24242000@gmail.com';
+								// echo "$to";
+								$email = new \SendGrid\Mail\Mail();
+								$email->setSubject($subject);
+								$email->addContent("text/html", $message);
+								$email->setFrom('support@finnup.in', 'FinnUp Team');
+								// $email->setFrom('platform@finnup.in', 'FinnUp Team');
+								// $email->addBcc('saravanan@thesquaircle.com');
+								// $email->addBcc('sheik@thesquaircle.com');
+								// $email->addBcc('dhanasekarancse08@gmail.com');
+								 $email->addTo($to);							
+								$sendgrid = new \SendGrid("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");
+								try {
+									$response = $sendgrid->send($email);
+									// $txnArr[]=['otp' => $num_str];
+									
+								} catch (Exception $e) {
+									echo 'Caught exception: ',  $e->getMessage(), "\n";
+									json_output(400,array('status' => 400,'message' => 'Invalid Email Id.'));
+								}
+
+								$resp = array('status' => 200,'message' =>  'success','data' => $txnArr);
+									
+							} else 
+							{
+								$respStatus = 400;
+								$resp = array('status' => 400,'message' =>  'Fields Missing');
+							}
+							json_output($respStatus,$resp);
+						}
+			else
+			{
+				json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}
+		}
+
+		}
+
+	}
 
 
 } // -------------------------- end ---------------------

@@ -531,5 +531,75 @@ public function createdby_admin()
 	
 } // End of funciton createdby_admin()---------------------------------------------
 
+
+public function connector_statuschange()
+{
+		$method = $_SERVER['REQUEST_METHOD'];
+		if($method =="POST")
+		{
+				// $checkToken = $this->check_token();
+				if(True)
+				{
+						$response['status']=200;
+						$respStatus = $response['status'];
+						$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+						$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+						$join 		= isset($params['key']) ? $params['key'] : "";
+						$where 		= isset($params['where']) ? $params['where'] : "";	
+
+						$status = 0;
+						$sql = "update fp_connector_users set connector_status=".$status." where id=".$where;
+						$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql));
+						return json_output($respStatus,$resp);
+				}
+				else
+				{
+					return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+				}
+			
+		}
+		else
+		{
+				return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		}
+	
+} // End of funciton connector_statuschange()---------------------------------------------
+
+
+public function connector_statuschangetoenable()
+{
+		$method = $_SERVER['REQUEST_METHOD'];
+		if($method =="POST")
+		{
+				// $checkToken = $this->check_token();
+				if(True)
+				{
+						$response['status']=200;
+						$respStatus = $response['status'];
+						$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+						$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+						$join 		= isset($params['key']) ? $params['key'] : "";
+						$where 		= isset($params['where']) ? $params['where'] : "";	
+
+						$status = 1;
+						$sql = "update fp_connector_users set connector_status=".$status." where id=".$where;
+						$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql));
+						return json_output($respStatus,$resp);
+				}
+				else
+				{
+					return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+				}
+			
+		}
+		else
+		{
+				return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+		}
+	
+} // End of funciton connector_statuschangetoenable()---------------------------------------------
+
   
 }  //------------------end of class----------------------------------------------
