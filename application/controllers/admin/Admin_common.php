@@ -212,7 +212,7 @@ class Admin_common extends CI_Controller
                         foreach ($emailtest as $row) {
 
                             $subject = "Dear Superadmin,";
-                            $message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $name . " has been created by the " . $created_by . " .
+                            $message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $company_names . " has been created by the " . $created_by . " .
 									Please click on the below link to view " . $company_names . " or assign the same ." . "<br/>" . "<br/>" .
                                 "link : app.finnup.in/#/admin.";
                             $email = new \SendGrid\Mail\Mail ();
