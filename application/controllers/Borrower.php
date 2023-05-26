@@ -183,7 +183,7 @@ class Borrower extends CI_Controller {
 										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url));
 										$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
 									}else{
-										$this->db->where(array('borrower_id'=>$br_id,"doc_type"=>$doc_type) );
+										$this->db->where(array('borrower_id'=>$br_id,"doc_type"=>$doc_type));
 										$this->db->update('fp_borrower_docs', array("delete_status"=>"0")); 
 										$this->db->insert('fp_borrower_docs', array("borrower_id"=>$br_id,"doc_type"=>$doc_type,"file_name"=>$url));
 										$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
@@ -564,7 +564,7 @@ class Borrower extends CI_Controller {
 							$sql = "SELECT count(*) as count FROM fp_xlrt_file_log xfl, fp_borrower_docs bd WHERE bd.id = xfl.borrower_docs_id and bd.delete_status = 1 and bd.borrower_id = $br_id and analysis = 'no' ";
 							$count = $this->db->query($sql)->result();
 							$number = $count[0]->count;
-							if($number>=3){
+							if($number>=1){
 								$analysis = true;
 							}else{
 								$analysis =  false;
@@ -624,6 +624,12 @@ class Borrower extends CI_Controller {
 	} 
 
 
+
+
+
+	
+
+	
 
 
 

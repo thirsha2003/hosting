@@ -20,8 +20,10 @@ class Admin_common extends CI_Controller
         parent::__construct();
         $this->load->helper('json_output');
 
+
         $this->ci = &get_instance();
         $this->ci->load->database();
+
 
     } // construct
     public function check_token()
