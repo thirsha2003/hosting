@@ -20,10 +20,8 @@ class Admin_common extends CI_Controller
         parent::__construct();
         $this->load->helper('json_output');
 
-
         $this->ci = &get_instance();
         $this->ci->load->database();
-
 
     } // construct
     public function check_token()
@@ -201,32 +199,37 @@ class Admin_common extends CI_Controller
                     $id = $this->db->insert_id();
 
                     $add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name, 'company_type' => $entity_type));
-                    $company_names = isset($params['data']['company_name']) ? $params['data']['company_name'] : $name;
+                    $company_names = isset($params['data']['company_name']) ? $params['data']['company_name'] : " ";
                     if ($add_user && $add_borrower) {
                         json_output(200, array('status' => 200, 'message' => 'successfully Added', "data" => $id));
 
-                        $results = "SELECT email
-								FROM fpa_adminusers
-								WHERE role_slug = 'sa'";
-                        $emailtest = $this->db->query($results)->result();
-                        foreach ($emailtest as $row) {
+                        if ($company_names != null) {
 
-                            $subject = "Dear Superadmin,";
-                            $message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $company_names . " has been created by the " . $created_by . " .
+                            $results = "SELECT email
+                            FROM fpa_adminusers
+                            WHERE role_slug = 'sa'";
+                            $emailtest = $this->db->query($results)->result();
+
+                            foreach ($emailtest as $row) {
+
+                                $subject = "Dear Superadmin,";
+                                $message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $company_names . " has been created by the " . $created_by . " .
 									Please click on the below link to view " . $company_names . " or assign the same ." . "<br/>" . "<br/>" .
-                                "link : app.finnup.in/#/admin.";
-                            $email = new \SendGrid\Mail\Mail ();
-                            $email->setSubject("$subject");
-                            $email->addContent("text/html", $message);
-                            $email->setFrom("support@finnup.in", 'FinnUp Team');
+                                    "link : app.finnup.in/#/admin.";
+                                $email = new \SendGrid\Mail\Mail ();
+                                $email->setSubject("$subject");
+                                $email->addContent("text/html", $message);
+                                $email->setFrom("support@finnup.in", 'FinnUp Team');
 
-                            $email->addTo($row->email);
-                            $sendgrid = new \SendGrid ("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");
-                            try {
-                                $response = $sendgrid->send($email);
-                            } catch (Exception $e) {
-                                echo 'Caught exception: ', $e->getMessage(), "\n";
+                                $email->addTo($row->email);
+                                $sendgrid = new \SendGrid ("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");
+                                try {
+                                    $response = $sendgrid->send($email);
+                                } catch (Exception $e) {
+                                    echo 'Caught exception: ', $e->getMessage(), "\n";
+                                }
                             }
+
                         }
 
                     } else {
@@ -655,7 +658,6 @@ class Admin_common extends CI_Controller
                         try {
                             $response = $sendgrid->send($email);
                             json_output(200, array('status' => 200, 'message' => 'Task assigned successfully!'));
-
 
                         } catch (Exception $e) {
                             echo 'Caught exception: ', $e->getMessage(), "\n";
