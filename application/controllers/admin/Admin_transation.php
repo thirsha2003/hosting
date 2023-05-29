@@ -1464,7 +1464,7 @@ public function  borrowerloanrequest()
 
 
 			public function getcibil()
-{
+            {
 				$method = $_SERVER['REQUEST_METHOD'];
 				if($method != 'POST'){
 				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
@@ -1488,7 +1488,7 @@ public function  borrowerloanrequest()
 						$cibilacc_id=$row->id;
 						$director_id=$row->director_id;
 
-						$this->db->limit(6);
+						$this->db->limit(6);   
 						
                        $payment_get = $this->db->get_where("fp_director_cibilpayments" , array('director_id'=>$director_id,'cibilaccountdetail_id'=>$cibilacc_id))->result();
 					   
@@ -1518,7 +1518,66 @@ public function  borrowerloanrequest()
 					
 				
 			}
-}  
+            }  
+
+
+
+			public function getcibils()
+            {
+				$method = $_SERVER['REQUEST_METHOD'];
+				if($method != 'POST'){
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+				}else{
+				  $response['status']=200;
+				  $respStatus = $response['status'];
+				  
+					  $params = json_decode(file_get_contents('php://input'), TRUE);
+					
+					  
+					  $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+					  $join = isset($params['key']) ? $params['key'] : "";
+					  $where = isset($params['where']) ? $params['where'] : "";
+							
+					  $sql = "SELECT " .$selectkey. " FROM ".$params['tableName']."  WHERE ".$where;
+ 
+					   $cibilaccounts = $this->db->query($sql)->result();
+					
+					
+					  foreach( $cibilaccounts as  $row ){
+						$cibilacc_id=$row->id;
+						$director_id=$row->director_id;
+
+						$this->db->limit(12);   
+						
+                       $payment_get = $this->db->get_where("fp_director_cibilpayments" , array('director_id'=>$director_id,'cibilaccountdetail_id'=>$cibilacc_id))->result();
+					   
+					
+
+					  
+					   
+					$data[] = [
+					'director_id'=> $row->director_id,
+					'account_number'=> $row->account_number,
+					'account_open_status'=> $row->account_open_status,
+					'account_type'=> $row->account_type,
+					'currentbalance'=> $row->currentbalance,
+					'director_id'=> $row->director_id,
+					'id'=> $row->id,
+					'lastpayment_date'=> $row->lastpayment_date,
+					'membername'=> $row->membername,
+					'opened_date'=> $row->opened_date,
+					'ownership'=> $row->ownership,	
+					'reported_date'=> $row->reported_date,	
+					'status'=> $row->status,
+					'payment'=>$payment_get
+					   ];
+					  }
+						
+					  json_output(200,array('status' => 200,'message' => 'successfully Feteach Data',"data"=>$data));
+					
+				
+			}
+            } 
 
 
 

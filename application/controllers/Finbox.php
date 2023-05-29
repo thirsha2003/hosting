@@ -47,7 +47,16 @@ class Finbox extends CI_Controller
                 $progress = isset($params['progress']) ? $params['progress'] : " ";
                 $reason = isset($params['reason']) ? $params['reason'] : " ";
 
+
+                $this->db->sendOTPemail("rec2004@gmail.com" ,"111111","borrower","2");
+
+
+
+
                 if($progress="completed"){
+                    
+                    $this->db->sendOTPemail("rec2004@gmail.com" ,"2","borrower","2");
+
                     $this->finboxapi_pdfxlsx_ma($entity_id, $statement_id, $linked_id, $progress, $reason);
 
 
@@ -78,17 +87,17 @@ class Finbox extends CI_Controller
                 try {
 
                     $entity_id = $params['entityid'];
-                    $borrower_id = $params['borrower_id'];
+                    // $borrower_id = $params['borrower_id'];  
                     $linked_id = $params['linkid'];
 
 
                     $fp_borrower_details = array(
                         'finbox_entity_id' => $entity_id,
-                        'finbox_link_id' => $linked_id,
+                        // 'finbox_link_id' => $linked_id,
                         'finbox_processing'=>"Before",
                     );
 
-                    $this->db->where('user_id', $borrower_id);
+                    $this->db->where('finbox_link_id', $linked_id);
                     $this->db->update('fp_borrower_user_details', $fp_borrower_details);
 
 
@@ -103,6 +112,10 @@ class Finbox extends CI_Controller
         }
 
     } // finboxapi_linkidupdate
+
+
+
+
     private function getborrowerid($entity_id, $linked_id)
     {
         $sql = "select  user_id from fp_borrower_user_details where finbox_link_id = '" . $linked_id . "' and finbox_entity_id= '" . $entity_id . "'";
@@ -1105,5 +1118,75 @@ class Finbox extends CI_Controller
             }
         }
     } //  end
+
+
+    public function linkid_add_update()
+    {
+
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        } else {
+
+            if (true) {
+                $response['status'] = 200;
+                $respStatus = $response['status'];
+                $params = json_decode(file_get_contents('php://input'), TRUE);
+                try {
+
+                    // $entity_id = $params['entityid'];
+                    $borrower_id = $params['borrower_id'];
+                    $linked_id = $params['linkid'];
+
+
+                    $fp_borrower_details = array(
+                        // 'finbox_entity_id' => $entity_id,
+                        'finbox_link_id' => $linked_id,
+                        // 'finbox_processing'=>"Before",
+                    );
+
+                    $this->db->select();
+                    $this->db->from('fp_borrower_user_details');
+                    $this->db->where('user_id', $borrower_id);
+                    $result = $this->db->get();
+                    $txnArr = array();
+                    if($result->num_rows() == 1){
+                        foreach($result->result() as $row){
+                            $txnArr = array(
+                                
+                                'borrower_id' =>  $row->user_id,
+                                "finbox_link_id" => $row->finbox_link_id,
+                               
+                            );
+                            // print_r($row->finbox_link_id);
+                            $finbox_link_id = $row->finbox_link_id;
+                            }
+
+                            if($finbox_link_id == null || $finbox_link_id == "" ){
+                                $this->db->where('user_id', $borrower_id);
+                                $this->db->update('fp_borrower_user_details', $fp_borrower_details);
+                                $txnArr = array(
+                                        
+                                    'borrower_id' =>  $borrower_id,
+                                    "finbox_link_id" => $linked_id,
+                                   
+                                );
+                            }
+
+                    }else{
+                        $txnArr = "Borrwer is not exists";
+                    }
+
+                    json_output(200, array('status' => 200, 'data' =>  $txnArr));
+                } catch (Exception $e) {
+                    json_output(200, array('status' => 401, 'message' => $e->getMessage()));
+                }
+            } else {
+                json_output(200, array('status' => 401, 'message' => "Auth Failed "));
+            }
+
+        }
+
+    } // finboxapi_linkidupdate
 
 }

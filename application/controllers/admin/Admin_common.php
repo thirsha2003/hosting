@@ -651,8 +651,12 @@ class Admin_common extends CI_Controller
                         $email->addTo($to);
 
                         $sendgrid = new \SendGrid ("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");
+                        json_output(200, array('status' => 200, 'message' => 'Task assigned successfully!'));
                         try {
                             $response = $sendgrid->send($email);
+                            json_output(200, array('status' => 200, 'message' => 'Task assigned successfully!'));
+
+
                         } catch (Exception $e) {
                             echo 'Caught exception: ', $e->getMessage(), "\n";
                         }
