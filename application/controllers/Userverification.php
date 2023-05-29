@@ -927,7 +927,7 @@ public function verifyemail()
 							$slug 		= $params['data']['slug'];	
 							$email		= $params['data']['email'];
 							$mobile 	= isset($params['data']['mobile']) ? $params['data']['mobile'] : null; 
-							$company_name 	= isset($params['data']['company_name']) ? $params['data']['company_name'] : null; 
+							// $company_name 	= isset($params['data']['company_name']) ? $params['data']['company_name'] : null; 
 							$is_whatsapp_notification = isset($params['data']['is_whatsapp']) ? $params['data']['is_whatsapp'] : null; 
 							$name 		    = isset( $params['data']['name'] )  ? $params['data']['name']:null ;
 							$lenderid 	    = isset( $params['data']['lender_master_id'])? $params['data']['lender_master_id']:null;
@@ -954,7 +954,7 @@ public function verifyemail()
 								$fpausers_array['slug']=$slug;
 								$fpausers_array['email']=$email;
 								$fpausers_array['mobile']=$mobile;
-								$fpausers_array['company_name']=$company_name;
+								// $fpausers_array['company_name']=$company_name;
 								$fpausers_array['is_email_verified']=1;
 								$fpausers_array['lender_master_id']= isset($lenderid) ? $lenderid:null;
 								
@@ -1102,7 +1102,7 @@ public function verifymobile()
 													'name' =>  $row->name,
 													'id' =>  $row->id,
 													'slug' =>  $row->slug,
-													'company_name'=>$row->company_name,
+													// 'company_name'=>$row->company_name,
 													'now'=> date('Y-m-d H:i:s'),
 													'random_key' => bin2hex(random_bytes(11))
 												);
@@ -1134,7 +1134,7 @@ public function verifymobile()
 				$respStatus =200;
 				$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
 				json_output($respStatus,$resp);
-				$company_name=$row->company_name;
+				// $company_name=$row->company_name;
 
   // Email Notification
 	if($row->slug=='borrower'){
@@ -1145,9 +1145,12 @@ public function verifymobile()
     foreach ($emailtest as $row){
 		$name 	= isset($params['data']['name']) ? $params['data']['name'] : null;
 		$subject = "Dear Superadmin,";
-		$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new Borrower application for " . $company_name . " has been created by the Borrower " . $name . " .
-		Please click on the below link to view " . $company_name ."" . "<br/>" . "<br/>" .
+		$message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new Borrower application for " . $name . " has been created by the " . $name . " .
+		Please click on the below link to view " . $name ."" . "<br/>" . "<br/>" .
 		"link : app.finnup.in/#/admin.";
+		// $message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new Borrower application for " . $company_name . " has been created by the Borrower " . $name . " .
+		// Please click on the below link to view " . $company_name ."" . "<br/>" . "<br/>" .
+		// "link : app.finnup.in/#/admin.";
 		
 		$email = new \SendGrid\Mail\Mail();
 		$email->setSubject($subject);
