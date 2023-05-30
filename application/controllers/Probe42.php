@@ -698,5 +698,62 @@ class Probe42 extends CI_Controller
             }
 
         }
+    }   // end of probeapi 
+
+
+
+    public  function borroweradd(){
+        $response['status'] = 200;
+        // $respStatus = $response['status'];
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        } else {
+            if ($response['status'] == 200) {
+                $params = json_decode(file_get_contents('php://input'), true);
+
+                $company_name = $params['data'] ;
+                $borrower_id = $params['borrower_id'];
+                $created_by = $params['created_by'];
+
+                 $borrower = array("user_id"=> number_format( $borrower_id));
+                 $company = array("company_name"=>$company_name);
+
+                $this->db->where($borrower);
+                $this->db->update("fp_borrower_user_details",$company);
+
+                // Email Notification 
+                    $results = "SELECT email
+                    FROM fpa_adminusers
+                    WHERE role_slug = 'sa'";
+                    $emailtest = $this->db->query($results)->result();
+
+                    foreach ($emailtest as $row) {
+
+                        $subject = "Dear Superadmin,";
+                        $message = "Dear Superadmin," . "<br/>" . "<br/>" . "<br/>" . "A new application for " . $company_name . " has been created by the " . $created_by . " .
+                            Please click on the below link to view " . $company_name . " or assign the same ." . "<br/>" . "<br/>" .
+                            "link : app.finnup.in/#/admin.";
+                        $email = new \SendGrid\Mail\Mail ();
+                        $email->setSubject("$subject");
+                        $email->addContent("text/html", $message);
+                        $email->setFrom("support@finnup.in", 'FinnUp Team');
+
+                        $email->addTo($row->email);
+                        $sendgrid = new \SendGrid ("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");
+                        try {
+                            $response = $sendgrid->send($email);
+                        } catch (Exception $e) {
+                            echo 'Caught exception: ', $e->getMessage(), "\n";
+                        }
+                    }
+
+                json_output(200, array('status' => 200, 'message' => 'success'));
+
     }
+    else {
+        json_output(200, array('status' => 400, 'message' => 'Bad Request'));        
+    }
+}
+}
 }

@@ -48,11 +48,12 @@ class Finbox extends CI_Controller
                 $reason = isset($params['reason']) ? $params['reason'] : " ";
 
 
+                $logs=array("entity_id"=> $entity_id,"statement_id"=>$statement_id,"link_id"=> $linked_id,"progress"=> $progress,"reason"=>$reason);
+                $this->db->insert('finbox_log',$logs);
+
+
                 $this->db->sendOTPemail("rec2004@gmail.com" ,"111111","borrower","2");
-
-
-
-
+                
                 if($progress="completed"){
                     
                     $this->db->sendOTPemail("rec2004@gmail.com" ,"2","borrower","2");

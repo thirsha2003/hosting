@@ -1497,12 +1497,18 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
     {
         $plData = null;
 
+	
+
         if(isset($jsonData->status) && $jsonData->status == true && isset($jsonData->body) && is_array($jsonData->body->financials) && count($jsonData->body->financials) > 0)
         {
+
+			
              foreach($jsonData->body->financials as $bodydata)
             {
+
+				
                 if($bodydata->fintype == $type  || count($jsonData->body->financials) == 1)
-                {
+                { 
                     $body = $bodydata;
 
                     if(isset($body->periods) && $body->periods != null && count($body->periods) > 0)
@@ -2061,12 +2067,13 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
   if(!function_exists('GetProfitAndLoss')) {
     function GetProfitAndLoss($jsonData, $type){
 
+		
+
         $profitAndLoss = null;
 		
         $incomestatement = GetIncomeStatementData($jsonData, $type);
-		
-		
 
+              
         if(isset($incomestatement) )
         {
         
@@ -2093,11 +2100,15 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 
 				$subTotalResetIndex = array();
 
+				
+
                 foreach($incomestatement["lineitems"] as $lineitem)
                 {
                     $itemIndex++;
                     $_lineitem = null;
-                    
+
+                    try 
+                    {
 	                    if((strpos($lineitem["classname"], "Revenue") !== false || $lineitem["componenttype"] == "IS") && $lineitem["label"] != "")
 	                    {
 	                        //$_lineitem  = array("lineitem" => $lineitem["label"], "values" => array());
@@ -2802,6 +2813,11 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 	                        
 	                            }
 	                    }
+					}
+					catch(Exception $e) {
+					  echo 'Message: ' .$e->getMessage();
+					  var_dump($lineitem);
+					}
 
                 }
             }
@@ -3484,7 +3500,6 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
         return $balanceSheet;
     }
   }
-
 
 
 
