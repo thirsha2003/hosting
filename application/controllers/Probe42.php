@@ -4,12 +4,19 @@ header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
 header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 header("HTTP/1.1 200 OK");
+header("hello: hellooo");
+require 'vendor/autoload.php';
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
 include APPPATH . 'ThirdParty/mTalkz.php';
 include APPPATH . 'libraries/Femail.php';
+
+include APPPATH . 'libraries/JsonuploadtoS3.php'; 
+
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -23,6 +30,8 @@ class Probe42 extends CI_Controller
 
     public function probeapi()
     {
+
+       $aws= new \App\Libraries\JsonuploadtoS3;
         $response['status'] = 200;
         $respStatus = $response['status'];
         $method = $_SERVER['REQUEST_METHOD'];
@@ -55,6 +64,13 @@ class Probe42 extends CI_Controller
                         $season_data = curl_exec($ch);
                         curl_close($ch);
                         $result = json_decode($season_data, true);
+
+                            // aws code  start 
+                          $projson= json_encode($season_data);
+                          $foldername="PROBE/";
+                          $aws->aws_s3bucket($params['borrowerid'],$foldername,$projson); 
+                        // aws end code 
+
                         $responseData = $result['data'];
 
                         // Getting the comapy details
@@ -113,7 +129,7 @@ class Probe42 extends CI_Controller
                             'api_city' => $companyDetails['registered_address']['city'],
                             'api_pincode' => $companyDetails['registered_address']['pincode'],
                             'api_state' => $companyDetails['registered_address']['state'],
-                            'classification' => $companyDetails['classification'],
+                            // 'classification' => $companyDetails['classification'], 
                             'company_status' => $companyDetails['status'],
                             'next_cin' => $companyDetails['next_cin'],
                             'last_agm_date' => $companyDetails['last_agm_date'],
@@ -123,12 +139,11 @@ class Probe42 extends CI_Controller
                             'cirp_status' => isset($companyDetails['cirp_status']) ? $companyDetails['cirp_status'] : null,
                             'active_compliance' => isset($companyDetails['active_compliance']) ? $companyDetails['active_compliance'] : null,
                             'status' => isset($companyDetails['status']) ? $companyDetails['status'] : null,
+                            'pro_created_by'=>"P"
 
                         ];
 
-                        // print_r($borrowerbasedetails);
-                        // print_r($borrowerbasedetails . company_name);
-                        // print_r($borrowerbasedetails->company_name);
+                        
 
                         $where_id = array(
                             'user_id' => ($params['borrowerid']) ? $params['borrowerid'] : '');
@@ -247,6 +262,15 @@ class Probe42 extends CI_Controller
                                 $result = json_decode($season_data, true);
                                 $director_network = $result;
 
+
+                            // Aws code start 
+                            $projson= json_encode($season_data);
+                            $foldername="PROBEDIR/";
+                            $aws->aws_s3bucket($params['borrowerid'],$foldername,$projson);
+                            // Aws end code 
+
+
+
                                 // isset($director_network['data']['director']);
                                 $director_network['data']['director'] = isset($director_network['data']['director']) ? $director_network['data']['director'] : null;
 
@@ -323,6 +347,14 @@ class Probe42 extends CI_Controller
                                 curl_close($ch);
                                 $result = json_decode($season_data, true);
                                 $director_network = $result;
+
+                                // Aws code start 
+                            $projson= json_encode($season_data);
+                            $foldername="PROBEDIR/";
+                            $aws->aws_s3bucket($params['borrowerid'],$foldername,$projson);
+                            // Aws end code 
+
+
 
                                 foreach ($director_network['data']['director'] as $director_data_new) {
                                     if ($director_data_new['network']['companies']) {
@@ -477,6 +509,7 @@ class Probe42 extends CI_Controller
 
                             'active_compliance' => isset($companyDetails['active_compliance']) ? $companydetails['active_compliance'] : null,
                             'status' => isset($companyDetails['status']) ? $companydetails['status'] : null,
+                            'pro_created_by'=>"P"
                         ];
 
                         $where_id = array(
@@ -717,7 +750,7 @@ class Probe42 extends CI_Controller
                 $created_by = $params['created_by'];
 
                  $borrower = array("user_id"=> number_format( $borrower_id));
-                 $company = array("company_name"=>$company_name);
+                 $company = array("company_name"=>$company_name,"pro_created_by"=>"U");
 
                 $this->db->where($borrower);
                 $this->db->update("fp_borrower_user_details",$company);
@@ -755,5 +788,6 @@ class Probe42 extends CI_Controller
         json_output(200, array('status' => 400, 'message' => 'Bad Request'));        
     }
 }
-}
+    }  // borroweradd 
+
 }

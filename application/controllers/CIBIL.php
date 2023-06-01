@@ -6,6 +6,8 @@ header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //metho
 header("HTTP/1.1 200 OK");
 
 defined('BASEPATH') OR exit('No direct script access allowed');
+
+include APPPATH . 'libraries/JsonuploadtoS3.php'; 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -18,6 +20,8 @@ class CIBIL extends CI_Controller
 
     public function  cibilscore()
     {
+
+      $aws= new \App\Libraries\JsonuploadtoS3;
       $CibilValue= 0;
       $did=0;
      $response['status'] = 200;
@@ -34,18 +38,8 @@ class CIBIL extends CI_Controller
 					{
 						$params = json_decode(file_get_contents('php://input'), TRUE);
                 
-            $did= $params['director_id'];
+               $did= $params['director_id'];
 
-            // if(!isset($params['director_id'])){
-
-            //   $this->db->insert('fp_director_details',$params['data2']);
-            //   $params['director_id'] = $this->db->insert_id();
-
-            //   $director =   $params['director_id'];
-              
-
-            //   // json_output(200, array('status' => 200 , 'message'=> 'success','director_id'=> $director)); 
-            // };
                              $data = [
                               "reference_id"=> (String)$params['cibilreference_id'],
                               "consent"=> true,
@@ -61,11 +55,10 @@ class CIBIL extends CI_Controller
                               "document_id"=> " "
                              ];
                              $datas = json_encode($data);
-                            // if(  isset($params ['data']['Name']) &&  isset($params['data']['DirectorPhone']) &&   isset ($params['director_id'] ) )
                             if(true)
                           { 
-                        $curl = curl_init();
-                        curl_setopt_array($curl, array(
+                           $curl = curl_init();
+                           curl_setopt_array($curl, array(
                           CURLOPT_URL => 'https://in.decentro.tech/v2/financial_services/credit_bureau/credit_report',
                           CURLOPT_RETURNTRANSFER => true,
                           CURLOPT_ENCODING => '',
@@ -88,10 +81,20 @@ class CIBIL extends CI_Controller
                          curl_close($curl);
                          $result = json_decode($season_data, true);
                          $responseData= $result;
-                         
-                        //  print_r($responseData);     
 
-                         $responseoutput = $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'];
+
+                        //  AWS code start 
+                        
+                        $projson= json_encode($season_data);
+                        $foldername="CIBIL/";
+                        $aws->aws_s3bucket($params['director_id'],$foldername,$projson);
+
+                        // AWS end code 
+                     
+                        // print_r($season_data);
+
+                        if($responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData']){
+                          $responseoutput = $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'];
 
                          $Scorefromjson = $responseoutput['scoreDetails']['0']['value'];
                           
@@ -135,10 +138,6 @@ class CIBIL extends CI_Controller
 
                           // cibil score update in director_details  
 
-                           
-                        
-
-                          
                           $totalaccounts= sizeof($responseoutput['retailAccountDetails']);
                            $total = 0;
                           for ($i = 0; $i < $totalaccounts; $i++) 
@@ -234,28 +233,7 @@ class CIBIL extends CI_Controller
                           $this->db->set('cibil_score',$CibilValue);
                           $this->db->where('id',$did);
                           $this->db->update('fp_director_details');
-
-                          // echo " Cibil updated Successfully";
-                          // echo $CibilValue;
-                                
-                          
-
-                            // This line  code json insert into table 
-
-                            // $responsejson=array(); 
-
-                            // $responsejson['responsejson'] = json_encode($responseData,true);  
-
-                            // $this->db->where('director_id', $params['director_id']);
-                            // $this->db->update('fp_director_cibilsummary',$responsejson ['responsejson']);   
-
-                          // End of  json 
-
-
-
                           $responseoutputs = $responseoutput['retailAccountDetails'];
-
-
                           // cibilaccountdetails   
                           foreach($responseoutputs as $cibilaccdetails){
                            
@@ -292,6 +270,8 @@ class CIBIL extends CI_Controller
                                 'lastpayment_date'=> $lastpayment_date,
                                 'termfrequency'=> $termfrequency,
                               ];
+                              
+
 
 
                                
@@ -318,34 +298,25 @@ class CIBIL extends CI_Controller
                                    };
                           } 
                     
-                    $fp_director_details = $this->db->get_where('fp_director_details', array('id' => $params['director_id']));
-                          
 
-                        //  json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
+                          json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!','data'=>$CibilValue));
+                        }
+                        else if ($responseData['data']['cCRResponse']['cIRReportDataLst']['0']['error']){
 
-                         json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!'));
+
+                          json_output(200, array('status' =>400,'message' => ' Consumer not found in bureau!'));
+                        }
+                        else {
+                          json_output(200, array('status' =>400,'message' => 'Bad Request'));
+
+                        }
                         }
                         else{
-                          json_output(200, array('status' => 200 , 'message'=> 'Invalid Information'));
+                          json_output(200, array('status' => 400 ,'message'=> 'Invalid Information'));
                         }
 
-
-                        // $fp_director_details = $this->db->get_where('fp_director_details', array('id' => $params['director_id']));
-                          
-
-                        // json_output(200, array('status' => 200 , 'message'=> 'success','data'=>$fp_director_details));
-
           }
-        
-
-          if ($response['status'] == 200){
-
-            json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!'));
-          } 
-                    else{
-                      json_output(400, array('status' => 400,'message' => 'Bad request.'));
-                    }
-
+      
     }
 }
 

@@ -7,6 +7,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
 include APPPATH . 'ThirdParty/mTalkz.php';
 include APPPATH . 'libraries/Femail.php';
+include APPPATH . 'libraries/JsonuploadtoS3.php'; 
+
 
 class XLRT extends CI_Controller 
 {
@@ -722,6 +724,9 @@ class XLRT extends CI_Controller
 
             public function  xlrtgetExtractionResponse($dmscode){
 
+                $aws= new \App\Libraries\JsonuploadtoS3;
+
+
                 $borrower_data = $this->getborrowerid($dmscode);
                 $borrowerid =  $borrower_data[0];
 
@@ -756,6 +761,15 @@ class XLRT extends CI_Controller
               $response_xlrt = curl_exec($ch);
               curl_close($ch);
               $xlrt_response= json_decode($response_xlrt);
+
+
+              //  AWS CODE START 
+
+            $projson = json_encode($response_xlrt);
+            $foldername ="XLRT/";
+            $aws->aws_s3bucket($borrowerid,$foldername,$projson);
+
+            // AWS END CODE
 
           
 

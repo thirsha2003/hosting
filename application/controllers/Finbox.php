@@ -12,6 +12,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
 include APPPATH . 'ThirdParty/mTalkz.php';
 include APPPATH . 'libraries/Femail.php';
+include APPPATH . 'libraries/JsonuploadtoS3.php'; 
 use Aws\S3\S3Client;
 use Aws\S3\Exception\S3Exception;
 
@@ -56,7 +57,7 @@ class Finbox extends CI_Controller
                 
                 if($progress="completed"){
                     
-                    $this->db->sendOTPemail("rec2004@gmail.com" ,"2","borrower","2");
+                    $this->db->sendOTPemail("parthiban24242000@gmail.com" ,"222222","borrower","2");
 
                     $this->finboxapi_pdfxlsx_ma($entity_id, $statement_id, $linked_id, $progress, $reason);
 
@@ -114,9 +115,9 @@ class Finbox extends CI_Controller
 
     } // finboxapi_linkidupdate
 
+    
 
-
-
+   
     private function getborrowerid($entity_id, $linked_id)
     {
         $sql = "select  user_id from fp_borrower_user_details where finbox_link_id = '" . $linked_id . "' and finbox_entity_id= '" . $entity_id . "'";
@@ -124,11 +125,11 @@ class Finbox extends CI_Controller
           
         return $result[0]->user_id;
 
-    } // getborrowerid End 
+    } // getborrowerid End   
 
     public function finboxapi_pdfxlsx_ma($entity_id, $statement_id, $linked_id, $progress, $reason)
     {
-
+        $aws= new \App\Libraries\JsonuploadtoS3;
 
         $borrower_id = $this->getborrowerid($entity_id, $linked_id);
 
@@ -175,6 +176,14 @@ class Finbox extends CI_Controller
             curl_close($curl);
             $result = json_decode($response, true);
 
+                        //  AWS CODE START 
+
+                        $projson= json_encode($response);
+                        $foldername="FINBOXPDF/";
+                        $aws->aws_s3bucket($borrower_id,$foldername,$projson);
+
+                        // AWS END CODE 
+
             // print_r($result); 
 
             // print_r("--------result-----------");
@@ -207,19 +216,13 @@ class Finbox extends CI_Controller
                 $Folder_name = 'finboxpdf/';
                 $Addkey_name = $Folder_name . $keyname . ".pdf";
 
-                // print_r($Addkey_name);
-                // print_r("-------Keyname------------");
-
                 $credentials = new Aws\Credentials\Credentials('AKIAWJIM4CKQMIAM5R5L', 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV');
 
                 $s3 = new S3Client([
                     'region' => 'ap-south-1',
                     'version' => 'latest',
                     'credentials' => $credentials
-
-
                 ]);
-
                 try {
                     // Upload data.
                     $result = $s3->putObject([
@@ -228,15 +231,7 @@ class Finbox extends CI_Controller
                         'Body' => $responseoutput,
                         'ACL' => 'public-read'
                     ]);
-                    // Print the URL to the object.
-                    // echo $result['ObjectURL'] . PHP_EOL; 
                     $url = $result['ObjectURL'];
-
-                    // print_r($url);
-
-                    // print_r("-------S3_url------------");
-
-                    // print_r("file upload successfully in s3 bucket in pdf");
                 } catch (S3Exception $e) {
                     echo $e->getMessage() . PHP_EOL;
                 }
@@ -259,12 +254,19 @@ class Finbox extends CI_Controller
 
                 if (count($this->db->query($sql)->result()) == 0) {
 
+
+
                     $this->db->insert("fp_finbox_pdfs", $pdffinbox);
+
+
 
 
                     // print_r("Data Insert into the Table");
 
                 } else {
+                       
+                    
+
                     $this->db->where('statement_id', $pdffinbox['statement_id']);
                     $this->db->update('fp_finbox_pdfs', $pdffinbox);
                 }
@@ -305,6 +307,15 @@ class Finbox extends CI_Controller
             $response = curl_exec($curl);
             curl_close($curl);
             $result = json_decode($response, true);
+
+
+             //  AWS CODE START 
+
+             $projson = json_encode($response);
+             $foldername ="FINBOXXLSX/";
+             $aws->aws_s3bucket($borrower_id,$foldername,$projson);
+
+             // AWS END CODE 
 
             // print_r($result);
 
@@ -415,6 +426,17 @@ class Finbox extends CI_Controller
             curl_close($curl);
 
             $result = json_decode($response, true);
+
+            //  AWS CODE START 
+
+            $projson = json_encode($response);
+            $foldername ="FINBOXMONTHLY/";
+            $aws->aws_s3bucket($borrower_id,$foldername,$projson);
+
+            // AWS END CODE 
+
+
+
 
             // print_r($result);
 
@@ -601,7 +623,7 @@ class Finbox extends CI_Controller
         }
 
 
-    } //  end of finbox 
+    } //  end of finboxapi_pdfxlsx_ma 
 
 
 
@@ -1143,7 +1165,7 @@ class Finbox extends CI_Controller
                     $fp_borrower_details = array(
                         // 'finbox_entity_id' => $entity_id,
                         'finbox_link_id' => $linked_id,
-                        // 'finbox_processing'=>"Before",
+                       
                     );
 
                     $this->db->select();
