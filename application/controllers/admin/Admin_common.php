@@ -1522,7 +1522,7 @@ class Admin_common extends CI_Controller
 
         FROM fpa_users b,fp_lender_user_details la ,fp_city fc ,fp_lender_master lm ,fp_fin_institution fin
 
-        WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' AND b.status NOT IN ('inactive','archieved') ";
+        WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' AND b.status NOT IN ('inactive','archieved') AND la.lender_status='active'";
                 $lender_master_id = $this->db->query($sql)->result();
 
                 $data = $this->db->query($sql);
@@ -1632,15 +1632,16 @@ class Admin_common extends CI_Controller
                     $name = $params['data']['name'];
                     $email = $params['data']['email'];
                     $phone = $params['data']['mobile'];
-                    $created_by = $params['data']['created_by'];
-                    $add_user = $this->db->insert("fpa_users", array('name' => $name, 'email' => $email, 'mobile' => $phone, 'slug' => 'lender', 'created_by' => $created_by));
+                    $institution = $params['data']['lender_id'];
+                    $created_by = isset($params['data']['created_by']) ? $params['data']['created_by']:null;
+                    $add_user = $this->db->insert("fpa_users", array('name' => $name, 'email' => $email, 'mobile' => $phone, 'slug' => 'lender', 'lender_master_id' => $institution,'created_by' => $created_by));
 
                     $id = $this->db->insert_id();
                     $department = $params['data']['lender_departments'];
                     $location = $params['data']['lender_location'];
                     $institution = $params['data']['lender_id'];
-                    $designation = $params['data']['designation'];
-                    $branch = $params['data']['Branch'];
+                    $designation = isset($params['data']['designation']) ? $params ['data']['designation']:null ;
+                    $branch = isset($params['data']['Branch']) ? $params['data']['Branch']:null;
 
                     $add_borrower = $this->db->insert("fp_lender_user_details", array('user_id' => $id, 'poc_name' => $name, 'email' => $email, 'mobile' => $phone, 'department_slug' => $department, 'location_id' => $location, 'lender_master_id' => $institution, 'designation' => $designation, 'branch' => $branch));
                     if ($add_user && $add_borrower) {
@@ -1654,7 +1655,7 @@ class Admin_common extends CI_Controller
                         foreach ($emailtest as $row) {
 
                             $name = $params['data']['name'];
-                            $created_by = $params['data']['created_by'];
+                            $created_by = isset($params['data']['created_by']) ? $params['data']['created_by']:null;
                             $subject = "Dear " . $created_by . ",";
                             $message = "Dear " . $created_by . "," . "<br/>" . "<br/>" . "<br/>" . "A new Lender Partner " . $name . "  has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria." . "<br/>" . "<br/>" .
                                 "Looking forward to building a portfolio with them.";
@@ -1952,8 +1953,9 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT lud.poc_name as name, fl.name as location, fd.name as designation   from fpa_users fpu, fp_lender_user_details  lud, fp_departments fd, fp_location fl where
-						 lud.user_id=fpu.id AND fpu.slug='lender' AND lud.department_slug=fd.slug AND fpu.is_email_verified =0 AND fpu.is_mobile_verified=0 AND fl.id=lud.location_id " . $where;
+                $sql = "SELECT lud.id, lud.user_id, lud.lender_master_id, lud.poc_name as lendername, lud.email as lenderemail, lud.mobile as lendermobile, lud.designation as lenderdesignation, lud.location_id,fl.name as location, fd.name as designation 
+                FROM fp_lender_user_details lud,fp_departments fd, fp_city fl 
+                WHERE lud.department_slug=fd.slug AND fl.id=lud.location_id AND lud.lender_status='active' AND lud.lender_master_id =' $where'";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -2495,5 +2497,116 @@ class Admin_common extends CI_Controller
         }
 
     } // End of funciton shareholder_total()  code by prathiban
+
+
+    public function lender_data()
+    {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method == "POST") {
+            $checkToken = $this->check_token();
+            if (true) {
+                $response['status'] = 200;
+                $respStatus = $response['status'];
+                $params = json_decode(file_get_contents('php://input'), true);
+
+                $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+                $where = isset($params['where']) ? $params['where'] : "";
+                $id = isset($params['id']) ? $params['id'] : "";
+
+                $sql = "SELECT lud.id, lud.user_id, lud.lender_master_id, lud.poc_name, lud.email,lud.mobile, lud.location_id, lud.department_slug, fc.name as cityname, fd.name as departmentname  
+                FROM fp_lender_user_details lud, fp_city fc, fp_departments fd  
+                WHERE fd.slug=lud.department_slug AND fc.id=lud.location_id and lud.user_id='$where'";
+
+                $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+                return json_output($respStatus, $resp);
+            } else {
+                return json_output(400, array('status' => 400, 'message' => $checkToken));
+            }
+
+        } else {
+            return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        }
+
+    } 
+    // End of lender_data
+
+    public function lender_statuschange()
+    {
+            $method = $_SERVER['REQUEST_METHOD'];
+            if($method =="POST")
+            {
+                    // $checkToken = $this->check_token();
+                    if(True)
+                    {
+                            $response['status']=200;
+                            $respStatus = $response['status'];
+                            $params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+                            $selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+                            $join 		= isset($params['key']) ? $params['key'] : "";
+                            $where 		= isset($params['where']) ? $params['where'] : "";	
+
+                            $sql = "update fp_lender_user_details set lender_status='inactive' where user_id=".$where;
+
+                            $sql1 = "update fpa_users set status='inactive' where id=".$where;
+                            $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql));
+                            $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql1));
+                            // return json_output($respStatus,$resp);
+                            return json_output(200,array('status' => 200,'message' => "Deleted Successfully"));
+                    }
+                    else
+                    {
+                        return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+                    }
+                
+            }
+            else
+            {
+                    return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+            }
+        
+    }
+    //End of lender_statuschange
+
+public function spoc_update()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            // fpa_users
+            
+            $lender_id= $params["lender_id"];
+
+            $fpa_user = array("name"=>$params['data']['poc_name'],"email"=>$params["data"]["email"],"mobile"=>$params["data"]["mobile"]);
+
+
+           $this->db->where("id",$lender_id);
+           $this->db->update("fpa_users",$fpa_user);
+
+
+           // fp_lender_user_details
+
+           $fp_lender_user_details = array("poc_name"=>$params['data']['poc_name'],"email"=>$params["data"]["email"],"mobile"=>$params["data"]["mobile"],"department_slug"=>$params["data"]["department_slug"],"location_id"=>$params["data"]["location_id"]);
+
+           $this->db->where("user_id",$lender_id);
+           $this->db->update("fp_lender_user_details",$fp_lender_user_details);
+
+
+           return json_output(200, array('status' => 200, 'message' => 'Insert Successfully!'));
+        } else {
+            return json_output(400, array('status' => 400, 'message' => "Bad request"));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} 
+
 
 } // -------------------------- end ---------------------
