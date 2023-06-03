@@ -569,7 +569,17 @@ class Borrower extends CI_Controller {
 							}else{
 								$analysis =  false;
 							}
-							$resp = array('status' => 200,"analysis"=>$analysis);
+							$before_after_log= "SELECT count(*) as count FROM fp_xlrt_file_log xfl, fp_borrower_docs bd WHERE bd.id = xfl.borrower_docs_id and bd.delete_status = 1 and bd.borrower_id = $br_id and before_after = 'before' ";
+							$before_after_count = $this->db->query($before_after_log)->result();
+							$before_afternumber = $before_after_count[0]->count;
+
+							if($before_afternumber>=1){
+								$progress = true;
+							}else{
+								$progress =  false;
+							}
+
+							$resp = array('status' => 200,"analysis"=>$analysis,'progress'=>$progress);
 						  } else 
 						{
 						  $respStatus = 200;
@@ -603,11 +613,9 @@ class Borrower extends CI_Controller {
 
 							$result = $this->db->query($sql)->result();
 
-						
-
 							foreach($result as $row){
 								$this->db->where(array('id'=>$row->id));
-								$this->db->update('fp_xlrt_file_log', array("analysis"=>'yes'));
+								$this->db->update('fp_xlrt_file_log', array("analysis"=>'yes',"before_after"=>"before"));
 							}
 							
 							$resp = array('status' => 200,"data"=>$result);

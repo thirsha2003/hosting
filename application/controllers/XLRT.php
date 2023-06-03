@@ -686,7 +686,8 @@ class XLRT extends CI_Controller
             public function finnupxlrtwebhook()
 
             {
-                
+                // print_r("dd");  
+                // exit;
 
                 $response['status'] = 200;
                 $respStatus = $response['status'];
@@ -705,15 +706,18 @@ class XLRT extends CI_Controller
                             $params = json_decode(file_get_contents('php://input'), TRUE);
                             $state = isset($params['state']) ? $params['state'] : " ";
                             $dmscode = isset($params['dmscode']) ? $params['dmscode'] : " ";
+                            $docname = isset($params['docname']) ? $params['docname'] : " ";
 
                             $logs=array("dmscode"=> $dmscode,"state"=>$state);
                             $this->db->insert('fp_xlrt_log',$logs);
-                            
-
                             if($state="ProcessingSuccess"){
-                                
-                                 $this->xlrtgetExtractionResponse($dmscode);      
+                                $this->xlrtgetExtractionResponse($dmscode);      
+                                $this->db->where(array('file_name'=>$docname));
+                                $this->db->update('fp_xlrt_file_log', array("analysis"=>'yes',"before_after"=>"after","analysis_status"=>"success"));
                                 json_output(200, array('status' => 200,'message' => 'Success!')); 
+                            }else{
+                                $this->db->where(array('file_name'=>$docname));
+                                $this->db->update('fp_xlrt_file_log', array("analysis"=>'yes',"before_after"=>"after","analysis_status"=>"failed"));
                             }
                         }
                     }
