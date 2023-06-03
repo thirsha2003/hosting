@@ -564,7 +564,7 @@ class Borrower extends CI_Controller {
 							$sql = "SELECT count(*) as count FROM fp_xlrt_file_log xfl, fp_borrower_docs bd WHERE bd.id = xfl.borrower_docs_id and bd.delete_status = 1 and bd.borrower_id = $br_id and analysis = 'no' ";
 							$count = $this->db->query($sql)->result();
 							$number = $count[0]->count;
-							if($number>=1){
+							if($number>=3){
 								$analysis = true;
 							}else{
 								$analysis =  false;

@@ -2,12 +2,14 @@
 header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
 header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
-header("HTTP/1.1 200 OK");
+header("HTTP/1.1 200 OK");                                         
 defined('BASEPATH') OR exit('No direct script access allowed');
 include APPPATH . 'ThirdParty/sendgrid-php/sendgrid-php.php';
 include APPPATH . 'ThirdParty/mTalkz.php';
 include APPPATH . 'libraries/Femail.php';
 include APPPATH . 'libraries/JsonuploadtoS3.php'; 
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
 
 
 class XLRT extends CI_Controller 
@@ -622,6 +624,17 @@ class XLRT extends CI_Controller
                                        $inarr = array('borrower_id'=>$borrower_id,'documenttype'=> $documenttype,'dmscode'=>$dmscode,'filename'=> $filename,'entity_id'=> $entityid,'jwt_token'=> $jwt_token);
                                        $this->db->insert("fp_xlrt_response", $inarr);
                                        $id = $this->db->insert_id();
+
+
+
+                                    //    document processing status 
+
+                                       $document_upload = array("xlrt_document_status"=>"AFTER");
+                                       $this->db->where("user_id", $borrower_id);
+                                       $this->db->update("fp_borrower_user_details", $document_upload);
+
+                                    //    document processing status complete 
+
 
                                        return json_output(200,array('status' => 200,'message' => 'Successfully Insert','data'=>$id));                                     
                            }

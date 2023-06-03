@@ -27,7 +27,7 @@ class Finbox extends CI_Controller
         $this->load->helper('json_output');
         // $this->load->library('S3_upload');
         // $this->load->library('S3');
-    }
+    }  // construct
     public function finnup_finboxwebhook()
     {
 
@@ -50,18 +50,9 @@ class Finbox extends CI_Controller
 
 
                 $logs=array("entity_id"=> $entity_id,"statement_id"=>$statement_id,"link_id"=> $linked_id,"progress"=> $progress,"reason"=>$reason);
-                $this->db->insert('finbox_log',$logs);
-
-
-                $this->db->sendOTPemail("rec2004@gmail.com" ,"111111","borrower","2");
-                
+                $this->db->insert('fp_finbox_log',$logs);
                 if($progress="completed"){
-                    
-                    $this->db->sendOTPemail("parthiban24242000@gmail.com" ,"222222","borrower","2");
-
                     $this->finboxapi_pdfxlsx_ma($entity_id, $statement_id, $linked_id, $progress, $reason);
-
-
                     json_output(200, array('status' => 200,'message' => 'Success!')); 
 
                 }
@@ -150,10 +141,7 @@ class Finbox extends CI_Controller
             $finbox_str = $Finboxapi . $entityid . $finboxendpoint;
             $curl = curl_init();
 
-            // print_r($finbox_str);
-            
-
-            // print_r("-------------Url------------------");  
+           
 
             curl_setopt_array($curl, array(
                 CURLOPT_URL => $finbox_str,
@@ -184,12 +172,7 @@ class Finbox extends CI_Controller
 
                         // AWS END CODE 
 
-            // print_r($result); 
-
-            // print_r("--------result-----------");
-
-            // fetch borrower id from fp_borrower_details based on  finbox_entitity_id & finbox_link_id
-
+            
             foreach ($result['statements'] as $responsedata) {
                 $finboxpdf = [
                     "borrower_id" => isset($borrower_id) ? $borrower_id : 0,
@@ -204,8 +187,7 @@ class Finbox extends CI_Controller
                     "message" => isset($responsedata['message']) ? $responsedata['message'] : "Not Avaiable",
                 ];
 
-                // print_r($finboxpdf['pdf_url']);
-                // print_r("-------pdf_url------------");
+                
 
                 $responseoutput = file_get_contents($finboxpdf['pdf_url']);
 
@@ -253,23 +235,40 @@ class Finbox extends CI_Controller
                 $sql = "select t1.statement_id from fp_finbox_pdfs t1  where  t1.statement_id ='" . $pdffinbox['statement_id'] . "' and t1.borrower_id = " . $pdffinbox['borrower_id'];
 
                 if (count($this->db->query($sql)->result()) == 0) {
-
-
-
                     $this->db->insert("fp_finbox_pdfs", $pdffinbox);
-
-
-
-
-                    // print_r("Data Insert into the Table");
-
                 } else {
-                       
-                    
-
                     $this->db->where('statement_id', $pdffinbox['statement_id']);
                     $this->db->update('fp_finbox_pdfs', $pdffinbox);
                 }
+
+
+
+                // documnet upload in db 
+                $documenturl=$pdffinbox['s3_url'];
+                $strexplode = explode(".com/", $documenturl);
+                  $file_name = $strexplode[1];
+                  
+                  $doc_type = $finboxpdf['bank_name'].$finboxpdf['statement_id'];
+
+                  $pdf_document = array("borrower_id"=>$finboxpdf['borrower_id'],"doc_type"=>$doc_type,"file_name"=>$file_name);
+
+
+                  $sql = "select doc_type from fp_borrower_docs   where  doc_type ='" .  $doc_type . "' and borrower_id = " . $pdffinbox['borrower_id'];
+                 
+                  
+                if(count($this->db->query($sql)->result()) == 0){
+
+                    $this->db->insert("fp_borrower_docs",$pdf_document);
+
+                }
+                else{
+
+                    $this->db->where('doc_type', $doc_type);
+                    $this->db->update('fp_borrower_docs', $pdf_document);
+
+                }
+
+
             }
 
             //    This Url is xlsx  End point 
@@ -389,6 +388,36 @@ class Finbox extends CI_Controller
                     $this->db->update('fp_finbox_xlsx_report', $finboxxlsx);
 
                 }
+                 
+                 // documnet upload in db 
+                 $documenturl=$finboxxlsx['s3_url'];
+                 $strexplode = explode(".com/", $documenturl);
+                   $file_name = $strexplode[1];
+                   
+                   $doc_type = "FINBOXXLSX".$finboxxlsx["account_id"];
+ 
+                   $pdf_document = array("borrower_id"=>$finboxxlsx['borrower_id'],"doc_type"=>$doc_type,"file_name"=>$file_name);
+ 
+ 
+                   $sql = "select doc_type from fp_borrower_docs   where  doc_type ='".$doc_type ."' and borrower_id = " . $pdffinbox['borrower_id'];
+                  
+                   
+                 if(count($this->db->query($sql)->result()) == 0){
+ 
+                     $this->db->insert("fp_borrower_docs",$pdf_document);
+ 
+                 }
+                 else{
+ 
+                     $this->db->where('doc_type', $doc_type);
+                     $this->db->update('fp_borrower_docs', $pdf_document);
+ 
+                 }
+
+
+
+
+
 
             }
 

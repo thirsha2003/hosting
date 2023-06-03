@@ -5,9 +5,13 @@ header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
 header("HTTP/1.1 200 OK");
 
+require 'vendor/autoload.php';
+
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 include APPPATH . 'libraries/JsonuploadtoS3.php'; 
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -93,7 +97,7 @@ class CIBIL extends CI_Controller
                      
                         // print_r($season_data);
 
-                        if($responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData']){
+                        if(isset($responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'])){
                           $responseoutput = $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['cIRReportData'];
 
                          $Scorefromjson = $responseoutput['scoreDetails']['0']['value'];
@@ -230,9 +234,21 @@ class CIBIL extends CI_Controller
                           // $this->db->where(array('id'=>$params['director_id']));
                           // $fp_director = $this->db->update('fp_director_details',array('cibil_score'=> $CibilValue));
 
-                          $this->db->set('cibil_score',$CibilValue);
-                          $this->db->where('id',$did);
-                          $this->db->update('fp_director_details');
+                          // $this->db->set('cibil_score',$CibilValue);
+                          // $this->db->where('id',$did);
+                          // $this->db->update('fp_director_details');
+
+
+                          $update_cibilscore = "UPDATE fp_director_details
+                          SET cibil_score= $CibilValue  WHERE  fp_director_details.id=".$did;
+
+                           $percentages = $this->db->query($update_cibilscore);
+
+
+
+
+
+
                           $responseoutputs = $responseoutput['retailAccountDetails'];
                           // cibilaccountdetails   
                           foreach($responseoutputs as $cibilaccdetails){
@@ -301,7 +317,7 @@ class CIBIL extends CI_Controller
 
                           json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!','data'=>$CibilValue));
                         }
-                        else if ($responseData['data']['cCRResponse']['cIRReportDataLst']['0']['error']){
+                        else if  ( isset( $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['error'])){
 
 
                           json_output(200, array('status' =>400,'message' => ' Consumer not found in bureau!'));
