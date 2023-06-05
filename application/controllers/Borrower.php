@@ -631,7 +631,40 @@ class Borrower extends CI_Controller {
 
 	} 
 
+public function file_revert(){
 
+	$method = $_SERVER['REQUEST_METHOD'];
+			  if($method != 'POST')
+			  {
+				  json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			  }else
+			  {
+					  $response['status'] = 200;
+					  $respStatus = $response['status'];
+					  if($response['status'] == 200)
+					  {
+						  $params = json_decode(file_get_contents('php://input'), TRUE);
+						  if (isset($params['file_name']))  
+						  {
+							foreach($params['file_name'] as $file_name){
+								print_r($file_name);
+								$this->db->where(array('file_name'=>$file_name));
+								$this->db->update('fp_xlrt_file_log', array("analysis"=>'no',"before_after"=>null));
+							}
+							
+							
+							$resp = array('status' => 200,"message"=>"revert");
+						  } else 
+						{
+						  $respStatus = 200;
+						  $resp = array('status' => 400,'message' =>  'Fields Missing');
+					  }
+						  json_output($respStatus,$resp);
+					  }
+				  // }
+			  }
+
+}
 
 
 
