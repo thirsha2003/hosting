@@ -279,6 +279,7 @@ public function updateworkflowloanapplication(){
 							'taskdetail_id'  => $fpa_taskdetails_id, 
 							'activity'=> $loanapplication_status, 
 							'activity_remarks'  => $remarks, 
+							'borrower_id'=> $borrower_id,
 							
 
 						);
@@ -747,6 +748,7 @@ public function deal_sanctioned()
 			  'taskdetail_id'  => $fpa_taskdetails_id, 
 			  'activity'=> $loanapplication_status, 
 			  'activity_remarks'  => $remarks, 
+			  'borrower_id'=> $borrower_id
 			 );
 			 $this->db->insert('fpa_taskdetails_worklog', $fpa_taskdetails_worklog);
 			 if ($this->db->trans_status() === FALSE)
@@ -1059,10 +1061,11 @@ public function  borrowerloanrequest()
 				  } 
 				  else 
 				  {
+					$params 	= json_decode(file_get_contents('php://input'), TRUE);
 					  $borrowerid = $params['data']['borrower_id'];
 					  $lender_product_details_id = $params['data']['lender_product_details_id'];
 					//   $remarks 		= isset($params['data']['remarks']) ? $params['data']['remarks'] : "";
-					  $params 	= json_decode(file_get_contents('php://input'), TRUE);
+					 
 					$borrower_id 		= isset($params['data']['borrower_id']) ? $params['data']['borrower_id'] : "";
 					// $loanapp_id 		= $loan_application_id;
 					$assigned_to_id 		= isset($params['data']['assigned_to_id']) ? $params['data']['assigned_to_id'] : "";
@@ -1077,6 +1080,8 @@ public function  borrowerloanrequest()
 					  $updated_by = isset($params['data']['updated_by']) ? $params['data']['updated_by']:"";
 					  $product=$params['data']['product_slug'];
 					  $conditions = array( 'borrower_id'=>$borrowerid, "lender_product_id" =>  $params['data']['lender_product_details_id']);
+
+
 					  $this->db->select('id');
 					  $this->db->from('fpa_loan_applications');
 					  $this->db->where($conditions);
@@ -1228,7 +1233,8 @@ public function  borrowerloanrequest()
 			
 										'taskdetail_id'  => $fpa_taskdetails_id, 
 										'activity'=> $loanapplication_status, 
-										'activity_remarks'  => $remarks, 
+										'activity_remarks'  => $remarks,
+										'borrower_id'=> $borrower_id
 										
 			
 									);
@@ -1301,13 +1307,13 @@ public function  borrowerloanrequest()
 							  "-----------------------------------------------<br/>
 							  Team Finnup";
 
-							  // $to = 'platform@finnup.in';
+							  $to = 'support@finnup.in';
 							  //$to = 'rec2004@gmail.com';
-							  $to = 'parthiban24242000@gmail.com';
+							//   $to = 'parthiban24242000@gmail.com'; 
 							  $email = new \SendGrid\Mail\Mail();
 							  $email->setSubject($subject);
 							  $email->addContent("text/html", $message);
-							  $email->setFrom("platform@finnup.in", 'FinnUp Team');
+							  $email->setFrom("support@finnup.in", 'FinnUp Team');
 							  $email->addTo($to);							
 							  $sendgrid = new \SendGrid("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");
 

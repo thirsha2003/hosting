@@ -1514,7 +1514,7 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT b.created_at as created_at ,lm.image as lenderimage, la.id as lenderuserid, la.user_id as lenderid, b.id as lender_user_id ,la.poc_name, b.rm_name  as AssignedTo, lm.id as lender_master_id, fc.name as location,lm.lender_name as bankname,fin.name as entitytype,
+                $sql = "SELECT b.created_at as created_at ,lm.image as lenderimage, la.user_id as lenderuserid, la.user_id as lenderid, b.id as lender_user_id ,la.poc_name, b.rm_name  as AssignedTo, lm.id as lender_master_id, fc.name as location,lm.lender_name as bankname,fin.name as entitytype,
         (CASE
          WHEN la.is_active=1 THEN 'Active'
          WHEN la.is_active=0 THEN 'In Active'
@@ -1526,10 +1526,14 @@ class Admin_common extends CI_Controller
                 $lender_master_id = $this->db->query($sql)->result();
 
                 $data = $this->db->query($sql);
-                foreach ($data->result() as $row) {
-                    $resultss = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Sent To Lender"           and lendermaster_id =' . $row->lender_master_id;
-                    $workflowstatus = $this->db->query($resultss)->num_rows();
-                    $result = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Approved"           and lendermaster_id =' . $row->lender_master_id;
+
+                 foreach ($data->result() as $row) {
+                    $resultss = "SELECT COUNT(*) as deal_send_to_lender FROM fpa_loan_applications WHERE lender_id = " . $row->lender_user_id;
+
+                    $workflowstatusss = $this->db->query($resultss)->result();
+                    foreach($workflowstatusss as $rowstatus){
+                        $workflowstatus = $rowstatus->deal_send_to_lender;
+                    $result = 'SELECT id  from fpa_loan_applications where workflow_status = "Deals Approved" and lendermaster_id =' . $row->lender_master_id;
                     $Dealsapproved = $this->db->query($result)->num_rows();
                     $txnArr[] = array("lender_master_id" => $row->lender_master_id,
                         "deal_send_to_lender" => $workflowstatus,
@@ -1545,6 +1549,7 @@ class Admin_common extends CI_Controller
                         "lendermasterimg" => $row->lenderimage,
                         "created_at" => $row->created_at,
                     );
+                }
                 }
                 //   'data' => $this->db->query($sql)->result()
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $txnArr);
@@ -2419,12 +2424,12 @@ class Admin_common extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
                 $is_created = isset($params['is_created']) ? $params['is_created'] : "";
 
-                $sql = "SELECT la.loanrequest_id as lrid ,lm.image , lm.lender_name, p.name as productname, bu.company_name as companyname, la.loanapplication_status as lastatus, la.workflow_status as wfstatus, la.lender_intrest_received,bl.loanamount_slug,bl.loan_min,bl.loan_max,bl.tenor_min,bl.tenor_max,bl.roi_min,bl.roi_max as amount,la.is_created, bu.user_id as borrower_id, p.id as product_id, la.id as loan_app_id
+                $sql = "SELECT lud.user_id,lud.poc_name, la.lender_id, la.loanrequest_id as lrid ,lm.image , lm.lender_name, p.name as productname, bu.company_name as companyname, la.loanapplication_status as lastatus, la.workflow_status as wfstatus, la.lender_intrest_received,bl.loanamount_slug,bl.loan_min,bl.loan_max,bl.tenor_min,bl.tenor_max,bl.roi_min,bl.roi_max as amount,la.is_created, bu.user_id as borrower_id, p.id as product_id, la.id as loan_app_id, loc.city_slug
 
-     FROM fpa_loan_applications la,fp_borrower_user_details bu,fp_products p,fp_borrower_loanrequests bl,fp_lender_master lm
-
-     WHERE bu.user_id = la.borrower_id
-     and la.product_slug = p.slug and bl.id = la.loanrequest_id and lm.id = la.lendermaster_id AND
+                FROM fpa_loan_applications la,fp_borrower_user_details bu,fp_products p,fp_borrower_loanrequests bl,fp_lender_master lm, fp_lender_user_details lud, fp_location loc
+           
+                WHERE bu.user_id = la.borrower_id
+                and la.product_slug = p.slug and bl.id = la.loanrequest_id and lm.id = la.lendermaster_id AND la.lender_id=lud.user_id AND lud.location_id = loc.id AND
      la.loanapplication_status in " . $loanapplication_status . $where . $is_created;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
