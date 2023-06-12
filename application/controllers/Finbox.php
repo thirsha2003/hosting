@@ -105,10 +105,6 @@ class Finbox extends CI_Controller
         }
 
     } // finboxapi_linkidupdate
-
-    
-
-   
     private function getborrowerid($entity_id, $linked_id)
     {
         $sql = "select  user_id from fp_borrower_user_details where finbox_link_id = '" . $linked_id . "' and finbox_entity_id= '" . $entity_id . "'";

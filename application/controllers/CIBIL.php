@@ -20,7 +20,7 @@ class CIBIL extends CI_Controller
     public function __construct(){
 		parent::__construct();
 		$this->load->helper('json_output');
-	}
+	}  // END OF CONSTRUCT
 
     public function  cibilscore()
     {
@@ -28,17 +28,15 @@ class CIBIL extends CI_Controller
       $aws= new \App\Libraries\JsonuploadtoS3;
       $CibilValue= 0;
       $did=0;
-     $response['status'] = 200;
-		$respStatus = $response['status'];
-		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'POST'){
-			json_output(400, array('status' => 400,'message' => 'Bad request.')); 
-		}
-     else
-		{ 
+      $response['status'] = 200;
+		  $respStatus = $response['status'];
+		  $method = $_SERVER['REQUEST_METHOD'];
+		  if($method != 'POST'){
+		  	json_output(400, array('status' => 400,'message' => 'Bad request.')); 
+		  }
+       else
+		  { 
             if($response['status'] == 200)  
-          
-
 					{
 						$params = json_decode(file_get_contents('php://input'), TRUE);
                 
@@ -57,7 +55,9 @@ class CIBIL extends CI_Controller
                               "inquiry_purpose"=> "PL",
                               "document_type"=> "PAN",
                               "document_id"=> " "
-                             ];
+                             ];   // PASS JSON TO CIBIL
+
+
                              $datas = json_encode($data);
                             if(true)
                           { 
@@ -317,16 +317,16 @@ class CIBIL extends CI_Controller
 
                           json_output(200, array('status' =>200,'message' => ' Cibil_Score updated Successfuly!','data'=>$CibilValue));
                         }
-                        else if  ( isset( $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['error'])){
+                        else if(isset( $responseData['data']['cCRResponse']['cIRReportDataLst']['0']['error'])){
 
 
                           json_output(200, array('status' =>400,'message' => ' Consumer not found in bureau!'));
                         }
                         else {
-                          json_output(200, array('status' =>400,'message' => 'Bad Request'));
+                          json_output(200, array('status' =>400,'message' => 'Something Went Wrong'));
 
                         }
-                        }
+                          }
                         else{
                           json_output(200, array('status' => 400 ,'message'=> 'Invalid Information'));
                         }
@@ -334,7 +334,7 @@ class CIBIL extends CI_Controller
           }
       
     }
-}
+    } // END OF CIBILSCORE
 
 } //----------------------- END OF CIBIL CLASS -------------------------
 

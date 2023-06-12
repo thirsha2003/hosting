@@ -63,26 +63,27 @@ class Admin_transation extends CI_Controller
 
 							if($where == "all"){
 							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
-                                  t2.product_slug,  t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id, t5.name as product_name
+                                  t2.product_slug,  t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id, t5.name as product_name,t6.poc_name
                                   
 								  from 
-                                  
                                   fp_borrower_loanrequests t3,
                                   fpa_loan_applications t2,
 								  fp_lender_master t4,
-								  fp_products t5
-                                  Where t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.borrower_id=".$id;
+								  fp_products t5,
+								  fp_lender_user_details t6
+                                  Where t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.lender_id=t6.user_id AND t2.borrower_id=".$id;
 							}else{
 
 							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
-                                  t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id , t5.name as product_name
+                                  t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id , t5.name as product_name ,t6.poc_name
                                   from 
                                   
                                   fp_borrower_loanrequests t3,
                                   fpa_loan_applications t2,
 								  fp_lender_master t4,
-								  fp_products t5
-                                  Where t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
+								  fp_products t5,
+								  fp_lender_user_details t6
+                                  Where t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.lender_id=t6.user_id AND  t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
 
 								//   echo $sql;
 							}
@@ -314,14 +315,15 @@ public function updateworkflowloanapplication(){
 						if(isset($params['data']['sanctioned_amount']))
 						{
 							$sanctioned= "UPDATE fpa_loan_applications
-						  	SET sanctioned_amount=".$params['data']['sanctioned_amount'] ." WHERE  fpa_loan_applications.borrower_id=".$borrower_id." ";
+						  	SET sanctioned_amount=".$params['data']['sanctioned_amount'] ." WHERE  fpa_loan_applications.borrower_id=".$borrower_id." and id=".$loanapp_id;
 						   	$sanctionedamount = $this->db->query($sanctioned);
 
 						}else if (isset($params['data']['approved_amount']))
 						{
 					 
 							$approvedamount= "UPDATE fpa_loan_applications
-						  	SET approved_amount=".$params['data']['approved_amount'] ." WHERE  fpa_loan_applications.borrower_id=".$borrower_id." ";
+						  	SET approved_amount=".$params['data']['approved_amount'] ." WHERE  fpa_loan_applications.borrower_id=".$borrower_id." and id=".$loanapp_id;
+
 						   	$approvedamounts = $this->db->query($approvedamount);
 					 
 						}

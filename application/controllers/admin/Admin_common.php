@@ -966,6 +966,7 @@ class Admin_common extends CI_Controller
 				LR.tenor_max, LR.roi_min,
 				LA.rm, AU.name as rmname, LA.lendermaster_id, LM.lender_name,
 				LA.workflow_status AS loanapplication_status, LM.image AS lender_logo
+              
 				FROM fp_borrower_loanrequests LR, fpa_loan_applications LA,
 				fp_lender_master LM, fp_products PR, fp_borrower_user_details BO, fpa_adminusers AU
 				WHERE LR.ID = LA.loanrequest_id
@@ -973,7 +974,7 @@ class Admin_common extends CI_Controller
 				AND  BO.user_id = LR.borrower_id
 				AND  LM.id = LA.lendermaster_id
 				AND  PR.slug = LR.product_slug
-				AND  LA.rm   = AU.id " . $where;
+				AND  LA.rm   = AU.id " . $where;   
 
                 if ($where == " AND LR.loan_request_status='CC Approved'" || $where == " AND LR.loan_request_status='Due Diligence'" || $where == " AND LR.loan_request_status='CC Rejected'" || $where == " AND LR.loan_request_status='CC Approval Pending'") {
 
@@ -1010,18 +1011,13 @@ class Admin_common extends CI_Controller
                     $res = implode(",", $txnArr);
                     $res = "(" . $res . ")";
 
-                    $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug=p.slug and bl.borrower_id in ' . $res;
-
-                    // $this->db->query($sql)-result();
-                    // $query = $this->db->get_where('fp_borrower_loanrequests', array('borrower_id' => $res))->result();
-                    // $trnn[]= $data->id;
+                    $result = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug  = p.slug and bl.borrower_id in ' . $res;
 
                     $result_slug = $this->db->query($result)->result();
-                } else {
+                } 
+                else {
                     $result_slug = '';
                 }
-
-                // $resp = array('status' => 200,'message' =>  'Success','data'=> $borrowerdetails,'data1' =>$this->db->query($result)->result());
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $result_slug);
                 return json_output($respStatus, $resp);
@@ -2612,6 +2608,104 @@ public function spoc_update()
     }
 
 } 
+
+
+
+
+public function loanapp_approved_deals()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "SELECT
+            BO.company_name,
+            LR.created_at AS created_at,
+            LR.id AS loanrequest_id,
+            LA.id As loanapplication_id,
+            LR.borrower_id,
+            BO.name AS borrowername,
+            LR.product_slug,
+            PR.name AS productname,
+            LR.loanamount_slug,
+            LR.tenor_max, LR.roi_min,
+            LA.rm, AU.name as rmname, LA.lendermaster_id, LM.lender_name,
+            LA.workflow_status AS loanapplication_status, LM.image AS lender_logo,
+            LA.approved_amount, LU.poc_name
+            FROM fp_borrower_loanrequests LR, fpa_loan_applications LA,
+            fp_lender_master LM, fp_products PR, fp_borrower_user_details BO, fpa_adminusers AU,
+            fp_lender_user_details LU
+            WHERE LR.ID = LA.loanrequest_id
+            AND  LR.borrower_id = LA.borrower_id
+            AND LA.lender_id = LU.user_id
+            AND  BO.user_id = LR.borrower_id
+            AND  LM.id = LA.lendermaster_id
+            AND  PR.slug = LR.product_slug
+            AND  LA.rm   = AU.id " . $where;   
+
+            if ($where == " AND LR.loan_request_status='CC Approved'" || $where == " AND LR.loan_request_status='Due Diligence'" || $where == " AND LR.loan_request_status='CC Rejected'" || $where == " AND LR.loan_request_status='CC Approval Pending'") {
+
+                $sql = "SELECT
+                BO.company_name,
+                LR.id AS loanrequest_id,
+                LR.borrower_id,
+                BO.name AS borrowername,
+                LR.product_slug,
+                PR.name AS productname,
+                LR.loanamount_slug,
+                LR.tenor_max, LR.roi_min,
+                LR.loan_request_status AS loanapplication_status,
+                FPU.rm_name AS rmname
+                FROM fp_borrower_loanrequests LR,
+                 fp_products PR, fp_borrower_user_details BO,
+                 fpa_users FPU
+                WHERE
+                 BO.user_id = LR.borrower_id
+                 AND FPU.id = BO.user_id
+                AND  PR.slug = LR.product_slug " . $where;
+            }
+
+            $borrowerdetails = $this->db->query($sql)->result();
+            $data = $this->db->query($sql);
+
+            if ($data->num_rows() >= 1) {
+
+                foreach ($data->result() as $row) {
+                    $txnArr[] = $row->borrower_id;
+
+                }
+
+                $res = implode(",", $txnArr);
+                $res = "(" . $res . ")";
+
+                $result = 'SELECT t2.name,t1.borrower_id FROM fpa_loan_applications t1 ,fp_products t2  WHERE t1.workflow_status="Deal Approved" and t1.product_slug=t2.slug and t1.borrower_id=' .$res;
+
+                $result_slug = $this->db->query($result)->result();
+            } 
+            else {
+                $result_slug = '';
+            }
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $borrowerdetails, 'data1' => $result_slug);
+            return json_output($respStatus, $resp);
+
+        } else {
+            return json_output(400, array('status' => 400, 'message' => "auth missing"));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} // loanapp_dash_details
 
 
 } // -------------------------- end ---------------------

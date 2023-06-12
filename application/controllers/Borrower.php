@@ -564,7 +564,7 @@ class Borrower extends CI_Controller {
 							$sql = "SELECT count(*) as count FROM fp_xlrt_file_log xfl, fp_borrower_docs bd WHERE bd.id = xfl.borrower_docs_id and bd.delete_status = 1 and bd.borrower_id = $br_id and analysis = 'no' ";
 							$count = $this->db->query($sql)->result();
 							$number = $count[0]->count;
-							if($number>=3){
+							if($number>=1){
 								$analysis = true;
 							}else{
 								$analysis =  false;
@@ -647,7 +647,7 @@ public function file_revert(){
 						  if (isset($params['file_name']))  
 						  {
 							foreach($params['file_name'] as $file_name){
-								print_r($file_name);
+								// print_r($file_name);  
 								$this->db->where(array('file_name'=>$file_name));
 								$this->db->update('fp_xlrt_file_log', array("analysis"=>'no',"before_after"=>null));
 							}

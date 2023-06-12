@@ -18,9 +18,47 @@ class JsonuploadtoS3 {
 
     public function aws_s3bucket($borrowerid,$foldername,$responsejson)
     {
-        $bucket = 'finnup';
+        $bucket = 'finnup';  
 
         $keyname = "FINNBID".$borrowerid;
+        $Folder_name = "finnup_json_dump/".$foldername;
+        $Addkey_name = $Folder_name . $keyname . ".json";
+        // $credentials = new Credentials('AKIAWJIM4CKQMIAM5R5L', 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV'); // live api_key
+        $credentials = new Credentials('AKIAYRVTG64ZXVJBLFE5', 'yw8tfa+DIwTVtSdKLWYGRdhIH94LwizjubpVw0XW');   // local Usages
+
+
+        $s3 = new S3Client([
+            'region' => 'ap-south-1',
+            'version' => 'latest',
+            'credentials' => $credentials
+        ]);
+        try {
+            // Upload data.
+            $result = $s3->putObject([
+                'Bucket' => $bucket,
+                'Key' => $Addkey_name,
+                'Body' =>  $responsejson,
+                'ACL' => 'public-read'
+            ]);
+            $url = $result['ObjectURL'];
+
+            
+
+        } catch (S3Exception $e) {
+            echo $e->getMessage() . PHP_EOL;
+        }
+        // return $url; 
+
+
+
+
+    }  // aws_s3bucket
+
+    public function aws_s3bucket_xlrt($borrowerid,$dmscode ,$foldername,$responsejson)
+    {
+        $bucket = 'finnup';
+
+        $keyname = "FINNBID".$borrowerid.$dmscode;
         $Folder_name = "finnup_json_dump/".$foldername;
         $Addkey_name = $Folder_name . $keyname . ".json";
         $credentials = new Credentials('AKIAWJIM4CKQMIAM5R5L', 'GcL436Q16pUChV4ohqqna0QE9arhpGw8Q5sRorBV'); 

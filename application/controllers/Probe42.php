@@ -229,6 +229,9 @@ class Probe42 extends CI_Controller
                                 'api_state' => isset($directors['address']['state']) ? $directors['address']['state'] : null,
                                 'api_pincode' => isset($directors['address']['pincode']) ? $directors['address']['pincode'] : null,
                                 'api_country' => isset($directors['address']['country']) ? $directors['address']['country'] : null,
+                                'pro_created_by'=>'P',
+
+
                             ];
                             $this->db->insert('fp_director_details', $directorsdetails);
                             $fp_director = $this->db->insert_id();
@@ -266,7 +269,7 @@ class Probe42 extends CI_Controller
                             // Aws code start 
                             $projson= json_encode($season_data);
                             $foldername="PROBEDIR/";
-                            $aws->aws_s3bucket($params['borrowerid'],$foldername,$projson);
+                            $aws->aws_s3bucket($director_data->id,$foldername,$projson);
                             // Aws end code 
 
 
