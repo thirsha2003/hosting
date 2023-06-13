@@ -2628,7 +2628,7 @@ public function loanapp_approved_deals()
 
             $sql = "SELECT
             BO.company_name,
-            LR.created_at AS created_at,
+            LR.updated_at AS created_at,
             LR.id AS loanrequest_id,
             LA.id As loanapplication_id,
             LR.borrower_id,
@@ -2639,13 +2639,14 @@ public function loanapp_approved_deals()
             LR.tenor_max, LR.roi_min,
             LA.rm, AU.name as rmname, LA.lendermaster_id, LM.lender_name,
             LA.workflow_status AS loanapplication_status, LM.image AS lender_logo,
-            LA.approved_amount, LU.poc_name
+            LA.approved_amount, LU.poc_name, FC.name as locationname
             FROM fp_borrower_loanrequests LR, fpa_loan_applications LA,
             fp_lender_master LM, fp_products PR, fp_borrower_user_details BO, fpa_adminusers AU,
-            fp_lender_user_details LU
+            fp_lender_user_details LU  , fp_city FC
             WHERE LR.ID = LA.loanrequest_id
             AND  LR.borrower_id = LA.borrower_id
             AND LA.lender_id = LU.user_id
+            AND LU.location_id = FC.ID
             AND  BO.user_id = LR.borrower_id
             AND  LM.id = LA.lendermaster_id
             AND  PR.slug = LR.product_slug
@@ -2683,10 +2684,15 @@ public function loanapp_approved_deals()
 
                 }
 
+          
+
                 $res = implode(",", $txnArr);
                 $res = "(" . $res . ")";
 
-                $result = 'SELECT t2.name,t1.borrower_id FROM fpa_loan_applications t1 ,fp_products t2  WHERE t1.workflow_status="Deal Approved" and t1.product_slug=t2.slug and t1.borrower_id=' .$res;
+
+                
+
+                $result = 'SELECT t2.name,t1.borrower_id FROM fpa_loan_applications t1 ,fp_products t2  WHERE t1.workflow_status="Deal Approved" and t1.product_slug=t2.slug and t1.borrower_id in'.$res;
 
                 $result_slug = $this->db->query($result)->result();
             } 

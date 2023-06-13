@@ -63,27 +63,29 @@ class Admin_transation extends CI_Controller
 
 							if($where == "all"){
 							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
-                                  t2.product_slug,  t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id, t5.name as product_name,t6.poc_name
+                                  t2.product_slug,  t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id, t5.name as product_name,t6.poc_name ,t7.name as locationname
                                   
 								  from 
                                   fp_borrower_loanrequests t3,
                                   fpa_loan_applications t2,
 								  fp_lender_master t4,
 								  fp_products t5,
-								  fp_lender_user_details t6
-                                  Where t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.lender_id=t6.user_id AND t2.borrower_id=".$id;
+								  fp_lender_user_details t6,
+								  fp_city t7 
+                                  Where t6.location_id= t7.id and  t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.lender_id=t6.user_id AND t2.borrower_id=".$id;
 							}else{
 
 							$sql = "select t2.is_created as is_created, t3.id AS Loanrequest,t2.borrower_id, t4.image as lender_image,
-                                  t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id , t5.name as product_name ,t6.poc_name
+                                  t2.product_slug, t2.loanrequest_id as loanrequest_id , t2.loanapplication_status,t2.id as loanappid,  t3.roi_min,t3.roi_max,t3.loan_max,t3.loan_min,t3.tenor_min,t3.tenor_max,t3.created_by,t2.workflow_status, t2.lender_product_id as lender_product_id , t5.name as product_name ,t6.poc_name, t7.name as locationname
                                   from 
                                   
                                   fp_borrower_loanrequests t3,
                                   fpa_loan_applications t2,
 								  fp_lender_master t4,
 								  fp_products t5,
-								  fp_lender_user_details t6
-                                  Where t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.lender_id=t6.user_id AND  t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
+								  fp_lender_user_details t6,
+								  fp_city t7 
+                                  Where  t6.location_id= t7.id and t5.slug=t2.product_slug and  t4.id= t2.lendermaster_id and t3.id = t2.loanrequest_id AND t2.lender_id=t6.user_id AND  t2.borrower_id=".$id." AND t2.product_slug='".$slug."'  ";
 
 								//   echo $sql;
 							}
