@@ -229,7 +229,7 @@ public function updateworkflowloanapplication(){
 						}
 
 						$fp_borrower_loanrequests = array( 
-							// 'loan_request_status'  => $loanapplication_status, 
+						
 							'loan_request_workflow_status'=> $loanapplication_status, 
 							'loan_request_remark'   =>  $remarks,
 						
@@ -283,6 +283,7 @@ public function updateworkflowloanapplication(){
 							'activity'=> $loanapplication_status, 
 							'activity_remarks'  => $remarks, 
 							'borrower_id'=> $borrower_id,
+							'created_by'=> $us_email  ,
 							
 
 						);
@@ -752,7 +753,8 @@ public function deal_sanctioned()
 			  'taskdetail_id'  => $fpa_taskdetails_id, 
 			  'activity'=> $loanapplication_status, 
 			  'activity_remarks'  => $remarks, 
-			  'borrower_id'=> $borrower_id
+			  'borrower_id'=> $borrower_id,
+			  'created_by'=> $us_email
 			 );
 			 $this->db->insert('fpa_taskdetails_worklog', $fpa_taskdetails_worklog);
 			 if ($this->db->trans_status() === FALSE)
