@@ -1240,7 +1240,8 @@ public function  borrowerloanrequest()
 										'taskdetail_id'  => $fpa_taskdetails_id, 
 										'activity'=> $loanapplication_status, 
 										'activity_remarks'  => $remarks,
-										'borrower_id'=> $borrower_id
+										'borrower_id'=> $borrower_id,
+										 'created_by'=> $us_email 
 										
 			
 									);

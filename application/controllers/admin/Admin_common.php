@@ -614,7 +614,15 @@ class Admin_common extends CI_Controller
 
                     $rmdata = $this->db->query($assigndata)->row();
 
-                    $task_details_worklog = $this->db->insert("fpa_taskdetails_worklog", array('taskdetail_id' => $taskdata->id));
+                    $assign = "select name,email,id
+                    from fpa_adminusers where fpa_adminusers.id=".$params['data']['task_assigned_by']
+                    ;
+      
+                    $admindata = $this->db->query($assign)->row();
+
+                    $task_details_worklog = array ("taskdetail_id"=>$taskdata->id,"borrower_id"=>$params['data']['borrower_id'],"created_by"=>$admindata->email,"activity_remarks"=>$params['data']['remarks']); 
+
+                    $task_details_worklog = $this->db->insert("fpa_taskdetails_worklog",$task_details_worklog );
 
                     $fpa_users = "UPDATE fpa_users
 			  SET status ='assigned', rm_id='" . $rmdata->id . "'," .
@@ -726,7 +734,7 @@ class Admin_common extends CI_Controller
             $checkToken = $this->check_token();
             if (true) {
                 $response['status'] = 200;
-                $respStatus = $response['status'];
+                $respStatus = $response['status'];  
                 $params = json_decode(file_get_contents('php://input'), true);
 
                 $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
