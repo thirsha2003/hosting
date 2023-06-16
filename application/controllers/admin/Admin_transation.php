@@ -1381,6 +1381,8 @@ public function  borrowerloanrequest()
 		  }else{
 		   // $this->db->where('borrower_id',$params['data']['borrower_id'] and 'product_slug',$params['data']['product_slug'] );
 		   // $this->db->update($params['tableName'], $params['data']); 
+		   $resp = array('status' => 400,'message' =>  'Inserted success','data' =>"No data");
+		   
 		  }
 		$resp = array('status' => 200,'message' =>  'Inserted success','data' => $this->db->insert_id());
 	   }
@@ -1505,17 +1507,13 @@ public function  borrowerloanrequest()
 						
                        $payment_get = $this->db->get_where("fp_director_cibilpayments" , array('director_id'=>$director_id,'cibilaccountdetail_id'=>$cibilacc_id))->result();
 					   
-					
-
-					  
-					   
+					 
 					$data[] = [
 					'director_id'=> $row->director_id,
 					'account_number'=> $row->account_number,
 					'account_open_status'=> $row->account_open_status,
 					'account_type'=> $row->account_type,
 					'currentbalance'=> $row->currentbalance,
-					'director_id'=> $row->director_id,
 					'id'=> $row->id,
 					'lastpayment_date'=> $row->lastpayment_date,
 					'membername'=> $row->membername,

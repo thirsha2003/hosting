@@ -600,6 +600,8 @@ class Admin_common extends CI_Controller
 
                 try {
 
+                    $this->db->trans_start();
+
                     $id = '';
 
                     $task_details = $this->db->insert("fpa_taskdetails", $params['data']);
@@ -620,12 +622,12 @@ class Admin_common extends CI_Controller
       
                     $admindata = $this->db->query($assign)->row();
 
-                    $task_details_worklog = array ("taskdetail_id"=>$taskdata->id,"borrower_id"=>$params['data']['borrower_id'],"created_by"=>$admindata->email,"activity_remarks"=>$params['data']['remarks']); 
+                    $task_details_worklog = array ("taskdetail_id"=>$taskdata->id,"borrower_id"=>$params['data']['borrower_id'],"created_by"=>$admindata->email,"activity_remarks"=>$params['data']['remarks'] ? $params['data']['remarks']:null); 
 
                     $task_details_worklog = $this->db->insert("fpa_taskdetails_worklog",$task_details_worklog );
 
                     $fpa_users = "UPDATE fpa_users
-			  SET status ='assigned', rm_id='" . $rmdata->id . "'," .
+			       SET status ='assigned', rm_id='" . $rmdata->id . "'," .
                     "rm_name='" . $rmdata->name . "'," .
                     "rm_email='" . $rmdata->email . "' WHERE fpa_users.id=" . $taskdata->borrower_id;
 
@@ -633,6 +635,8 @@ class Admin_common extends CI_Controller
                     $company_name = $params['company_name'];
 
                     $checkdata = $this->db->query($fpa_users);
+                    
+                    $this->db->trans_complete();
 
                     // if ($this->db->trans_status() === FALSE)
                     // {
@@ -642,10 +646,12 @@ class Admin_common extends CI_Controller
                     // {
                     //   $this->db->trans_commit();
                     // }
-
                     //  $this->db->trans_complete();
+                    json_output(200, array('status' => 200, 'message' => 'Task assigned successfully!'));
 
                     if ($task_details && $task_details_worklog && $fpa_users) {
+
+
                         json_output(200, array('status' => 200, 'message' => 'Task assigned successfully!'));
 
                         $subject = "Dear " . $rm_name . ",";
@@ -671,7 +677,10 @@ class Admin_common extends CI_Controller
                             echo 'Caught exception: ', $e->getMessage(), "\n";
                         }
 
-                    } else {
+                    }
+                
+                    
+                    else {
                         json_output(200, array('status' => 400, 'message' => 'Bad request.'));
                     }
                 } catch (Exception $e) {
@@ -698,7 +707,7 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "WITH borrowerTable as (SELECT b.created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.created_at, bd.rm_name ,  bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null order by bd.id desc " . $where;
+                $sql = "WITH borrowerTable as (SELECT b.created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city,b.rm_email,b.rm_id FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.rm_id, bd.rm_email, bd.created_at, bd.rm_name ,  bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null order by bd.id desc " . $where;
 
                 $borrowerdetails = $this->db->query($sql)->result();
                 $data = $this->db->query($sql);
@@ -996,7 +1005,8 @@ class Admin_common extends CI_Controller
 					LR.loanamount_slug,
 					LR.tenor_max, LR.roi_min,
 					LR.loan_request_status AS loanapplication_status,
-					FPU.rm_name AS rmname
+					FPU.rm_name AS rmname,
+                    LR.updated_at as  created_at
 					FROM fp_borrower_loanrequests LR,
 					 fp_products PR, fp_borrower_user_details BO,
 					 fpa_users FPU
