@@ -203,6 +203,12 @@ class Probe42 extends CI_Controller
                             } elseif ($directors['designation'] == ' Nominee Director') {
                                 $director_type = 6;
                             }
+                            elseif ($directors['designation'] == 'Designated Partner'){
+                                $director_type =7;
+                            }
+                            elseif ($directors['designation']){
+                                $director_type =8;
+                            }
 
                             // object for send to DB
                             $directorsdetails = [
@@ -354,7 +360,7 @@ class Probe42 extends CI_Controller
                                 // Aws code start 
                             $projson= json_encode($season_data);
                             $foldername="PROBEDIR/";
-                            $aws->aws_s3bucket($params['borrowerid'],$foldername,$projson);
+                            $aws->aws_s3bucket($director_data->id,$foldername,$projson);
                             // Aws end code 
 
 
@@ -447,7 +453,19 @@ class Probe42 extends CI_Controller
                         $season_data = curl_exec($ch);
                         curl_close($ch);
                         $result = json_decode($season_data, true);
+
+
+
+                        // aws code  start 
+
+                        $projson= json_encode($season_data);
+                        $foldername="PROBE/";
+                        $aws->aws_s3bucket($params['borrowerid'],$foldername,$projson); 
+                        //    aws end code 
+
+
                         $responseData = $result['data'];
+
                         $companydetails = $responseData['llp'];
 
                         $incorporation_date = $companydetails['incorporation_date'];
@@ -503,7 +521,7 @@ class Probe42 extends CI_Controller
                             'api_city' => isset($companydetails['registered_address']['city']) ? $companydetails['registered_address']['city'] : null,
                             'api_pincode' => isset($companydetails['registered_address']['pincode']) ? $companydetails['registered_address']['pincode'] : null,
                             'api_state' => isset($companydetails['registered_address']['state']) ? $companydetails['registered_address']['state'] : null,
-                            'api_country' => isset($companydetails['address']['country']) ? $companydetails['address']['country'] : null,
+                            // 'api_country' => isset($companydetails['address']['country']) ? $companydetails['address']['country'] : null,
                             'classification' => isset($companydetails['classification']) ? $companydetails['classification'] : null,
                             'api_email' => isset($companydetails['email']) ? $companydetails['email'] : null,
                             'last_agm_date' => isset($companydetails['last_financial_reporting_date']) ? $companydetails['last_financial_reporting_date'] : null,
@@ -521,8 +539,11 @@ class Probe42 extends CI_Controller
                         $this->db->update('fp_borrower_user_details', $borroweruserbasedetails);
 
                         //  ----------------------- end of borroweruserdetails ------------------
-
+ 
+                        
                         $director = $responseData['directors'];
+
+
                         foreach ($director as $directors) {
                             // object for send to DB
                             $director_type = '';
@@ -532,13 +553,20 @@ class Probe42 extends CI_Controller
                                 $director_type = 2;
                             } elseif ($directors['designation'] == 'Additional Director') {
                                 $director_type = 3;
-                            } elseif ($directors['designation'] == ' Executive Director') {
+                            } elseif ($directors['designation'] == 'Executive Director') {
                                 $director_type = 4;
-                            } elseif ($directors['designation'] == ' Independent Director') {
+                            } elseif ($directors['designation'] == 'Independent Director') {
                                 $director_type = 5;
-                            } elseif ($directors['designation'] == ' Nominee Director') {
+                            } elseif ($directors['designation'] == 'Nominee Director') {
                                 $director_type = 6;
                             }
+                            elseif ($directors['designation'] == 'Designated Partner'){
+                                $director_type =7;
+                            }
+                            elseif ($directors['designation']){
+                                $director_type =8;
+                            }
+                            
                             $directordetails = [
                                 'type' => $director_type,
                                 'borrower_id' => ($params['borrowerid']) ? $params['borrowerid'] : '',
@@ -563,9 +591,15 @@ class Probe42 extends CI_Controller
                                 'api_state' => isset($directors['address']['state']) ? $directors['address']['state'] : null,
                                 'api_pincode' => isset($directors['address']['pincode']) ? $directors['address']['pincode'] : null,
                                 'api_country' => isset($directors['address']['country']) ? $directors['address']['country'] : null,
+                                'pro_created_by'=>'P',
+
+
                             ];
                             $this->db->insert('fp_director_details', $directordetails);
                             $fp_director = $this->db->insert_id();
+
+                        
+
 
                             $sql = "select t1.pan,t1.id,t1.din
                               from fp_director_details t1 where t1.id=" . $fp_director;
@@ -592,6 +626,14 @@ class Probe42 extends CI_Controller
                                 curl_close($ch);
                                 $result = json_decode($season_data, true);
                                 $director_network = $result;
+
+                                // aws start code 
+                            $projson= json_encode($season_data);
+                            $foldername="PROBEDIR/";
+                            $aws->aws_s3bucket($director_data->id,$foldername,$projson);
+                            // aws end code 
+
+
 
                                 foreach ($director_network['data']['director'] as $director_data_new) {
                                     if ($director_data_new['network']['companies']) {
@@ -659,6 +701,14 @@ class Probe42 extends CI_Controller
                                 curl_close($ch);
                                 $result = json_decode($season_data, true);
                                 $director_network = $result;
+                                  
+                                // aws start code 
+
+                                $projson= json_encode($season_data);
+                                $foldername="PROBEDIR/";
+                                $aws->aws_s3bucket($director_data->id,$foldername,$projson);
+
+                                // aws end code 
 
                                 foreach ($director_network['data']['director'] as $director_data_new) {
                                     if ($director_data_new['network']['companies']) {
@@ -722,6 +772,7 @@ class Probe42 extends CI_Controller
                             $this->db->insert('fp_open_charges', $shareholderdetails);
 
                         }
+                        json_output(200, array('status' => 200, 'message' => 'success'));
                     } // ---------- End of  LLPIN NUMBER -------------
                     json_output(200, array('status' => 200, 'message' => 'success'));
                 } catch (Exception $e) {
