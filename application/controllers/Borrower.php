@@ -666,9 +666,112 @@ public function file_revert(){
 
 }
 
+// Code start by Inba-------------------------
+
+public function add_opencharges()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+           $opencharge = array(
+            "open_charges_id"=>$params['data']['open_charges_id'],
+            "holder_name"=>$params['data']['holder_name'],
+            "amount"=>$params['data']['amount'],
+            "date"=>$params['data']['date'],
+			"type"=>$params["data"]["type"],
+            "borrower_id"=>$params['borrower_id']);
+			
+     
+        $this->db->insert("fp_open_charges",$opencharge);
+        return json_output(200, array('status' => 200, 'message' => 'Insert Successfully!'));
+        } 
+        else {
+            return json_output(500, array('status' => 500, 'message' => "Duplicate Entry"));
+        }
+
+    } 
+    else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} 
 
 
-	
+public function update_opencharges()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+			$id = isset($params['data']['id']) ? $params['data']['id'] : null;
+			
+           $opencharge = array(
+            "open_charges_id"=>$params['data']['open_charges_id'],
+            "holder_name"=>$params['data']['holder_name'],
+            "amount"=>$params['data']['amount'],
+            "date"=>$params['data']['date'],
+			"type"=>$params["data"]["type"]);
+			
+     
+			$this->db->where("id",$id);
+        $this->db->update("fp_open_charges",$opencharge);
+        return json_output(200, array('status' => 200, 'message' => 'Updated Successfully!'));
+        } 
+        else {
+            return json_output(500, array('status' => 500, 'message' => "Duplicate Entry"));
+        }
+
+    } 
+    else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} 
+
+public function delete_opencharges()
+{
+	$method = $_SERVER['REQUEST_METHOD'];
+	if($method =="POST")
+	{
+			// $checkToken = $this->check_token();
+			if(True)
+			{
+					$response['status']=200;
+					$respStatus = $response['status'];
+					$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+					$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+					$join 		= isset($params['key']) ? $params['key'] : "";
+					$where 		= isset($params['where']) ? $params['where'] : "";	
+
+					$sql = "update fp_open_charges set is_active='0' where id='$where'";
+
+					$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql));
+				   
+					return json_output(200,array('status' => 200,'message' => "Deleted Successfully"));
+			}
+			else
+			{
+				return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+			}
+		
+	}
+	else
+	{
+			return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+	}
+
+} 
+
+	//Code end by Inba----------------- 
 
 	
 
