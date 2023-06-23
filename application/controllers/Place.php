@@ -838,9 +838,12 @@ public function getlenderproduct()
         $join     = isset($params['key']) ? $params['key'] : "";
         $where = isset($params['where']) ? $params['where'] : "";
     
-          $sql = "SELECT *
+          $sql = "SELECT lpd.id, lpd.lender_id, lpd.product_id, lpd.product_slug, lpd.loan_min, lpd.loan_max, lpd.roi_min, lpd.roi_max, lpd.tenor_min, lpd.tenor_max, lpd.loan_unit, lpd.tenor_unit, lpd.is_active, fp.id as productid, fp.name as productname, fp.slug as productslug, lm.id as lendermasterid, lm.slug as lendermasterslug, lm.lender_name
           FROM 
-          fp_lender_product_details lpd LEFT JOIN fp_products fp on fp.id=lpd.product_id LEFT JOIN fp_lender_master lm on lm.id=lpd.lender_id ";
+          fp_lender_product_details lpd 
+          LEFT JOIN fp_products fp on fp.id=lpd.product_id 
+          LEFT JOIN fp_lender_master lm on lm.id=lpd.lender_id
+          WHERE lpd.lender_id=lm.id AND lpd.product_slug=fp.slug AND lpd.is_active=1 ORDER BY lpd.id DESC";
         
         
         $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
@@ -870,7 +873,7 @@ public function geteditlenderproduct()
         $join     = isset($params['key']) ? $params['key'] : "";
         $where = isset($params['where']) ? $params['where'] : "";
     
-          $sql = "SELECT lender_id, product_id, product_slug, loan_min, loan_max, roi_min, roi_max, tenor_min, tenor_max, loan_unit, tenor_unit FROM fp_lender_product_details lm where lm.id='$where'";
+          $sql = "SELECT lpd.id, lpd.lender_id, lpd.product_id, lpd.product_slug, lpd.loan_min, lpd.loan_max, lpd.roi_min, lpd.roi_max, lpd.tenor_min, lpd.tenor_max, lpd.loan_unit, lpd.tenor_unit, lpd.is_active, fp.id as productid, fp.name as productname, fp.slug as productslug, lm.id as lendermasterid, lm.slug as lendermasterslug, lm.lender_name FROM fp_lender_product_details lpd LEFT JOIN fp_products fp on fp.id=lpd.product_id LEFT JOIN fp_lender_master lm on lm.id=lpd.lender_id WHERE lpd.lender_id=lm.id AND lpd.product_slug=fp.slug AND lpd.id='$where'";
         
         
         $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
@@ -906,14 +909,14 @@ public function add_lenderproduct_details()
             $loanunit = isset($params["data"]["loan_unit"])? $params["data"]["loan_unit"] : null;
             $tenorunit = isset($params["data"]["tenor_unit"])? $params["data"]["tenor_unit"] : null;
 
-            $product_id = "SELECT id FROM fp_products WHERE slug = '" . $productslug . "'";
+            $product_id = "SELECT * FROM fp_products WHERE slug = '" . $productslug . "'";
             $productid = $this->db->query($product_id)->result();
 
 
            $lenderdata = array(
        
         "lender_id"=>$lenderid,
-        "product_id"=>$productid,
+        "product_id"=>$productid[0]->id,
         "product_slug"=>$productslug,
        "loan_min"=>$loanmin,
         "loan_max"=>$loanmax,
@@ -928,6 +931,7 @@ public function add_lenderproduct_details()
      
         $this->db->insert("fp_lender_product_details",$lenderdata);
         return json_output(200, array('status' => 200, 'message' => 'Insert Successfully!'));
+        json_output($respStatus,$resp);
         } 
         else {
             return json_output(500, array('status' => 500, 'message' => "Duplicate Entry"));
@@ -939,6 +943,295 @@ public function add_lenderproduct_details()
     }
 
 } 
+
+public function update_lenderproduct_details()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+            
+            $id = isset($params['data']['id']) ? $params['data']['id'] : null;
+
+
+            
+            $lenderid = isset($params["data"]["lender_id"])? $params["data"]["lender_id"] : null;
+            $productslug = isset($params["data"]["product_slug"])? $params["data"]["product_slug"] : null;
+            $loanmin = isset($params["data"]["loan_min"])? $params["data"]["loan_min"] : null;
+            $loanmax = isset($params["data"]["loan_max"])? $params["data"]["loan_max"] : null;
+            $roimin = isset($params["data"]["roi_min"])? $params["data"]["roi_min"] : null;
+            $roimax = isset($params["data"]["roi_max"])? $params["data"]["roi_max"] : null;
+            $tenormin = isset($params["data"]["tenor_min"])? $params["data"]["tenor_min"] : null;
+            $tenormax = isset($params["data"]["tenor_max"])? $params["data"]["tenor_max"] : null;
+            $loanunit = isset($params["data"]["loan_unit"])? $params["data"]["loan_unit"] : null;
+            $tenorunit = isset($params["data"]["tenor_unit"])? $params["data"]["tenor_unit"] : null;
+
+            $product_id = "SELECT * FROM fp_products WHERE slug = '" . $productslug . "'";
+            $productid = $this->db->query($product_id)->result();
+
+
+           $lenderdata = array(
+       
+        "lender_id"=>$lenderid,
+        "product_id"=>$productid[0]->id,
+        "product_slug"=>$productslug,
+       "loan_min"=>$loanmin,
+        "loan_max"=>$loanmax,
+        "roi_min"=>$roimin,
+        "roi_max"=>$roimax,
+        "tenor_min"=>$tenormin,
+        "tenor_max"=>$tenormax,
+        "loan_unit"=>$loanunit,
+        "tenor_unit"=>$tenorunit,
+    
+    );
+     
+    
+    $this->db->where("id",$id);
+
+        $this->db->update("fp_lender_product_details",$lenderdata);
+        return json_output(200, array('status' => 200, 'message' => 'Updated Successfully!'));
+        json_output($respStatus,$resp);
+
+        } 
+        else {
+            return json_output(500, array('status' => 500, 'message' => "Duplicate Entry"));
+        }
+
+    } 
+    else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} 
+
+
+public function delete_lenderproduct_details()
+{
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method =="POST")
+        {
+                // $checkToken = $this->check_token();
+                if(True)
+                {
+                        $response['status']=200;
+                        $respStatus = $response['status'];
+                        $params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+                        $selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+                        $join 		= isset($params['key']) ? $params['key'] : "";
+                        $where 		= isset($params['where']) ? $params['where'] : "";	
+
+                        $sql = "update fp_lender_product_details set is_active='0' where id='$where'";
+
+                        $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql));
+                       
+                        return json_output(200,array('status' => 200,'message' => "Deleted Successfully"));
+                        return json_output($respStatus,$resp);
+
+                }
+                else
+                {
+                    return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+                }
+            
+        }
+        else
+        {
+                return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+        }
+    
+}
+
+public function getproduct()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == 'POST') {
+
+        $response['status'] = 200;
+        $respStatus = $response['status'];
+        $params = json_decode(file_get_contents('php://input'), true);
+
+        $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+        $join = isset($params['key']) ? $params['key'] : "";
+        $where = isset($params['where']) ? $params['where'] : "";
+
+        $sql = "SELECT fp.id as id, fp.name,fp.slug,pt.name as products_type,fp.amounts,fp.tenor_min,fp.tenor_max,fp.tenor,fp.roi_min,fp.roi_max
+      FROM fp_products fp, fp_products_type pt
+      WHERE fp.products_type=pt.id AND fp.is_active = 1
+      ORDER BY fp.id DESC ";
+
+        $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+        json_output($respStatus, $resp);
+
+    } else {
+        json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} 
+
+
+public function getedit_product()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == 'POST') {
+
+        $response['status'] = 200;
+        $respStatus = $response['status'];
+        $params = json_decode(file_get_contents('php://input'), true);
+
+        $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+        $join = isset($params['key']) ? $params['key'] : "";
+        $where = isset($params['where']) ? $params['where'] : "";
+
+        $sql = "SELECT fp.name,fp.slug,pt.id as products_type,fp.amounts,fp.tenor_min,fp.tenor_max,fp.tenor,fp.roi_min,fp.roi_max
+      FROM fp_products fp, fp_products_type pt
+      WHERE fp.products_type=pt.id AND fp.id='$where'";
+
+        $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+        json_output($respStatus, $resp);
+
+    } else {
+        json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+}  
+
+public function addlenderproduct()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $name = isset($params["data"]["name"]) ? $params["data"]["name"] : null;
+            $slug = isset($params["data"]["slug"]) ? $params["data"]["slug"] : null;
+            $products_type = isset($params["data"]["products_type"]) ? $params["data"]["products_type"] : null;
+            $amounts = isset($params["data"]["amounts"]) ? $params["data"]["amounts"] : null;
+            $tenormin = isset($params["data"]["tenor_min"]) ? $params["data"]["tenor_min"] : null;
+            $tenormax = isset($params["data"]["tenor_max"]) ? $params["data"]["tenor_max"] : null;
+            $tenor = isset($params["data"]["tenor"]) ? $params["data"]["tenor"] : null;
+            $roimin = isset($params["data"]["roi_min"]) ? $params["data"]["roi_min"] : null;
+            $roimax = isset($params["data"]["roi_max"]) ? $params["data"]["roi_max"] : null;
+
+            // $product_id = "SELECT id FROM fp_products WHERE slug = '" . $productslug . "'";
+            // $productid = $this->db->query($product_id)->result();
+
+            $lenderproduct = array(
+
+                "name" => $name,
+                "slug" => $slug,
+                "products_type" => $products_type,
+                "amounts" => $amounts,
+                "tenor_min" => $tenormin,
+                "tenor_max" => $tenormax,
+                "tenor" => $tenor,
+                "roi_min" => $roimin,
+                "roi_max" => $roimax,
+
+            );
+
+            $this->db->insert("fp_products", $lenderproduct);
+            return json_output(200, array('status' => 200, 'message' => 'Insert Successfully!'));
+        } else {
+            return json_output(500, array('status' => 500, 'message' => "Duplicate Entry"));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+}
+
+
+
+public function updatelenderproduct()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $id =isset($params["where"]) ? $params["where"] : null;
+
+            $name = isset($params["data"]["name"]) ? $params["data"]["name"] : null;
+            $slug = isset($params["data"]["slug"]) ? $params["data"]["slug"] : null;
+            $products_type = isset($params["data"]["products_type"]) ? $params["data"]["products_type"] : null;
+            $amounts = isset($params["data"]["amounts"]) ? $params["data"]["amounts"] : null;
+            $tenormin = isset($params["data"]["tenor_min"]) ? $params["data"]["tenor_min"] : null;
+            $tenormax = isset($params["data"]["tenor_max"]) ? $params["data"]["tenor_max"] : null;
+            $tenor = isset($params["data"]["tenor"]) ? $params["data"]["tenor"] : null;
+            $roimin = isset($params["data"]["roi_min"]) ? $params["data"]["roi_min"] : null;
+            $roimax = isset($params["data"]["roi_max"]) ? $params["data"]["roi_max"] : null;
+
+            // $product_id = "SELECT id FROM fp_products WHERE slug = '" . $productslug . "'";
+            // $productid = $this->db->query($product_id)->result();
+
+            $lenderproduct = array(
+
+                "name" => $name,
+                "slug" => $slug,
+                "products_type" => $products_type,
+                "amounts" => $amounts,
+                "tenor_min" => $tenormin,
+                "tenor_max" => $tenormax,
+                "tenor" => $tenor,
+                "roi_min" => $roimin,
+                "roi_max" => $roimax,
+
+            );
+            $this->db->where("id",$id);
+            $this->db->update("fp_products", $lenderproduct);
+            return json_output(200, array('status' => 200, 'message' => 'Insert Successfully!'));
+        } else {
+            return json_output(500, array('status' => 500, 'message' => "Duplicate Entry"));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+}  
+
+
+
+public function deletelenderproduct()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        // $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "update fp_products set is_active='0' where id='$where'";
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql));
+
+            // return json_output($respStatus,$resp);
+            return json_output(200, array('status' => 200, 'message' => "Deleted Successfully"));
+        } else {
+            return json_output(400, array('status' => 400, 'message' => "Unauthorized"));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+}
 
 
 
