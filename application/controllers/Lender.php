@@ -70,8 +70,7 @@ class Lender extends CI_Controller
 		  else
 		  {
 			  $check_auth_user = $this->login->check_auth_user();
-			  // if($check_auth_user == true){
-			  // $response = $this->login->auth();
+			 
 			  $response['status'] = 200;
 			  $respStatus = $response['status'];
 			  if($response['status'] == 200)
@@ -101,44 +100,27 @@ class Lender extends CI_Controller
 						$borrowerloanrequestdetails = $this->db->get_where('fp_borrower_loanrequests', array('id' => $borrower_loanrequests_id));
 
 						if($borrowerloanrequestdetails->num_rows() >= 1){
-
-						
 						foreach ($borrowerloanrequestdetails->result() as $rows)
 									{
 										$borrowerloanslug = $rows->product_slug;
 									}
-									// print_r($borrowerloanrequestdetails->num_rows());
 						
 								}else{
 									$borrowerloanslug = "";
 								}
-
-
-
 
 						  $sql ="select name, email,mobile from fpa_users where id=".$borrowerid;
 						  $borrowerdata= $this->db->query($sql)->row();
 
 						  $sql ="select name, email,mobile from fpa_users where id=".$lenderid;
 						  $lenderdata= $this->db->query($sql)->row();
-
-
-
-
-
 						  try{
-
-							
-
 							$intrest_by = array( 
 							'lender_intrest_received'=>"yes", 
 							'lender_interest_expressed_by' =>  $lenderid, 
 							'loanapplication_status' =>  "Express Interest", 
 							'workflow_status' =>  "Express Interest",
-						
 						);
-
-
 						if($loan_id == 0){
 
 						$conditions_loan_app = array( 'borrower_id'=>$params['data']['borrower_id'], 'loanrequest_id' =>  $params['data']['borrower_loanrequests_id'],
@@ -147,8 +129,6 @@ class Lender extends CI_Controller
 						$conditions_loan_app = array("id"=>$loan_id);
 					}
 
-						
-							// $this->db->select('id');
 							$this->db->from('fpa_loan_applications');
 							$this->db->where($conditions_loan_app);
 							$this->db->update("fpa_loan_applications",$intrest_by);
@@ -158,11 +138,7 @@ class Lender extends CI_Controller
 
 							$this->db->where($conditions_loan_app);
 							$this->db->update("fpa_loan_applications",$intrest_by);
-							// $num_results = $this->db->count_all_results();
-
-
-
-
+						
 
 							$conditions = array( 'borrower_id'=>$params['data']['borrower_id'], 'borrower_loanrequests_id' =>  $params['data']['borrower_loanrequests_id'], 'lender_id'=>$lenderid, "lender_master_id"=>$lender_master_id);
 							
@@ -170,7 +146,7 @@ class Lender extends CI_Controller
 							$this->db->from('fp_lender_proposals');
 							$this->db->where($conditions);
 							$num_results = $this->db->count_all_results();
-							// return json_output(400,array('status' => 400,'message' => $num_results));
+					
 
 							$conditionsloanapplication = array( 'borrower_id'=>$params['data']['borrower_id'], 'loanrequest_id' =>  $params['data']['borrower_loanrequests_id'], "lendermaster_id"=>$lender_master_id);
 							
@@ -221,9 +197,9 @@ class Lender extends CI_Controller
 								  "-----------------------------------------------<br/>
 								  Team Finnup";
 
-								  // $to = 'platform@finnup.in';
+								  $to = 'platform@finnup.in';
 								  //$to = 'rec2004@gmail.com';
-								  $to = 'parthiban24242000@gmail.com';
+								//   $to = 'parthiban24242000@gmail.com';
 								  $email = new \SendGrid\Mail\Mail();
 								  $email->setSubject($subject);
 								  $email->addContent("text/html", $message);
@@ -239,6 +215,8 @@ class Lender extends CI_Controller
 								  return json_output(200,array('status' => 200,'message' => 'Submitted'));
 								}
 								
+
+
 								else{
 									return json_output(200,array('status' => 401,'message' => 'Already Submitted'));
 								}
@@ -247,24 +225,10 @@ class Lender extends CI_Controller
 						  {
 
 							  echo 'Caught exception: ',  $e->getMessage(), "\n";
-						  }
-
-						
-
-
-
-						 
-
-							  
+						  }	  
 					  }//----------------end of Condition 2
-					   
-
-
-				  }
-
-				  
+				  }				  
 			  }
-		
 	  }
 	}
 

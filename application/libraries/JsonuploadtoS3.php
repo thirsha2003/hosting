@@ -18,7 +18,8 @@ class JsonuploadtoS3 {
 
     public function aws_s3bucket($borrowerid,$foldername,$responsejson)
     {
-        $bucket = 'finnup';  
+        // $bucket = 'finnup';       
+        $bucket = 'bucketinfo';     
 
         $keyname = "FINNBID".$borrowerid;
         $Folder_name = "finnup_json_dump/".$foldername;

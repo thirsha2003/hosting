@@ -1977,6 +1977,69 @@ public function  addborroweruser()
 
 
 
+
+
+	// 22/06/23  code by parthiban 
+
+
+	public function loanrequestedit()
+  {
+			$method = $_SERVER['REQUEST_METHOD'];
+			if($method != 'POST')
+			{
+				json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			}else
+			{
+				
+					$response['status'] = 200;
+					$respStatus = $response['status'];
+					if($response['status'] == 200)
+					{
+						$params = json_decode(file_get_contents('php://input'), TRUE);
+						if ($params['tableName'] == "") 
+						{
+							$respStatus = 400;
+							$resp = array('status' => 400,'message' =>  'Fields Missing');
+						} else 
+						{
+							$d_id = isset($params['data']['id']) ? $params['data']['id'] : "0";
+							$sql = "SELECT * FROM ".$params['tableName']." WHERE id =".$d_id;
+								
+									if(count($this->db->query($sql)->result())==0){
+										$this->db->insert($params['tableName'], $params['data']);
+									}else{
+                                          
+									$condition= array('id'=>$params['data']['id'] ,'borrower_id'=>$params['data']['borrower_id'],'product_slug'=>$params['data']['product_slug']);
+
+
+										$this->db->where($condition);
+										$this->db->update($params['tableName'], $params['data']); 
+										$resp = array('status' => 200,'message' =>  'success','data' => 'Does Not Updated Successfully');
+
+
+
+									// 	$update = mysqli_query($uinsert) ;
+
+									// 	if(mysqli_affected_rows($update) == 1 ){ 
+									// 		$resp = array('status' => 200,'message' =>  'success','data' =>'Updated Successfully');
+									
+									//    }
+									//    else{
+									// 	$resp = array('status' => 200,'message' =>  'success','data' => 'Does Not Updated Successfully');
+
+									
+									//    }
+									}
+							$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
+						}
+						json_output($respStatus,$resp);
+					}
+				// }
+			}
+  }
+
+
+
 }//------------------end of class------------------------------------------
 //   $this->db->insert($params['tableName'], $params['data']);
 
