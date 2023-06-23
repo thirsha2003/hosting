@@ -31,105 +31,132 @@ class Connector_user_verification extends CI_Controller
       }
 
     
-      public function newusersignup()
-     {
-        $mailer = new \App\Libraries\Femail;
-        $MTalkMobOtp = new \App\ThirdParty\MTalkz;
-		// $isEmailSuccess = $mailer->sendOTPemail("parthibangnc51@gmail.com", "878787", "connector", "2");
-		// print_r($isEmailSuccess);
-		// exit();
-		
-        $response['status'] = 200;
-        $respStatus = $response['status'];
-        $method = $_SERVER['REQUEST_METHOD'];
-        if ($method != 'POST') {
-            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
-        } else {
-            $check_auth_user = $this->login->check_auth_user();
-
-            if ($check_auth_user == true) {
-                $params = json_decode(file_get_contents('php://input'), true);
-                if ($params['tableName'] == "") {
-                    $respStatus = 400;
-                    $resp = array('status' => 400, 'message' => 'Fields Missing');
-                } else {
-                    $email_id = $params['data']['email'];
-                    $isEmailSuccess = true;
-                    $slug = isset($params['data']['slug']) ? $params['data']['slug'] : null;
-                    $mobile = isset($params['data']['mobile']) ? $params['data']['mobile'] : null;
-                    $connector = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
-                    $sql = "SELECT * FROM " . $params['tableName'] . " WHERE email='" . $email_id . "'" . " || mobile=" . $mobile;
-                    $count = $this->db->query($sql)->num_rows();
-                    $otpvalid = 2;
-                    $eOTP = 0;
-                    $mOTP = 0;
-
-                    $slug_name = $params['data']['slug'];
-                    if ($slug_name == "815102354141513") {
-                        $slug = 'connector';
-                    } 
-
-
-                    if ($count == 0) {
-                        //Sending an email OTP
-                        if ($email_id != '' && $email_id != null) {
-                            $eOTP = sprintf("%06d", mt_rand(100000, 999999));
-                            try
-                            {
-                                //$this->load->library('femail');
-                                $isEmailSuccess = $mailer->sendOTPemail($email_id, $eOTP, $slug, $otpvalid);
-                                //sendOTPemail($toemail,$otp,$emailslug,$otpvalid)
-                            } catch (Exception $e) {
-                                json_output(201, array('status' => 201, 'message' => 'Unable to send an email, Please try again'));
-                            }
-
-                        }
-                        // Sending an mobile OTP
-                        if ($mobile != '' && $mobile != null) {
-                            //--------------------------------------------------
-
-                            $mOTP = sprintf("%06d", mt_rand(100000, 999999));
-
-                            // code for mobile OTP
-                            $msgreturn = $MTalkMobOtp->sendmobileotp($mobile, $slug, $mOTP);
-
-                            //---------------------------------------------------
-                        } else {
-                            $msgreturn = "Mobile OTP Error, Not Sent";
-                        }
-
-                        if ($isEmailSuccess) {
-                            $insert_array = array();
-                            $insert_array['connector_id'] = null;
-                            $insert_array['email'] = $email_id;
-                            $insert_array['mobile'] = $mobile;
-                            $insert_array['emailotp'] = $eOTP;
-                            $insert_array['mobotp'] = $mOTP;
-                            $insert_array['mTalkzMessage'] = $msgreturn;
-
-                            //debug_to_console($insert_array);
-                            $this->db->insert("fp_connector_login_history", $insert_array);
-                            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->row());
-                        } else {
-                            $resp = array('status' => 201, 'message' => 'Unable to send an email, Please try again', 'data' => "");
-                        }
-
-                    } else {
-                        $respStatus = 201;
-                        $resp = array('status' => 201, 'message' => 'email already exists!.');
-                        //json_output(201, array('status' => 201,'message' => 'email already exists!.'));
-                    }
-                    //$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
-
-                }
-
-            } else {
-                json_output(403, array('status' => 403, 'message' => 'Unknown access'));
-            } //-----end of user authentication check----------//
-            json_output($respStatus, $resp);
-        } //-------end of post check----------//
-
-     }
+	  public function newusersignup()
+	  {
+		 $mailer = new \App\Libraries\Femail;
+		 $MTalkMobOtp = new \App\ThirdParty\MTalkz;
+		 // $isEmailSuccess = $mailer->sendOTPemail("parthibangnc51@gmail.com", "878787", "connector", "2");
+		 // print_r($isEmailSuccess);
+		 // exit();
+		 
+		 $response['status'] = 200;
+		 $respStatus = $response['status'];
+		 $method = $_SERVER['REQUEST_METHOD'];
+		 if ($method != 'POST') {
+			 json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+		 } else {
+			 $check_auth_user = $this->login->check_auth_user();
+ 
+			 if ($check_auth_user == true) {
+				 $params = json_decode(file_get_contents('php://input'), true);
+ 
+								 $allowuser = $params['data']['email'];
+				 $domain_name = substr(strrchr($allowuser, "@"), 1);
+				 $domain_name = explode('.', $domain_name)[0];
+				 if($domain_name != "" || $domain_name != null){
+ 
+					 $query = "select * from (SELECT SUBSTRING_INDEX(domain,'.',1) as domain from fp_domaincheck where status = 1) as fp_domaincheck where domain = '".$domain_name."'";
+					 $result = $this->db->query($query)->num_rows();
+					 // $this->db->select('*');
+					 // $this->db->where(array("status" => 1));
+					 // $this->db->like('domain',$domain_name);
+					 // $query=$this->db->get("fp_domaincheck");
+					 // $result=$query->result_array();
+					 if($result > 0)
+					 {
+					 $domain_check = false;
+					 }
+					 else
+					 {
+					 $domain_check = true;
+					 }
+				 }else{
+					 $domain_check = false;
+					 $resp = array('status' => 400,'message' =>  'Fields Missing');
+				 }
+			   
+								 if ($params['tableName'] == "" || $domain_check != true) {
+					 $respStatus = 200;
+					 $resp = array('status' => 400, 'message' => 'Fields Missing');
+				 } else {
+					 $email_id = $params['data']['email'];
+					 $isEmailSuccess = true;
+					 $slug = isset($params['data']['slug']) ? $params['data']['slug'] : null;
+					 $mobile = isset($params['data']['mobile']) ? $params['data']['mobile'] : null;
+					 $connector = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
+					 $sql = "SELECT * FROM " . $params['tableName'] . " WHERE email='" . $email_id . "'" . " || mobile=" . $mobile;
+					 $count = $this->db->query($sql)->num_rows();
+					 $otpvalid = 2;
+					 $eOTP = 0;
+					 $mOTP = 0;
+ 
+					 $slug_name = $params['data']['slug'];
+					 if ($slug_name == "815102354141513") {
+						 $slug = 'connector';
+					 } 
+ 
+ 
+					 if ($count == 0) {
+						 //Sending an email OTP
+						 if ($email_id != '' && $email_id != null) {
+							 $eOTP = sprintf("%06d", mt_rand(100000, 999999));
+							 try
+							 {
+								 //$this->load->library('femail');
+								 $isEmailSuccess = $mailer->sendOTPemail($email_id, $eOTP, $slug, $otpvalid);
+								 //sendOTPemail($toemail,$otp,$emailslug,$otpvalid)
+							 } catch (Exception $e) {
+								 json_output(201, array('status' => 201, 'message' => 'Unable to send an email, Please try again'));
+							 }
+ 
+						 }
+						 // Sending an mobile OTP
+						 if ($mobile != '' && $mobile != null) {
+							 //--------------------------------------------------
+ 
+							 $mOTP = sprintf("%06d", mt_rand(100000, 999999));
+ 
+							 // code for mobile OTP
+							 $msgreturn = $MTalkMobOtp->sendmobileotp($mobile, $slug, $mOTP);
+ 
+							 //---------------------------------------------------
+						 } else {
+							 $msgreturn = "Mobile OTP Error, Not Sent";
+						 }
+ 
+						 if ($isEmailSuccess) {
+							 $insert_array = array();
+							 $insert_array['connector_id'] = null;
+							 $insert_array['email'] = $email_id;
+							 $insert_array['mobile'] = $mobile;
+							 $insert_array['emailotp'] = $eOTP;
+							 $insert_array['mobotp'] = $mOTP;
+							 $insert_array['mTalkzMessage'] = $msgreturn;
+ 
+							 //debug_to_console($insert_array);
+							 $this->db->insert("fp_connector_login_history", $insert_array);
+							 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->row());
+						 } else {
+							 $resp = array('status' => 201, 'message' => 'Unable to send an email, Please try again', 'data' => "");
+						 }
+ 
+					 } else {
+						 $respStatus = 201;
+						 $resp = array('status' => 201, 'message' => 'email already exists!.');
+						 //json_output(201, array('status' => 201,'message' => 'email already exists!.'));
+					 }
+					 //$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->row());
+ 
+				 }
+ 
+			 } else {
+				 json_output(403, array('status' => 403, 'message' => 'Unknown access'));
+			 } //-----end of user authentication check----------//
+			 json_output($respStatus, $resp);
+		 } //-------end of post check----------//
+ 
+	  }
+ 
 
 
 public function verifymobile()

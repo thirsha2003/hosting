@@ -546,6 +546,38 @@ class Common extends CI_Controller {
 		}
 	}
 
+
+	public function getcities()
+{
+  $method = $_SERVER['REQUEST_METHOD'];
+  if($method == 'POST')
+  {
+    
+    $response['status']=200;
+    $respStatus = $response['status'];
+    $params = json_decode(file_get_contents('php://input'), TRUE);
+      
+        $selectkey   = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+        $join     = isset($params['key']) ? $params['key'] : "";
+        $where = isset($params['where']) ? $params['where'] : "";
+    
+          // $sql = "SELECT * FROM fp_district where is_active =1 ORDER BY id DESC";
+          $sql = "SELECT * 
+          FROM fp_city
+          WHERE is_active = 1
+          ORDER BY id in (4,5,6,7,8,9,10,11,12,13,14,15) DESC ,name ASC";
+        
+        
+        $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+        json_output($respStatus,$resp);
+    
+  }
+  else
+  {
+         json_output(400,array('status' => 400,'message' => 'Bad request.'));
+  }
+}
+
 	public function borrower_profile(){
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'POST'){
