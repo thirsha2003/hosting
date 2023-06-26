@@ -559,7 +559,7 @@ class XLRT extends CI_Controller
 
                 
 
-                $extratin_url = "https://finnupuat.xlrt.ai/fst-api//financialdocs/";
+                $extratin_url = "https://finnup.xlrt.ai/fst-api//financialdocs/";
                 $extration_url_end = "/extraction?checkpoints=true&children=true&unitType=ACTUALS";
                 $dmscodes = $dmscode; 
                 $xlrt_str = $extratin_url.$dmscodes.$extration_url_end;
@@ -582,6 +582,8 @@ class XLRT extends CI_Controller
             )
             );
               $response_xlrt = curl_exec($ch);
+
+              print_r( $response_xlrt);
               curl_close($ch);
               $xlrt_response= json_decode($response_xlrt);
 
@@ -1348,7 +1350,8 @@ class XLRT extends CI_Controller
           }
           else
           {
-              $downloadUrl = "http://localhost/fin/api/";   ///  CHAGING THIS URL IN LIVE 
+            //   $downloadUrl = "http://localhost/fin/api/";   ///  CHAGING THIS URL IN LIVE   
+              $downloadUrl = "https://app.finnup.in/api/";   ///   THIS URL IN LIVE   
               $data = null;
               $check_auth_user = $this->login->check_auth_user();
   
@@ -1799,7 +1802,7 @@ class XLRT extends CI_Controller
                   $params = json_decode(file_get_contents('php://input'), TRUE);
                   $borrowerid = $params['data']['id'];
   
-                  $unit = "lakh";
+                  $unit =$params['unit'] ;
   
                   $response['status']=200;
                   $respStatus = $response['status'];
@@ -1976,30 +1979,13 @@ class XLRT extends CI_Controller
 
 
 
-       public   function AnalyzeData(){
+       public   function AnalyzeData($borrowerid,$xlrt_response){
     
 
-    $method = $_SERVER['REQUEST_METHOD'];
-    $method = $_SERVER['REQUEST_METHOD'];
-    if($method != 'POST')
-    {
-        json_output(400,array('status' => 400,'message' => 'Bad request.'));
-    }
-    else
-    {
-        $check_auth_user = $this->login->check_auth_user();
-        if($check_auth_user == true)
-        {
-            $params = json_decode(file_get_contents('php://input'), TRUE);
-            $borrowerid = $params['data']['id'];
-
-            $response['status']=200;
-            $respStatus = $response['status'];
+  
+          
             
-            $params 	= json_decode(file_get_contents('php://input'), TRUE);
-            $param	= json_decode(file_get_contents('php://input'), FALSE);
-            
-            $financejson 	= $param->jsondata;
+            $financejson 	= $xlrt_response;
             $financialstype = "STA";
 
             
@@ -2620,12 +2606,9 @@ class XLRT extends CI_Controller
 
             $resp = array('status' => 200,'message' =>  'Success','data' => $data, 'sql' => $plaInsertSql);
             json_output(200,$resp);
-        }
-        else
-        {
-            return json_output(200,array('status' => 400,'Message' => "Invalid Authentication"));
-        }
-    }
+        
+       
+    
         }    // END OF ANALYZEDATA
 
         
