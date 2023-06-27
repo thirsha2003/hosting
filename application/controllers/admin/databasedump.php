@@ -238,8 +238,12 @@ class Databasedump extends CI_Controller
  
         //  echo($sheet);  
       
-            $writer->save($fileName); // download file /
-            redirect(base_url().$fileName);  
+        $writer->save("databasedownload/".$fileName);
+            // $writer->save($fileName); // download file /
+            // redirect(base_url().$fileName);  
+            redirect(base_url()."/databasedownload/".$fileName);  
+
+
             // $writer->save('php://output'); // download file 
             json_output(200, array('status' => 401, 'message' =>  $writer->save('php://output')));
             // exit();
@@ -277,13 +281,13 @@ class Databasedump extends CI_Controller
             $sheet->setCellValue('H1', 'whatsapp_notification'); 
             $sheet->setCellValue('I1', 'department_slug'); 
             $sheet->setCellValue('J1', 'designation'); 
-            $sheet->setCellValue('K1', 'is_important_contact'); 
-            $sheet->setCellValue('L1', 'branch'); 
-            $sheet->setCellValue('M1', 'image'); 
-            $sheet->setCellValue('N1', 'is_active'); 
-            $sheet->setCellValue('O1', 'lender_status'); 
-            $sheet->setCellValue('P1', 'created_at'); 
-            $sheet->setCellValue('Q1', 'updated_at'); 
+            $sheet->setCellValue('K1', 'branch'); 
+            $sheet->setCellValue('L1', 'image'); 
+            $sheet->setCellValue('M1', 'is_active'); 
+            $sheet->setCellValue('N1', 'lender_status'); 
+            $sheet->setCellValue('O1', 'created_at'); 
+        
+
 
 
             
@@ -303,13 +307,13 @@ class Databasedump extends CI_Controller
                 $sheet->setCellValue('H' . $rows, $val->whatsapp_notification);
                 $sheet->setCellValue('I' . $rows, $val->department_slug);
                 $sheet->setCellValue('J' . $rows, $val->designation);
-                $sheet->setCellValue('K' . $rows, $val->is_important_contact);
-                $sheet->setCellValue('L' . $rows, $val->branch);
-                $sheet->setCellValue('M' . $rows, $val->image);
-                $sheet->setCellValue('N' . $rows, $val->is_active);
-                $sheet->setCellValue('O' . $rows, $val->lender_status);
-                $sheet->setCellValue('P' . $rows, $val->created_at);
-                $sheet->setCellValue('Q' . $rows, $val->update_at);
+                $sheet->setCellValue('K' . $rows, $val->branch);
+                $sheet->setCellValue('L' . $rows, $val->image);
+                $sheet->setCellValue('M' . $rows, $val->is_active);
+                $sheet->setCellValue('N' . $rows, $val->lender_status);
+                $sheet->setCellValue('O' . $rows, $val->created_at);
+                
+            
                 $rows++;
             } 
             

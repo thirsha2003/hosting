@@ -212,6 +212,41 @@ class Dashboard extends CI_Controller
 				
 			} // End of funciton gettotaldealssenttolenders()---------------------------------------------
 
+			public function gettotalexpressedinterest()
+			{
+					$method = $_SERVER['REQUEST_METHOD'];
+					if($method =="POST")
+					{
+							$checkToken = $this->check_token();
+							if(True)
+							{
+									$response['status']=200;
+									$respStatus = $response['status'];
+									$params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+									$selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+									$join 		= isset($params['key']) ? $params['key'] : "";
+									$where 		= isset($params['where']) ? $params['where'] : "";
+
+                $sql = "SELECT count(*) as Totalexpressinterest FROM `fpa_loan_applications` WHERE 
+									workflow_status IN ('Express Interest') ";
+
+									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+									return json_output($respStatus,$resp);
+							}
+							else
+							{
+								return json_output(400,array('status' => 400,'message' => $checkToken));
+							}
+						
+					}
+					else
+					{
+							return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+					}
+				
+			} // End of funciton gettotalexpressedinterest()---------------------------------------------
+
 
 			public function gettotaldealsapprovedbylenders()
 			{

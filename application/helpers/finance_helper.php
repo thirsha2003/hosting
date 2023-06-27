@@ -481,7 +481,8 @@ if(!function_exists('GetFinancialSummary'))
 				$netWorkingCapital["values"][$i]["value"] = $totalCurrAssets - $totalCurrLiabilities;
 
 				$currentRatio["values"][$i]["key"] = $periodItem["key"];
-				$currentRatio["values"][$i]["value"] = $totalCurrAssets / $totalCurrLiabilities;
+				// $currentRatio["values"][$i]["value"] = $totalCurrAssets / $totalCurrLiabilities;  
+				$currentRatio["values"][$i]["value"] = $totalCurrLiabilities != 0 ? $totalCurrAssets / $totalCurrLiabilities : 0;
 
 				$rawMaterialsImported  = GetBalanceSheetLineItem($balanceSheet, " Raw Materials – Imported", $periodItem["key"]); 
 				$rawMaterialsIndigenous  = GetBalanceSheetLineItem($balanceSheet, " Raw Materials – Indigenous", $periodItem["key"]); 

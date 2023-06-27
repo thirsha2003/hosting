@@ -615,6 +615,42 @@ public function  deal_recieved_forlenderprofilepage()
     }
 
 }   // -------------------------- deal_recieved -----------------------------
+
+
+
+public function  expressintrest()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if($method =="POST")
+    {
+            $checkToken = $this->check_token();
+            if(True)
+            {
+                    $response['status']=200;
+                    $respStatus = $response['status'];
+                    $params 	= json_decode(file_get_contents('php://input'), TRUE);
+
+                    $selectkey 	= isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+                    $join 		= isset($params['key']) ? $params['key'] : "";
+                    $where 		= isset($params['where']) ? $params['where'] : "";	
+
+                    $sql = "SELECT COUNT(*) as totalexprssinterest FROM fpa_loan_applications WHERE workflow_status='Express Interest' and lendermaster_id=".$where;
+
+                    $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+                    return json_output($respStatus,$resp);
+            }
+            else
+            {
+                return json_output(400,array('status' => 400,'message' => $checkToken));
+            }
+        
+    }
+    else
+    {
+            return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+    }
+
+}   // -------------------------- deal_recieved -----------------------------
 public function deal_sanctioned()
 {
     $method = $_SERVER['REQUEST_METHOD'];
@@ -631,7 +667,7 @@ public function deal_sanctioned()
                     $join 		= isset($params['key']) ? $params['key'] : "";
                     $where 		= isset($params['where']) ? $params['where'] : "";	
 
-                    $sql = " SELECT COUNT(*) as dealsanctionedcount FROM fpa_loan_applications as lp WHERE lp.workflow_status='Deal Sanctioned' ";
+                    $sql = " SELECT COUNT(*) as dealsanctionedcount FROM fpa_loan_applications as lp WHERE lp.workflow_status='Deal Sanctioned' and lendermaster_id=".$where;
 
                     $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
                     return json_output($respStatus,$resp);
@@ -665,7 +701,7 @@ public function deal_sanctioned()
 					 $join 		= isset($params['key']) ? $params['key'] : "";
 					 $where 		= isset($params['where']) ? $params['where'] : "";	
  
-					 $sql = " SELECT COUNT(*) as Dealrejectedcount FROM fpa_loan_applications as lp WHERE lp.workflow_status='Deal Rejected' ";
+					 $sql = " SELECT COUNT(*) as Dealrejectedcount FROM fpa_loan_applications as lp WHERE lp.workflow_status='Deal Rejected' and lendermaster_id=".$where;
  
  
 					 $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());

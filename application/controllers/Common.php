@@ -2008,14 +2008,34 @@ public function  addborroweruser()
 									if(count($this->db->query($sql)->result())==0){
 										$this->db->insert($params['tableName'], $params['data']);
 									}else{
+
+
+
+										
                                           
 									$condition= array('id'=>$params['data']['id'] ,'borrower_id'=>$params['data']['borrower_id'],'product_slug'=>$params['data']['product_slug']);
 
 
+								
+									$this->db->where($condition);
+									$count = $this->db->count_all_results($params['tableName']);
+									if ($count == 1) {
 										$this->db->where($condition);
 										$this->db->update($params['tableName'], $params['data']); 
 										
 										$resp = array('status' => 200,'message' =>  'success','data' => 'Does Not Updated Successfully');
+
+									
+									} else {
+										$resp = array('status' => 201,'message' =>  'success','data' => 'Does Not Updated Successfully');
+
+
+									
+									}
+
+
+
+									
 
 
 
@@ -2031,7 +2051,7 @@ public function  addborroweruser()
 									
 									//    }
 									}
-							$resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
+							// $resp = array('status' => 200,'message' =>  'success','data' => $this->db->insert_id());
 						}
 						json_output($respStatus,$resp);
 					}

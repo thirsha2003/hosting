@@ -1528,7 +1528,7 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT b.created_at as created_at ,lm.image as lenderimage, la.user_id as lenderuserid, la.user_id as lenderid, b.id as lender_user_id ,la.poc_name, b.rm_name  as AssignedTo, lm.id as lender_master_id, fc.name as location,lm.lender_name as bankname,fin.name as entitytype,
+                $sql = "SELECT b.created_at as created_at ,lm.image as lenderimage, la.user_id as lenderuserid,  b.id as lender_user_id ,la.poc_name, b.rm_name  as AssignedTo, lm.id as lender_master_id, fc.name as location,lm.lender_name as bankname,fin.name as entitytype,
         (CASE
          WHEN la.is_active=1 THEN 'Active'
          WHEN la.is_active=0 THEN 'In Active'
@@ -1536,7 +1536,7 @@ class Admin_common extends CI_Controller
 
         FROM fpa_users b,fp_lender_user_details la ,fp_city fc ,fp_lender_master lm ,fp_fin_institution fin
 
-        WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' AND b.status NOT IN ('inactive','archieved') AND la.lender_status='active'";
+        WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' AND b.status NOT IN ('inactive','archieved') AND la.lender_status='active' order by b.id desc";
                 $lender_master_id = $this->db->query($sql)->result();
 
                 $data = $this->db->query($sql);
@@ -1590,14 +1590,14 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT b.rm_name  as AssignedTo, lm.id as lender_master_id, fc.name as location,lm.lender_name as bankname,fin.name as entitytype,
+                $sql = "SELECT b.rm_name  as AssignedTo, lm.id as lender_master_id, fc.name as location,lm.lender_name as bankname,fin.name as entitytype, la.user_id as lenderid,
         (CASE
          WHEN la.is_active=1 THEN 'Active'
          WHEN la.is_active=0 THEN 'In Active'
          END )as Active
 
         FROM fpa_users b,fp_lender_user_details la ,fp_city fc ,fp_lender_master lm ,fp_fin_institution fin
-        WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' " . $where;
+        WHERE b.id=la.user_id AND la.location_id=fc.id AND la.lender_master_id=lm.id AND lm.lender_type=fin.id AND  b.slug='lender' '". $where."' order by b.id desc  ";
 
                 $lender_master_id = $this->db->query($sql)->result();
                 $count = $this->db->query($sql)->num_rows();
@@ -2190,7 +2190,7 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, b.rm_id, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.created_at,bd.rm_id, bd.rm_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.rm_id=" . $where;
+                $sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, b.rm_id, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.created_at,bd.rm_id, bd.rm_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.rm_id='".$where."' order by bd.id desc ";
 
                 $borrowerdetails = $this->db->query($sql)->result();
                 $data = $this->db->query($sql);
