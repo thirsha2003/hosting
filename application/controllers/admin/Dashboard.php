@@ -62,7 +62,7 @@ class Dashboard extends CI_Controller
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
 									$sql = "SELECT count(*) as TotalBorrowers_Onboarded FROM `fpa_users` WHERE 
-									slug ='borrower' and status IN ('new','assigned','active') and partner_id IS null and partner_name is null";
+									slug ='borrower' and status IN ('new','assigned','active')";
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -443,7 +443,8 @@ class Dashboard extends CI_Controller
 					$join     = isset($params['key']) ? $params['key'] : "";
 					$where     = isset($params['where']) ? $params['where'] : "";  
 
-					$sql = "SELECT COUNT(*) as TotalProfilesCompleted FROM fp_borrower_user_details  WHERE profilecomplete_percentage ='100' and profilecomplete='completed'";
+					$sql = "SELECT COUNT(*) as TotalProfilesCompleted FROM fpa_users fpu, fp_borrower_user_details bud 
+					WHERE fpu.id=bud.user_id AND fpu.status IN ('new', 'active', 'assigned') and bud.profilecomplete_percentage ='100' and bud.profilecomplete='completed'";
 					
 					$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 					return json_output($respStatus,$resp);
@@ -477,7 +478,7 @@ class Dashboard extends CI_Controller
 						$join     = isset($params['key']) ? $params['key'] : "";
 						$where     = isset($params['where']) ? $params['where'] : "";  
 
-						$sql = "SELECT COUNT(*) as TotalWorkinProgressProfile FROM fp_borrower_user_details  WHERE profilecomplete_percentage >='50' && profilecomplete_percentage <='99'";
+						$sql = "SELECT COUNT(bud.id) as TotalWorkinProgressProfile FROM fpa_users fpu, fp_borrower_user_details bud  WHERE fpu.id=bud.user_id AND fpu.status IN ('new', 'active', 'assigned') and bud.profilecomplete_percentage >='50' && bud.profilecomplete_percentage <='99'";
 						
 						$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 						return json_output($respStatus,$resp);
@@ -583,7 +584,7 @@ class Dashboard extends CI_Controller
 									$join 		= isset($params['key']) ? $params['key'] : "";
 									$where 		= isset($params['where']) ? $params['where'] : "";	
 
-									$sql = "SELECT count(*) as TotalIncompletedProfiles FROM  fp_borrower_user_details t1 WHERE t1.profilecomplete='incomplete'";
+									$sql = "SELECT COUNT(fpu.id) as TotalIncompletedProfiles FROM fpa_users fpu, fp_borrower_user_details bud WHERE fpu.id=bud.user_id AND fpu.status IN ('new', 'active', 'assigned') and bud.profilecomplete='incomplete'";
 				
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);

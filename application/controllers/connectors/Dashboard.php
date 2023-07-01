@@ -53,6 +53,7 @@ class Dashboard extends CI_Controller
                     $email = $params['data']['email'];
                     $phone = $params['data']['mobile'];
                     $created_by = $params['data']['created_by'];
+                    $entity = $params['data']['entity_type'];
                     $partner_id = isset($params['partner_id']) ? $params['partner_id'] : null;
                     $partner_name = isset($params['partner_name']) ? $params['partner_name'] : null;
                     $company_name = isset($params['data']['company_name']) ? $params['data']['company_name'] : null;
@@ -61,7 +62,7 @@ class Dashboard extends CI_Controller
                     $add_user = $this->db->insert("fpa_users", array('name' => $name, 'email' => $email, 'mobile' => $phone, 'slug' => 'borrower', 'company_name' => $company_name, 'created_by' => $created_by, 'partner_id' => $partner_id, 'partner_name' => $partner_name, 'is_email_verified' => $emailandmobileverified, 'is_mobile_verified' => $emailandmobileverified, 'status' => $status));
                     $id = $this->db->insert_id();
 
-                    $add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name));
+                    $add_borrower = $this->db->insert("fp_borrower_user_details", array('user_id' => $id, 'name' => $name, 'email' => $email, 'phone' => $phone, 'company_name' => $company_name,'company_type' => $entity ));
                     if ($add_user && $add_borrower) {
                         json_output(200, array('status' => 200, 'message' => 'successfully Added', "data" => $id));
                     } else {
@@ -235,7 +236,7 @@ class Dashboard extends CI_Controller
 
                         $sql = "SELECT count(*) as TotalAssigned_Leads
                         FROM fpa_users fu,fpa_partners fp,fp_borrower_user_details bd
-                        WHERE fu.partner_id='$partnerid' AND  fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NOT NULL AND bd.pincode IS NOT NULL   AND fu.slug='borrower' AND fu.status ='assigned' AND fu.sa_id IS NOT NULL";
+                        WHERE fu.partner_id='$partnerid' AND  fp.email = fu.created_by AND fu.id = bd.user_id AND bd.company_name IS NOT NULL AND fu.slug='borrower' AND fu.status ='assigned' AND fu.rm_id IS NOT NULL";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -1027,8 +1028,8 @@ public function partner_totalborrowerleads()
             $partner_id = isset($params['partner_id']) ? $params['partner_id'] : "";
 
             $sql = "WITH borrowerTable as
-            (SELECT b.status , b.created_at, b.slug, b.id,b.sa_id,b.sa_name,b.sa_email, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name as partner_name, b.partner_id as pid,b.company_name as connector_company, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active','connector') AND b.id = bd.user_id AND bd.company_name is not null AND b.partner_name is NOT null AND b.created_by=pa.email)
-            SELECT bd.partner_name,bd.connector_company,bd.pid,bd.status,bd.created_at,bd.slug, bd.profilecomplete,bd.sa_id, bd.sa_name,bd.sa_email,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null AND bd.pid ='$partner_id' ORDER BY bd.created_at DESC";
+            (SELECT b.status , b.created_at, b.slug, b.id,b.sa_id,b.sa_name,b.sa_email, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name as partner_name, b.partner_id as pid,b.company_name as connector_company, bd.city, pa.email as partemail,pa.company_name as partnercompany,b.rm_id,b.rm_name,b.rm_email FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active','connector') AND b.id = bd.user_id AND bd.company_name is not null AND b.partner_name is NOT null AND b.created_by=pa.email)
+            SELECT bd.partner_name,bd.connector_company,bd.pid,bd.status,bd.created_at,bd.slug, bd.profilecomplete, bd.rm_id,bd.rm_name,bd.rm_email,bd.sa_id, bd.sa_name,bd.sa_email,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null AND bd.pid ='$partner_id' ORDER BY bd.created_at DESC";
 
             //  and  bd.partemail='$where' or
 
@@ -1177,8 +1178,8 @@ public function partner_totalassignedleads()
             $partner_id = isset($params['partner_id']) ? $params['partner_id'] : "";
 
             $sql = "WITH borrowerTable as
-            (SELECT b.created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status='assigned' AND b.id = bd.user_id AND bd.gst is not null AND bd.pan is not null AND bd.pincode is not null AND bd.rm_id is not null AND b.sa_id is not null and b.created_by=pa.email)
-            SELECT bd.created_at,bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null and bd.pid='$partner_id'";
+            (SELECT b.created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name, b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany, b.rm_name FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status='assigned' AND b.id = bd.user_id AND b.rm_id is not null and b.created_by=pa.email)
+            SELECT bd.created_at,bd.pid, bd.partner_name,bd.slug,bd.rm_name, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null and bd.pid='$partner_id'";
 
             $borrowerdetails = $this->db->query($sql)->result();
             $txnArr = [];

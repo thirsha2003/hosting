@@ -330,6 +330,21 @@ class Connectorusers extends CI_Controller
                            'partner_id'=>$partnerid,
                            'finnup_spoc'=> $finnupspoc,
                            'created_by'=>$created_by));
+
+                           $userid2 = $this->db->insert("fp_connector_users", array(
+                                            
+                                            
+                                'name'=>$name,
+                                'email'=>$email,
+                                'mobile'=>$phone,
+                                'status'=>"created",
+                                // 'password'=>$encryption,
+                                // 'role_slug'=>  $role ,
+                                // 'parent_id'=>$parent_id,
+                                'company_name'=>$companyname,
+                                // 'partner_id'=>$partnerid,
+                                // 'finnup_spoc'=> $finnupspoc,
+                                'created_by'=>$created_by));
                            $role_name='';
                            if( $role='sa'){
                                 $role_name = 'Super Admin';
@@ -350,6 +365,7 @@ class Connectorusers extends CI_Controller
                                        
                                        
                                 json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$userid));
+                                json_output(200,array('status' => 200,'message' => 'successfully Added',"data"=>$userid2));
                                 //    Email notification  
                                 $subject = "Dear ".$name." ,";
                                 $message = "Dear ".$name.","."<br/>"."<br/>"."<br/>"."FinnUp Superadmin has invited you to app.finnup.in/#/connectorlogin as a ". $role_name.", Please use the following link to set your password and login. " . "<br/>" ."<br/>" .
