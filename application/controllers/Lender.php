@@ -458,8 +458,8 @@ class Lender extends CI_Controller
 					   
 					   if(isset($params['id'])){
   
-						  $sql = 'SELECT  bd.company_name, bd.turnover, bd.networth, bd.profilecomplete, bd.profilecomplete_percentage , bd.gst, bd.cin, bl.name  as location ,t1.name as industry,t2.name as entity , bd.pan
-						  FROM fp_borrower_user_details bd LEFT JOIN fp_location bl ON  bd.location=bl.id  LEFT JOIN fp_industry t1 ON t1.id=bd.company_industry LEFT JOIN  fp_entitytype t2 ON t2.id= bd.company_type    
+						  $sql = 'SELECT  bd.company_name, bd.turnover, bd.networth, bd.profilecomplete, bd.profilecomplete_percentage , bd.gst, bd.cin, bl.name  as location ,t1.name as industry,t2.name as entity , bd.pan,bd.city
+						  FROM fp_borrower_user_details bd LEFT JOIN fp_city bl ON  bd.city=bl.id  LEFT JOIN fp_industry t1 ON t1.id=bd.company_industry LEFT JOIN  fp_entitytype t2 ON t2.id= bd.company_type    
 											   WHERE bd.user_id='.$id;
   
 						  $result= $this->db->query($sql)->result();

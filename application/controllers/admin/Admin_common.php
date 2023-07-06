@@ -1806,10 +1806,10 @@ class Admin_common extends CI_Controller
                 $loan_req = isset($params['loan_req']) ? $params['loan_req'] : "";
                 if ($loan_req == '') {
 
-                    $sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city ,bd.user_id,b.status
+                    $sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city ,bd.user_id,b.status,b.partner_id as partnerid, b.partner_name as partnername 
 					FROM fpa_users b, fp_borrower_user_details bd
 					WHERE b.slug ='borrower' AND b.status in ('assigned','active') AND b.id = bd.user_id AND bd.company_name is not null )
-					SELECT bd.created_at,bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth
+					SELECT bd.created_at,bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth,bd.partnerid , bd.partnername 
 					FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  " . $where . " ";
                 } else if ($loan_req != "") {
 
@@ -2197,7 +2197,7 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, b.rm_id, bd.city FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.created_at,bd.rm_id, bd.rm_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.rm_id='".$where."' order by bd.id desc ";
+                $sql = "WITH borrowerTable as (SELECT b.created_at as created_at,b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, b.rm_id, bd.city,b.partner_id as partnerid, b.partner_name as partnername  FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active') AND b.id = bd.user_id AND bd.company_name is not null) SELECT bd.created_at,bd.rm_id, bd.rm_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth,bd.partnerid , bd.partnername FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null  and  bd.rm_id='".$where."' order by bd.id desc ";
 
                 $borrowerdetails = $this->db->query($sql)->result();
                 $data = $this->db->query($sql);
@@ -2354,10 +2354,10 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "WITH borrowerTable as (SELECT b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city
+                $sql = "WITH borrowerTable as (SELECT b.slug,b.rm_id, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.city,b.partner_id as partnerid, b.partner_name as partnername
 						FROM fpa_users b, fp_borrower_user_details bd
 						WHERE b.slug ='borrower' AND b.status in ('new') AND  b.id = bd.user_id AND bd.company_name is not null AND b.created_by = '" . $where . "' )
-						SELECT bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth
+						SELECT bd.rm_name , bd.rm_id, bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id,fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth, bd.partnerid, bd.partnername
 						FROM borrowerTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null order by bd.id desc ";
 
                 $borrowerdetails = $this->db->query($sql)->result();

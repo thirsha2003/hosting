@@ -26,7 +26,7 @@ class Dashboard extends CI_Controller
             $user_id = $this->ci->input->get_request_header('user-id', true);
             $checkuser = array('id' => $user_id, 'token' => $token);
             $this->db->where($checkuser);
-            $count = $this->db->count_all_results("fpa_adminusers");
+            $count = $this->db->count_all_results("fpa_partners");
             if ($count == 1) {
                 return true;
             } else {
@@ -43,7 +43,7 @@ class Dashboard extends CI_Controller
         if ($method != 'POST') {
             json_output(400, array('status' => 400, 'message' => 'Bad request.'));
         } else {
-            // $checkToken = $this->check_token();
+            $checkToken = $this->check_token();
             if (true) {
                 $response['status'] = 200;
                 $respStatus = $response['status'];
@@ -1085,8 +1085,8 @@ public function partner_totaldraftleads()
             $partner_id = isset($params['partner_id']) ? $params['partner_id'] : "";
 
             $sql = " WITH connectorTable as
-            (SELECT b.created_at, b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name,b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active','connector') AND b.id = bd.user_id AND b.created_by=pa.email AND bd.gst is null AND bd.pan is null AND bd.pincode is null AND bd.profilecomplete ='incomplete')
-            SELECT bd.created_at, bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany,bd.pid, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth FROM connectorTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null and bd.pid='$partner_id'";
+            (SELECT b.created_at, b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.partner_name,b.partner_id as pid, bd.city, pa.email as partemail,pa.company_name as partnercompany,b.rm_id,b.rm_name,b.rm_email FROM fpa_users b, fp_borrower_user_details bd , fpa_partners pa WHERE b.slug ='borrower' AND b.status in ('new','assigned','active','connector') AND b.id = bd.user_id AND b.created_by=pa.email AND bd.gst is null AND bd.pan is null AND bd.pincode is null AND bd.profilecomplete ='incomplete')
+            SELECT bd.created_at, bd.pid, bd.partner_name,bd.slug, bd.profilecomplete ,bd.city,fp_entitytype.id,bd.id as borrower_id, bd.partemail,bd.partnercompany,bd.pid, fp_city.id as location_id, fp_city.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover, bd.networth, bd.rm_id,bd.rm_name,bd.rm_email FROM connectorTable as bd LEFT JOIN fp_city ON bd.city = fp_city.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id where bd.company_name is not null and bd.pid='$partner_id'";
 
             $borrowerdetails = $this->db->query($sql)->result();
             $data = $this->db->query($sql);
@@ -1255,6 +1255,40 @@ public function partner_totalapprovedprofiles()
     }
 
 } //----------------------- partner_totalapprovedprofiles ---------------------
+
+public function borrower_profile_details()
+{
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == "POST") {
+        $checkToken = $this->check_token();
+        if (true) {
+            $response['status'] = 200;
+            $respStatus = $response['status'];  
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+            $id = ($params['id']);
+
+            $sql = "WITH borrowerTable as (SELECT b.slug, b.id, bd.company_industry, bd.company_name, bd.turnover, bd.networth, bd.company_type, bd.profilecomplete, b.rm_name, bd.location ,bd.city,bd.profilecomplete_percentage,bd.user_id FROM fpa_users b, fp_borrower_user_details bd WHERE b.slug ='borrower' AND b.status in ('new','assigned','active','connector') AND b.id = bd.user_id AND bd.company_name is not null AND b.id=" . $id . ") SELECT bd.user_id, bd.slug, bd.profilecomplete_percentage, bd.profilecomplete ,bd.location,fp_entitytype.id,bd.id as borrower_id,fp_location.id as location_id, fp_location.name as location, fp_entitytype.name as entity_name,bd.company_name as company_name, bd.company_industry as company_industry,bd.turnover,fc.name as cityname, bd.networth,fp_industry.name as fp_industry FROM borrowerTable as bd LEFT JOIN fp_location ON bd.location = fp_location.id LEFT JOIN fp_entitytype ON bd.company_type = fp_entitytype.id LEFT JOIN fp_industry ON bd.company_industry = fp_industry.id left join fp_city fc on bd.city=fc.id where bd.company_name is not null order by bd.id desc";
+
+            $sqldata = 'SELECT bl.product_slug,bl.borrower_id,p.name  FROM fp_borrower_loanrequests bl ,fp_products p WHERE bl.product_slug =p.slug and bl.borrower_id = ' . $id;
+            $resultdata = $this->db->query($sqldata)->result();
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data1' => $resultdata, 'data' => $this->db->query($sql)->result());
+            return json_output($respStatus, $resp);
+
+        } else {
+            return json_output(400, array('status' => 400, 'message' => $checkToken));
+        }
+
+    } else {
+        return json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+    }
+
+} // borrower_profile_details
+
  
 
 } //--------------------end of class-------------------------------------------
