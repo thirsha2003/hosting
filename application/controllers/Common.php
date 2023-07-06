@@ -2006,17 +2006,12 @@ public function  addborroweruser()
 							$sql = "SELECT * FROM ".$params['tableName']." WHERE id =".$d_id;
 								
 									if(count($this->db->query($sql)->result())==0){
+
 										$this->db->insert($params['tableName'], $params['data']);
-									}else{
+									}
+									else{
 
-
-
-										
-                                          
 									$condition= array('id'=>$params['data']['id'] ,'borrower_id'=>$params['data']['borrower_id'],'product_slug'=>$params['data']['product_slug']);
-
-
-								
 									$this->db->where($condition);
 									$count = $this->db->count_all_results($params['tableName']);
 									if ($count == 1) {

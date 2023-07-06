@@ -659,7 +659,7 @@ class Admin_common extends CI_Controller
 							   Please click on the below link to view " . $company_name . ".<br/><br/>" .
                             "link : app.finnup.in/#/admin.";
 
-                        // $to = 'support@finnup.in';
+                        
                         $to = $rmdata->email;
                         $email = new \SendGrid\Mail\Mail ();
                         $email->setSubject($subject);
@@ -2715,13 +2715,8 @@ public function loanapp_approved_deals()
 
                 }
 
-          
-
                 $res = implode(",", $txnArr);
                 $res = "(" . $res . ")";
-
-
-                
 
                 $result = 'SELECT t2.name,t1.borrower_id FROM fpa_loan_applications t1 ,fp_products t2  WHERE t1.workflow_status="Deal Approved" and t1.product_slug=t2.slug and t1.borrower_id in'.$res;
 
@@ -2743,6 +2738,113 @@ public function loanapp_approved_deals()
     }
 
 } // loanapp_dash_details
+
+
+
+
+public function emailout()
+{
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method =="POST")
+        {
+                // $checkToken = $this->check_token();
+                if(True)
+                {
+                        $response['status']=200;
+                        $respStatus = $response['status'];
+                        $params 	= json_decode(file_get_contents('php://input'), TRUE);
+                   
+                        $where 		= isset($params['where']) ? $params['where'] : "";	
+                    
+                        $sql = "SELECT email FROM  fp_borrower_user_details WHERE email='".$where."'";
+                       
+                        $email=$this->db->query($sql)->result();
+
+                        $resp = array('status' => 200,'message' =>  'Successsssss','data' =>$email);
+                        return json_output($respStatus,$resp);
+                        // return json_output(200,array('status' => 200,'message' => "Deleted Successfully"));
+                }
+                else
+                {
+                    return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+                }
+            
+        }
+        else
+        {
+                return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+        }
+    
+}
+public function mobileout()
+{
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method =="POST")
+        {
+                // $checkToken = $this->check_token();
+                if(True)
+                {
+                        $response['status']=200;
+                        $respStatus = $response['status'];
+                        $params 	= json_decode(file_get_contents('php://input'), TRUE);
+                   
+                        $where 		= isset($params['where']) ? $params['where'] : "";	
+                    
+                        $sql = "SELECT phone FROM  fp_borrower_user_details WHERE phone='".$where."'";
+                       
+                        $email=$this->db->query($sql)->result();
+
+                        $resp = array('status' => 200,'message' =>  'Successsssss','data' =>$email);
+                        return json_output($respStatus,$resp);
+                        // return json_output(200,array('status' => 200,'message' => "Deleted Successfully"));
+                }
+                else
+                {
+                    return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+                }
+            
+        }
+        else
+        {
+                return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+        }
+    
+}
+
+public function cinout()
+{
+        $method = $_SERVER['REQUEST_METHOD'];
+        if($method =="POST")
+        {
+                // $checkToken = $this->check_token();
+                if(True)
+                {
+                        $response['status']=200;
+                        $respStatus = $response['status'];
+                        $params 	= json_decode(file_get_contents('php://input'), TRUE);
+                   
+                        $where 		= isset($params['where']) ? $params['where'] : "";	
+                    
+                        $sql = "SELECT cin FROM  fp_borrower_user_details WHERE cin='".$where."'";
+                       
+                        $email=$this->db->query($sql)->result();
+
+                        $resp = array('status' => 200,'message' =>  'Successsssss','data' =>$email);
+                        return json_output($respStatus,$resp);
+                        // return json_output(200,array('status' => 200,'message' => "Deleted Successfully"));
+                }
+                else
+                {
+                    return json_output(400,array('status' => 400,'message' => "Unauthorized"));
+                }
+            
+        }
+        else
+        {
+                return json_output(400,array('status' => 400,'message' => 'Bad request.'));
+        }
+    
+}
 
 
 } // -------------------------- end ---------------------

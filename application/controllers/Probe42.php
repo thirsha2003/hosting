@@ -43,6 +43,13 @@ class Probe42 extends CI_Controller
                 $cinorllpin = ($params['datas']);
                 try
                 {
+
+                    
+                      
+                    if($params['borrowerid']!='Not_borrower_id'){
+
+                    
+
                     // CIN  NUMBER  USING THIS CODE
                     if (strlen($cinorllpin) == 21) {
                         //  This url  using for cin number
@@ -774,7 +781,16 @@ class Probe42 extends CI_Controller
                         }
                         json_output(200, array('status' => 200, 'message' => 'success'));
                     } // ---------- End of  LLPIN NUMBER -------------
-                    json_output(200, array('status' => 200, 'message' => 'success'));
+                      
+                    json_output(200, array('status' => 200, 'message' => 'success'));  
+                } 
+                else {
+
+                    json_output(200, array('status' => 400, 'message' => 'Faild'));
+                    
+                }
+
+                    // json_output(200, array('status' => 200, 'message' => 'success'));  
                 } catch (Exception $e) {
                     echo 'Caught exception: ', $e->getMessage(), "\n";
                 }
