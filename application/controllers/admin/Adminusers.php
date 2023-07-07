@@ -725,7 +725,7 @@ class Adminusers extends CI_Controller
 							$join 		= isset($params['key']) ? $params['key'] : "";
 							$where 		= isset($params['where']) ? $params['where'] : "";	
 
-							$sql = "SELECT pa.id, pa.name, pa.email, pa.mobile, pa.password,pa.company_name, pa.role_slug, pa.partner_id, pa.created_at, pr.name as rolename, pr.slug FROM fpa_partners pa, fpa_partner_roles pr WHERE pa.role_slug=pr.slug";
+							$sql = "SELECT pa.id, pa.name, pa.email, pa.mobile, pa.password,pa.company_name, pa.role_slug, pa.partner_id, pa.created_at, pr.name as rolename, pr.slug FROM fpa_partners pa, fpa_partner_roles pr WHERE pa.role_slug=pr.slug order by pa.id desc";
 
 
 							$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());

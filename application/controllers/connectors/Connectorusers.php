@@ -974,8 +974,8 @@ class Connectorusers extends CI_Controller
 
 									// $sql="SELECT * FROM fpa_partners WHERE fpa_partners.parent_id='$where'";
 									$sql="SELECT fp.* ,fr.name as role
-									FROM fpa_partners fp,fpa_roles fr
-									WHERE fp.role_slug=fr.slug AND fp.status=1 AND fp.parent_id= '$where'";
+									FROM fpa_partners fp,fpa_partner_roles fr
+									WHERE fp.role_slug=fr.slug AND fp.status=1 AND fp.partner_id= '$where'";
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1010,8 +1010,8 @@ class Connectorusers extends CI_Controller
 
 									// $sql="SELECT * FROM fpa_partners WHERE fpa_partners.parent_id='$where'";
 									$sql="SELECT fp.* ,fr.name as role
-									FROM fpa_partners fp,fpa_roles fr
-									WHERE fp.role_slug=fr.slug AND fp.status=0 AND fp.parent_id= '$where'";
+									FROM fpa_partners fp,fpa_partner_roles fr
+									WHERE fp.role_slug=fr.slug AND fp.status=0 AND fp.partner_id= '$where'";
 									$resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
 									return json_output($respStatus,$resp);
 							}
@@ -1062,7 +1062,8 @@ class Connectorusers extends CI_Controller
 
 
 
-	public function get_fpa_partners()	{
+	public function get_fpa_partners()
+        	{
 		$response['status'] = 200;
 		$respStatus = $response['status'];
 		$method = $_SERVER['REQUEST_METHOD'];
