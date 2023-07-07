@@ -1059,7 +1059,7 @@ public function getproduct()
         $join = isset($params['key']) ? $params['key'] : "";
         $where = isset($params['where']) ? $params['where'] : "";
 
-        $sql = "SELECT fp.id as id, fp.name,fp.slug,pt.name as products_type,fp.amounts,fp.tenor_min,fp.tenor_max,fp.tenor,fp.roi_min,fp.roi_max
+        $sql = "SELECT fp.id as id, fp.name,fp.slug,pt.name as products_type,fp.amounts,fp.tenor_min,fp.tenor_max,fp.tenor,fp.roi_min,fp.roi_max, fp.roi
       FROM fp_products fp, fp_products_type pt
       WHERE fp.products_type=pt.id AND fp.is_active = 1
       ORDER BY fp.id DESC ";
@@ -1087,7 +1087,7 @@ public function getedit_product()
         $join = isset($params['key']) ? $params['key'] : "";
         $where = isset($params['where']) ? $params['where'] : "";
 
-        $sql = "SELECT fp.name,fp.slug,pt.id as products_type,fp.amounts,fp.tenor_min,fp.tenor_max,fp.tenor,fp.roi_min,fp.roi_max
+        $sql = "SELECT fp.name,fp.slug,pt.id as products_type,fp.amounts,fp.tenor_min,fp.tenor_max,fp.tenor,fp.roi_min,fp.roi_max, fp.roi
       FROM fp_products fp, fp_products_type pt
       WHERE fp.products_type=pt.id AND fp.id='$where'";
 
@@ -1118,6 +1118,7 @@ public function addlenderproduct()
             $tenor = isset($params["data"]["tenor"]) ? $params["data"]["tenor"] : null;
             $roimin = isset($params["data"]["roi_min"]) ? $params["data"]["roi_min"] : null;
             $roimax = isset($params["data"]["roi_max"]) ? $params["data"]["roi_max"] : null;
+            $roi = isset($params["data"]["roi"]) ? $params["data"]["roi"] : null;
 
             // $product_id = "SELECT id FROM fp_products WHERE slug = '" . $productslug . "'";
             // $productid = $this->db->query($product_id)->result();
@@ -1133,6 +1134,7 @@ public function addlenderproduct()
                 "tenor" => $tenor,
                 "roi_min" => $roimin,
                 "roi_max" => $roimax,
+                "roi" => $roi,
 
             );
 
@@ -1171,6 +1173,8 @@ public function updatelenderproduct()
             $tenor = isset($params["data"]["tenor"]) ? $params["data"]["tenor"] : null;
             $roimin = isset($params["data"]["roi_min"]) ? $params["data"]["roi_min"] : null;
             $roimax = isset($params["data"]["roi_max"]) ? $params["data"]["roi_max"] : null;
+            $roi = isset($params["data"]["roi"]) ? $params["data"]["roi"] : null;
+
 
             // $product_id = "SELECT id FROM fp_products WHERE slug = '" . $productslug . "'";
             // $productid = $this->db->query($product_id)->result();
@@ -1186,6 +1190,8 @@ public function updatelenderproduct()
                 "tenor" => $tenor,
                 "roi_min" => $roimin,
                 "roi_max" => $roimax,
+                "roi" => $roi,
+
 
             );
             $this->db->where("id",$id);
