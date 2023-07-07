@@ -152,7 +152,7 @@ class Lender extends CI_Controller
 
 							// $conditions = array( 'borrower_id'=>$params['data']['borrower_id'], 'borrower_loanrequests_id' =>  $params['data']['borrower_loanrequests_id'], 'lender_id'=>$lenderid, "lender_master_id"=>$lender_master_id); old code 
 
-							$conditions = array( 'lender_id'=>$lenderid,);
+							$conditions = array( 'lender_id'=>$lenderid,'borrower_loanrequests_id'=>$params['data']['borrower_loanrequests_id']	);
 							
 							$this->db->select('id');
 							$this->db->from('fp_lender_proposals');
