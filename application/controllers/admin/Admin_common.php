@@ -2448,13 +2448,7 @@ class Admin_common extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
                 $is_created = isset($params['is_created']) ? $params['is_created'] : "";
 
-                $sql = "SELECT lud.user_id,lud.poc_name, la.lender_id, la.loanrequest_id as lrid ,lm.image , lm.lender_name, p.name as productname, bu.company_name as companyname, la.loanapplication_status as lastatus, la.workflow_status as wfstatus, la.lender_intrest_received,bl.loanamount_slug,bl.loan_min,bl.loan_max,bl.tenor_min,bl.tenor_max,bl.roi_min,bl.roi_max as amount,la.is_created, bu.user_id as borrower_id, p.id as product_id, la.id as loan_app_id, loc.city_slug
-
-                FROM fpa_loan_applications la,fp_borrower_user_details bu,fp_products p,fp_borrower_loanrequests bl,fp_lender_master lm, fp_lender_user_details lud, fp_location loc
-           
-                WHERE bu.user_id = la.borrower_id
-                and la.product_slug = p.slug and bl.id = la.loanrequest_id and lm.id = la.lendermaster_id AND la.lender_id=lud.user_id AND lud.location_id = loc.id AND
-     la.loanapplication_status in " . $loanapplication_status . $where . $is_created;
+                $sql = "SELECT lud.user_id,lud.poc_name, la.lender_id, la.loanrequest_id as lrid ,lm.image , lm.lender_name, p.name as productname, bu.company_name as companyname, la.loanapplication_status as lastatus, la.workflow_status as wfstatus, la.lender_intrest_received,bl.loanamount_slug,bl.loan_min,bl.loan_max,bl.tenor_min,bl.tenor_max,bl.roi_min,bl.roi_max as amount,la.is_created, bu.user_id as borrower_id, p.id as product_id, la.id as loan_app_id, loc.city_slug FROM fpa_loan_applications la,fp_borrower_user_details bu,fp_products p,fp_borrower_loanrequests bl,fp_lender_master lm, fp_lender_user_details lud, fp_location loc  WHERE bu.user_id = la.borrower_id and la.product_slug = p.slug and bl.id = la.loanrequest_id and lm.id = la.lendermaster_id AND la.lender_id=lud.user_id AND lud.location_id = loc.id AND la.loanapplication_status in " . $loanapplication_status . $where . $is_created;
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);

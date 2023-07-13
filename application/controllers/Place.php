@@ -690,7 +690,7 @@ public function getlenderlocation()
             $join = isset($params['key']) ? $params['key'] : "";
             $where = isset($params['where']) ? $params['where'] : "";
 
-            $sql = "SELECT fpl.id, fpl.lender_master_id, fpl.location_id, loc.name, lm.lender_name , loc.city_slug FROM fp_lender_location fpl, fp_location loc, fp_lender_master lm WHERE fpl.lender_master_id=lm.id AND fpl.location_id=loc.id AND fpl.is_active=1 ORDER BY id DESC";
+            $sql = "SELECT fpl.id, fpl.lender_master_id, fpl.location_id, loc.name, lm.lender_name , loc.city_slug FROM fp_lender_location fpl, fp_city loc, fp_lender_master lm WHERE fpl.lender_master_id=lm.id AND fpl.location_id=loc.id AND fpl.is_active=1 ORDER BY id DESC";
 
             $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
             json_output($respStatus, $resp);
@@ -715,6 +715,30 @@ public function edit_lenderlocation()
             $where = isset($params['where']) ? $params['where'] : "";
 
             $sql = "SELECT fpl.id, fpl.lender_master_id, fpl.location_id, loc.name, lm.lender_name , loc.city_slug FROM fp_lender_location fpl, fp_location loc, fp_lender_master lm WHERE fpl.lender_master_id=lm.id AND fpl.location_id=loc.id AND fpl.id='$where'";
+
+            $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
+            json_output($respStatus, $resp);
+
+        }
+}
+
+public function edit_lenderlocationcity()
+{
+        $method = $_SERVER['REQUEST_METHOD'];
+        if ($method != 'POST') {
+            json_output(400, array('status' => 400, 'message' => 'Bad request.'));
+        } else {
+
+            $response['status'] = 200;
+            $respStatus = $response['status'];
+
+            $params = json_decode(file_get_contents('php://input'), true);
+
+            $selectkey = isset($params['selectkey']) ? $params['selectkey'] : "*";
+            $join = isset($params['key']) ? $params['key'] : "";
+            $where = isset($params['where']) ? $params['where'] : "";
+
+            $sql = "SELECT fpl.id, fpl.lender_master_id, fpl.location_id, loc.name, lm.lender_name , loc.city_slug FROM fp_lender_location fpl, fp_city loc, fp_lender_master lm WHERE fpl.lender_master_id=lm.id AND fpl.location_id=loc.id AND fpl.id='$where'";
 
             $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
             json_output($respStatus, $resp);
