@@ -2723,7 +2723,7 @@ public function loanapp_approved_deals()
                 $res = implode(",", $txnArr);
                 $res = "(" . $res . ")";
 
-                $result = 'SELECT t2.name,t1.borrower_id FROM fpa_loan_applications t1 ,fp_products t2  WHERE t1.workflow_status="Deal Approved" and t1.product_slug=t2.slug and t1.borrower_id in'.$res;
+                $result = 'SELECT t2.name,t1.borrower_id FROM fpa_loan_applications t1 ,fp_products t2  WHERE t1.workflow_status="Approve Deal" and t1.product_slug=t2.slug and t1.borrower_id in'.$res;
 
                 $result_slug = $this->db->query($result)->result();
             } 
@@ -2833,6 +2833,13 @@ public function cinout()
                         $sql = "SELECT cin FROM  fp_borrower_user_details WHERE cin='".$where."'";
                        
                         $email=$this->db->query($sql)->result();
+
+                    
+                        
+                            $resp = array('status' => 200,'message' =>  'Successsssss','data' =>$email);
+
+                     
+                    
 
                         $resp = array('status' => 200,'message' =>  'Successsssss','data' =>$email);
                         return json_output($respStatus,$resp);
