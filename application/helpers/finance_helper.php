@@ -283,8 +283,10 @@ if(!function_exists('GetFinancialSummary'))
 				$depriciation = GetProfitandLossLineItem($profitloss, "Depreciation", $periodItem["key"]); 
 				$opAfterInterest = GetProfitandLossLineItem($profitloss, "Operating Profit after Interest", $periodItem["key"]); 
 
+				$opBeforeInterest = GetProfitandLossLineItem($profitloss, "Operating Profit before Interest", $periodItem["key"]); 
+
 				$pbdita["values"][$i]["key"] = $periodItem["key"];
-				$pbdita["values"][$i]["value"] = $depriciation + $opAfterInterest; 
+				$pbdita["values"][$i]["value"] = $depriciation + $opBeforeInterest; 
 
 				$pbditaMargin["values"][$i]["key"] = $periodItem["key"];
 				$pbditaMargin["values"][$i]["value"] = $netSales["values"][$i]["value"] != 0 ? ($pbdita["values"][$i]["value"] / $netSales["values"][$i]["value"]) * 100 : 0;
@@ -390,8 +392,17 @@ if(!function_exists('GetFinancialSummary'))
 				$unsecuredLoans = GetBalanceSheetLineItem($balanceSheet, "Unsecured Loans ", $periodItem["key"]); 
 				$otherTermLiabilities = GetBalanceSheetLineItem($balanceSheet, "Other term liabilities", $periodItem["key"]); 
 
-				$totalTermLiabilities = $debMaturingAfter1Year + $prefShareCapMatLessThen12Year + $dealersDeposit + $termLoansFromBanks + $termLoansFromFinancialInstitution + $termDeposits + $deferredTaxLiabilities + $borrowingFromSubs + $unsecuredLoans + $otherTermLiabilities ;
-				
+				$totalTermLiabilities = $debMaturingAfter1Year + 
+				$prefShareCapMatLessThen12Year + 
+				$dealersDeposit + 
+				$termLoansFromBanks + 
+				$termLoansFromFinancialInstitution + 
+				$termDeposits + 
+				$deferredTaxLiabilities + 
+				$borrowingFromSubs + 
+				$unsecuredLoans + 
+				$otherTermLiabilities ;
+
 				$longTermDebt["values"][$i]["key"] = $periodItem["key"];
 				$longTermDebt["values"][$i]["value"] = $totalTermLiabilities - $deferredTaxLiabilities;
 
@@ -481,7 +492,6 @@ if(!function_exists('GetFinancialSummary'))
 				$netWorkingCapital["values"][$i]["value"] = $totalCurrAssets - $totalCurrLiabilities;
 
 				$currentRatio["values"][$i]["key"] = $periodItem["key"];
-				// $currentRatio["values"][$i]["value"] = $totalCurrAssets / $totalCurrLiabilities;  
 				$currentRatio["values"][$i]["value"] = $totalCurrLiabilities != 0 ? $totalCurrAssets / $totalCurrLiabilities : 0;
 
 				$rawMaterialsImported  = GetBalanceSheetLineItem($balanceSheet, " Raw Materials – Imported", $periodItem["key"]); 
@@ -1717,9 +1727,13 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 				$otherManfExp = GetProfitandLossLineItem($profitAndLoss, "Other manufacturing expenses", $periodItem["key"]); 
 				$badDebts = GetProfitandLossLineItem($profitAndLoss, "Bad Debts", $periodItem["key"]); 
 				$sellingGenAdminExp = GetProfitandLossLineItem($profitAndLoss, "Selling, Gen. & Administration Exp", $periodItem["key"]); 
+
+				$otherAdminExp = GetProfitandLossLineItem($profitAndLoss, "Other Administration Exp", $periodItem["key"]); 
+				
+
 				$totalNonOperatingExp = GetProfitandLossLineItem($profitAndLoss, "Total Non-operating expenses", $periodItem["key"]); 
 
-				$otherExpVal = $powerAndFuel + $directLabourAndWages + $otherManfExp + $badDebts + $sellingGenAdminExp + $totalNonOperatingExp;
+				$otherExpVal = $powerAndFuel + $directLabourAndWages + $otherManfExp + $badDebts + $sellingGenAdminExp + $totalNonOperatingExp + $otherAdminExp;
 
 				$otherExp["values"][$i]["key"] = $periodItem["key"];
 				$otherExp["values"][$i]["value"] = $otherExpVal;
@@ -2280,7 +2294,7 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 		$sales = array("label" => "Sales", "values" => null);
 		$salesDomestic = array("label" => "- Domestic", "values" => null);
 		$salesExport = array("label" => "- Export", "values" => null);
-		$salesSubTotal = array("label" => "Sub Total", "values" => null);
+		$salesSubTotal = array("label" => "Sub Total", "values" => null, "type" => "sales");
 		$exciseDuty = array("label" => "Less Excise Duty (if applicable)", "values" => null);
 		$netSales = array("label" => "Net Sales", "values" => null);
 
@@ -2304,7 +2318,7 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 		$directLabourAndWages = array("label" => "Direct labour and wages", "values" => null);
 		$otherManfExp = array("label" => "Other manufacturing expenses", "values" => null);
 		$depriciation = array("label" => "Depreciation", "values" => null);
-		$costOfSalesSubTotal = array("label" => "Sub Total", "values" => null);
+		$costOfSalesSubTotal = array("label" => "Sub Total", "values" => null, "type" => "cost of sale");
 		
 		$opStockWIP = array("label" => "Add: Op. Stock of WIP", "values" => null);
 		$clStockWIP = array("label" => "Less: Cl. Stock of WIP", "values" => null);
@@ -2318,7 +2332,9 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 		$salaryAndStaffExp = array("label" => "Salary & Staff Expenses", "values" => null);
 		$badDebts = array("label" => "Bad Debts", "values" => null);
 		$sellGenAdmExp = array("label" => "Selling, Gen. & Administration Exp", "values" => null);
-		$admSubTotal = array("label" => "Sub Total", "values" => null);
+		$otherAdmExp = array("label" => "Other Administration Exp", "values" => null);
+		
+		$admSubTotal = array("label" => "Sub Total", "values" => null, "type" => "other admin exp");
 		$opBeforeInterest = array("label" => "Operating Profit before Interest", "values" => null);
 
 		
@@ -2354,7 +2370,7 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 		$provForTaxation = array("label" => "Provision for taxation:", "values" => null);
 		$currentProv = array("label" => "Current", "values" => null);
 		$deferredProv = array("label" => "Deferred", "values" => null);
-		$provSubTotal = array("label" => "Sub Total", "values" => null);
+		$provSubTotal = array("label" => "Sub Total", "values" => null, "type" => "provision for tax");
 		$netProfitAfterTax = array("label" => "Net Profit After tax", "values" => null);
 		$dividendPaid = array("label" => "Dividend Paid", "values" => null);
 		$retainedProfit = array("label" => "Retained Profit ", "values" => null);
@@ -2456,8 +2472,11 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 			$badDebts["values"][$i]["value"] =  GetISLineItem($isLineItems, "Bad Debts", $periodItem["key"]); 
 			$sellGenAdmExp["values"][$i]["key"] = $periodItem["key"];
 			$sellGenAdmExp["values"][$i]["value"] =  GetISLineItem($isLineItems, "Selling, Gen. & Administration Exp", $periodItem["key"]); 
+			$otherAdmExp["values"][$i]["key"] = $periodItem["key"];
+			$otherAdmExp["values"][$i]["value"] =  GetISLineItem($isLineItems, "Other Administration Exp", $periodItem["key"]); 
+			
 			$admSubTotal["values"][$i]["key"] = $periodItem["key"];
-			$admSubTotal["values"][$i]["value"] =  $salaryAndStaffExp["values"][$i]["value"]+$badDebts["values"][$i]["value"]+$sellGenAdmExp["values"][$i]["value"];
+			$admSubTotal["values"][$i]["value"] =  $salaryAndStaffExp["values"][$i]["value"]+$badDebts["values"][$i]["value"]+$sellGenAdmExp["values"][$i]["value"] +$otherAdmExp["values"][$i]["value"];
 
 			$opBeforeInterest["values"][$i]["key"] = $periodItem["key"];
 			$opBeforeInterest["values"][$i]["value"] = $totalOperatingIncome["values"][$i]["value"] - $totalCostOfSales["values"][$i]["value"] - $admSubTotal["values"][$i]["value"];
@@ -2536,6 +2555,7 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 		$profitAndLoss[] = $salesDomestic;
 		$profitAndLoss[] = $salesExport;
 		$profitAndLoss[] = $salesSubTotal;
+		$profitAndLoss[] = $exciseDuty;
 		$profitAndLoss[] = $netSales;
 		$profitAndLoss[] = $riseFallInNetSales;
 		
@@ -2573,6 +2593,7 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
 		$profitAndLoss[] = $salaryAndStaffExp;
 		$profitAndLoss[] = $badDebts;
 		$profitAndLoss[] = $sellGenAdmExp;
+		$profitAndLoss[] = $otherAdmExp;
 		$profitAndLoss[] = $admSubTotal;
 		$profitAndLoss[] = $opBeforeInterest;
 
@@ -4054,6 +4075,897 @@ if(!function_exists('GetBalanceSheetAnalysisFromDB'))
     }
   }
 
+  if(!function_exists('GetBSSourceFromDB')) 
+  {
+	  function GetBSSourceFromDB($bssPeriods, $bssDbData, $unit = "million")
+	  {
+			$prevLabel = "";	
+		  
+			$balanceSheet = null;
+  
+			  
+			$currentLiabilities = array("label" => "CURRENT LIABILITIES", "values" => null);
+			$stBorrowingsFromBanks = array("label" => "Short term borrowings from Banks", "values" => null);
+			  
+			$bank_borrowings_from_applicant_bank  = array("label" => "Bank Borrowings - From applicant Bank", "values" => null);
+			$bank_borrowings_from_other_banks  = array("label" => "Bank Borrowings - From other Banks", "values" => null);
 
+			$borrowings_sub_total = array("label" => "Sub Total", "values" => null);
+
+			$st_borrowings_from_associates = array("label" => "Short term borrowings from Associates & Group Concerns repayable within one year", "values" => null);
+			$st_borrowings_from_others = array("label" => "Short term borrowings from Others", "values" => null);
+			$creditors_for_purchases_others = array("label" => "Creditors for purchases – others", "values" => null);
+			$creditors_for_purchases_group_companies = array("label" => "Creditors for purchases – Group Companies", "values" => null);
+			$creditors_for_expenses = array("label" => "Creditors for expenses", "values" => null);
+			$advances_payments_from_customers = array("label" => "Advances/ payments from customers/deposits from dealers.", "values" => null);
+			$provisions = array("label" => "Provisons", "values" => null);
+			$provisions_for_tax = array("label" => " - Tax", "values" => null);
+			$provisions_for_deferred_tax = array("label" => " - Deferred Tax", "values" => null);
+			$others  = array("label" => " - Others", "values" => null);
+
+			$dividends_payable  = array("label" => "Dividends Payable", "values" => null);
+			$statutory_liabilities_due_within_one_year  = array("label" => "Statutory liabilities due within one year", "values" => null);
+			$installments_of_term_to_banks  = array("label" => "Installments of Term Loans/Debentures (due within one year)- To banks ", "values" => null);
+			$installments_of_term_loans_to_others  = array("label" => "Installments of Term Loans/Debentures (due within one year)- To Others", "values" => null);
+			$deposits_due_payable_within_a_year  = array("label" => "Deposits due / payable within a year", "values" => null);
+			$other_current_liabilities_due_within_one_year  = array("label" => "Other Current Liabilities due within one year", "values" => null);
+
+			$total_current_liabilities  = array("label" => "Total Current Liabilities", "values" => null);
+
+			$term_liabilities  = array("label" => "TERM LIABILITIES", "values" => null);
+
+			$debentures_maturing_after_1_year  = array("label" => "Debentures maturing after 1 year", "values" => null);
+			$preference_share_capital_maturity_within_12_years  = array("label" => "Preference share capital maturity < 12 years", "values" => null);
+			$dealers_deposit  = array("label" => "Dealer's Deposit", "values" => null);
+			$deferred_tax_liability  = array("label" => "Deferred Tax Liability", "values" => null);
+			$term_loans_from_banks  = array("label" => "Term Loans  - From Banks", "values" => null);
+			$term_loans_from_financial_istitution  = array("label" => "Term Loans - From Financial Institution", "values" => null);
+			$term_deposits  = array("label" => "Term Deposits", "values" => null);
+			$borrowings_from_subsidiaries  = array("label" => "Borrowings from subsidiaries / affiliates", "values" => null);
+			$unsecured_loans  = array("label" => "Unsecured Loans", "values" => null);
+			$other_term_liabilities  = array("label" => "Other term liabilities", "values" => null);
+
+			$total_term_liabilities  = array("label" => "Total Term Liabilities", "values" => null);
+			$total_outside_liabilities  = array("label" => "TOTAL OUTSIDE LIABILITIES", "values" => null);
+
+			$net_worth_title  = array("label" => "NET WORTH", "values" => null);
+
+			$equity_share_capital  = array("label" => "Equity Share Capital ", "values" => null);
+			$share_capital_paid_up  = array("label" => "Share Capital (Paid-up)", "values" => null);
+			$share_application_money  = array("label" => "Share Application money", "values" => null);
+			$general_reserve  = array("label" => "General Reserve", "values" => null);
+			$revaluation_reserve  = array("label" => "Revaluation Reserve", "values" => null);
+			$partners_capital  = array("label" => "Partners capital / Proprietor's capital", "values" => null);
+			$balance_in_partners_current_ac  = array("label" => "Balance in Partners' Current A/c (+ / -)", "values" => null);
+			
+			$other_reserve_and_surplus  = array("label" => "Other Reserves & Surplus:", "values" => null);
+			
+			$share_premium  = array("label" => "Share Premium", "values" => null);
+			$capital_subsidy  = array("label" => "Capital subsidy", "values" => null);
+			$quasi_equity  = array("label" => "Quasi Equity", "values" => null);
+			$balance_in_pl_account  = array("label" => "Balance in P&L Account (+ / - )", "values" => null);
+
+			$net_worth  = array("label" => "NET WORTH", "values" => null);
+			$total_liabilities  = array("label" => "Total Liabilities", "values" => null);
+
+			$balance_sheet_assets_input  = array("label" => "BALANCE SHEET (ASSETS) INPUT", "values" => null);
+			$current_assets_title  = array("label" => "CURRENT ASSETS", "values" => null);
+			
+
+			$cash_balances  = array("label" => "Cash Balances", "values" => null);
+			$bank_balances  = array("label" => "Bank Balances", "values" => null);
+
+			$investments  = array("label" => "Investments", "values" => null);
+
+			$govt_and_other_trustee_securities  = array("label" => "Govt. and other trustee Securities", "values" => null);
+			$fixed_deposits_with_banks  = array("label" => "Fixed Deposits with Banks", "values" => null);
+			$others_investments_in_subsidiaries  = array("label" => "Others – Investments in Subsidiaries/Group Companies", "values" => null);
+
+			$receivables  = array("label" => "Receivables", "values" => null);
+
+			$domestic_receivables  = array("label" => "Domestic Receivables ", "values" => null);
+			$export_receivables  = array("label" => "Export Receivables", "values" => null);
+
+			$inventory  = array("label" => "Inventory", "values" => null);
+
+			$raw_Materials_imported  = array("label" => " Raw Materials – Imported", "values" => null);
+			$raw_materials_indigenous  = array("label" => " Raw Materials – Indigenous", "values" => null);
+			$work_in_process  = array("label" => " Work in process", "values" => null);
+			$finished_goods  = array("label" => " Finished Goods (incl Traded Goods)", "values" => null);
+			$other_consumable_spares_imported  = array("label" => "Other consumable spares – Imported", "values" => null);
+			$other_consumable_spares_indigenous  = array("label" => "Other consumable spares -  Indigenous", "values" => null);
+			$adv_to_suppliers_of_raw_materials  = array("label" => "Advances to suppliers of Raw materials/Stores/Spares", "values" => null);
+			$advance_payment_of_tax  = array("label" => "Advance payment of tax", "values" => null);
+
+			$other_current_assets  = array("label" => "Other Current Assets", "values" => null);
+
+			$prepaid_expenses  = array("label" => "Prepaid Expenses", "values" => null);
+			$other_advances_current_asset  = array("label" => "Other Advances/current Asset", "values" => null);
+
+			$total_current_assets  = array("label" => "TOTAL CURRENT ASSETS", "values" => null);
+
+			$fixed_assets_title  = array("label" => "FIXED ASSETS", "values" => null);
+			
+
+			$gross_block  = array("label" => "Gross Block", "values" => null);
+			$accumulated_depreciation  = array("label" => "Less: Accumulated Depreciation", "values" => null);
+
+			$net_block  = array("label" => "Net Block", "values" => null);
+
+			$capital_wip  = array("label" => "Capital Work in progress", "values" => null);
+
+			$non_current_assets_title  = array("label" => "NON-CURRENT ASSETS", "values" => null);
+			$investments_book_debts_title  = array("label" => "Investments / Book Debts / Advances / Deposits (which are not current assets):", "values" => null);
+			
+
+			$investments_in_group_concerns  = array("label" => "Investments in Group concerns", "values" => null);
+			$loans_to_group_concerns  = array("label" => "Loans to group concerns / Advances to subsidiaries", "values" => null);
+			$investments_in_others  = array("label" => "Investments in others", "values" => null);
+			$adv_to_suppliers_of_capital_goods  = array("label" => "Advances to suppliers of capital goods and contractors", "values" => null);
+			$deferred_receivables  = array("label" => "Deferred receivables (maturity exceeding one year)", "values" => null);
+			$debtors_more_than_6_months  = array("label" => "Debtors more than 6 months", "values" => null);
+			$others_loan_advances  = array("label" => "Others (Loans & Advances non current in nature, ICD’s etc.)", "values" => null);
+			$security_deposits  = array("label" => "Security deposits", "values" => null);
+			$deposits_with_government_dept  = array("label" => "Deposits with Government departments", "values" => null);
+			$deferred_tax_asset  = array("label" => "Deferred Tax Asset", "values" => null);
+			$other_non_current_assets  = array("label" => "Other Non-current Assets", "values" => null);
+
+			$total_non_current_assets  = array("label" => "TOTAL NON CURRENT ASSETS", "values" => null);
+
+			$intangible_assets_title  = array("label" => "Intangible Assets:", "values" => null);
+
+
+			$goodwill_patents_trademarks  = array("label" => "Goodwill, Patents & trademarks", "values" => null);
+			$misc_exp_not_written_off  = array("label" => "Miscellaneous expenditure not w/off", "values" => null);
+			$other_deferred_revenue_exp  = array("label" => "Other deferred revenue expenses", "values" => null);
+
+			$total_intangible_assets  = array("label" => "TOTAL INTANGIBLE ASSETS", "values" => null);
+			$total_assets  = array("label" => "TOTAL ASSETS", "values" => null);
+			  
+			  
+  
+			  for($i = 0 ; $i < count($bssPeriods); $i++)
+			  {
+				  $periodItem = $bssPeriods[$i];
+  
+				  foreach($bssDbData as $bssDataItem)
+				  {
+					  if($bssDataItem->year == $periodItem["year"] && $periodItem["ptype"] == $bssDataItem->period_type)
+					  {
+						$bank_borrowings_from_applicant_bank["values"][$i]["key"] = $periodItem["key"];
+						$bank_borrowings_from_applicant_bank["values"][$i]["value"] =  DisplayAmount($bssDataItem->bank_borrowings_from_applicant_bank, $unit);
+
+						$bank_borrowings_from_other_banks["values"][$i]["key"] = $periodItem["key"];
+						$bank_borrowings_from_other_banks["values"][$i]["value"] =  DisplayAmount($bssDataItem->bank_borrowings_from_other_banks, $unit);
+
+						$borrowings_sub_total["values"][$i]["key"] = $periodItem["key"];
+						$borrowings_sub_total["values"][$i]["value"] =  DisplayAmount($bssDataItem->borrowings_sub_total, $unit);
+
+						$st_borrowings_from_associates["values"][$i]["key"] = $periodItem["key"];
+						$st_borrowings_from_associates["values"][$i]["value"] =  DisplayAmount($bssDataItem->st_borrowings_from_associates, $unit);
+
+						$st_borrowings_from_others["values"][$i]["key"] = $periodItem["key"];
+						$st_borrowings_from_others["values"][$i]["value"] =  DisplayAmount($bssDataItem->st_borrowings_from_others, $unit);
+
+						$creditors_for_purchases_others["values"][$i]["key"] = $periodItem["key"];
+						$creditors_for_purchases_others["values"][$i]["value"] =  DisplayAmount($bssDataItem->creditors_for_purchases_others, $unit);
+
+						$creditors_for_purchases_group_companies["values"][$i]["key"] = $periodItem["key"];
+						$creditors_for_purchases_group_companies["values"][$i]["value"] =  DisplayAmount($bssDataItem->creditors_for_purchases_group_companies, $unit);
+
+						$creditors_for_expenses["values"][$i]["key"] = $periodItem["key"];
+						$creditors_for_expenses["values"][$i]["value"] =  DisplayAmount($bssDataItem->creditors_for_expenses, $unit);
+
+						$advances_payments_from_customers["values"][$i]["key"] = $periodItem["key"];
+						$advances_payments_from_customers["values"][$i]["value"] =  DisplayAmount($bssDataItem->advances_payments_from_customers, $unit);
+
+						$provisions_for_tax["values"][$i]["key"] = $periodItem["key"];
+						$provisions_for_tax["values"][$i]["value"] =  DisplayAmount($bssDataItem->provisions_for_tax, $unit);
+
+						$provisions_for_deferred_tax["values"][$i]["key"] = $periodItem["key"];
+						$provisions_for_deferred_tax["values"][$i]["value"] =  DisplayAmount($bssDataItem->provisions_for_deferred_tax, $unit);
+
+						$others["values"][$i]["key"] = $periodItem["key"];
+						$others["values"][$i]["value"] =  DisplayAmount($bssDataItem->others, $unit);
+
+						$dividends_payable["values"][$i]["key"] = $periodItem["key"];
+						$dividends_payable["values"][$i]["value"] =  DisplayAmount($bssDataItem->dividends_payable, $unit);
+
+						$statutory_liabilities_due_within_one_year["values"][$i]["key"] = $periodItem["key"];
+						$statutory_liabilities_due_within_one_year["values"][$i]["value"] =  DisplayAmount($bssDataItem->statutory_liabilities_due_within_one_year, $unit);
+
+						$installments_of_term_to_banks["values"][$i]["key"] = $periodItem["key"];
+						$installments_of_term_to_banks["values"][$i]["value"] =  DisplayAmount($bssDataItem->installments_of_term_to_banks, $unit);
+
+						$installments_of_term_loans_to_others["values"][$i]["key"] = $periodItem["key"];
+						$installments_of_term_loans_to_others["values"][$i]["value"] =  DisplayAmount($bssDataItem->installments_of_term_loans_to_others, $unit);
+
+						$deposits_due_payable_within_a_year["values"][$i]["key"] = $periodItem["key"];
+						$deposits_due_payable_within_a_year["values"][$i]["value"] =  DisplayAmount($bssDataItem->deposits_due_payable_within_a_year, $unit);
+
+						$other_current_liabilities_due_within_one_year["values"][$i]["key"] = $periodItem["key"];
+						$other_current_liabilities_due_within_one_year["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_current_liabilities_due_within_one_year, $unit);
+
+						$total_current_liabilities["values"][$i]["key"] = $periodItem["key"];
+						$total_current_liabilities["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_current_liabilities, $unit);
+
+						$debentures_maturing_after_1_year["values"][$i]["key"] = $periodItem["key"];
+						$debentures_maturing_after_1_year["values"][$i]["value"] =  DisplayAmount($bssDataItem->debentures_maturing_after_1_year, $unit);
+
+						$preference_share_capital_maturity_within_12_years["values"][$i]["key"] = $periodItem["key"];
+						$preference_share_capital_maturity_within_12_years["values"][$i]["value"] =  DisplayAmount($bssDataItem->preference_share_capital_maturity_within_12_years, $unit);
+
+						$dealers_deposit["values"][$i]["key"] = $periodItem["key"];
+						$dealers_deposit["values"][$i]["value"] =  DisplayAmount($bssDataItem->dealers_deposit, $unit);
+
+						$deferred_tax_liability["values"][$i]["key"] = $periodItem["key"];
+						$deferred_tax_liability["values"][$i]["value"] =  DisplayAmount($bssDataItem->deferred_tax_liability, $unit);
+
+						$term_loans_from_banks["values"][$i]["key"] = $periodItem["key"];
+						$term_loans_from_banks["values"][$i]["value"] =  DisplayAmount($bssDataItem->term_loans_from_banks, $unit);
+
+						$term_loans_from_financial_istitution["values"][$i]["key"] = $periodItem["key"];
+						$term_loans_from_financial_istitution["values"][$i]["value"] =  DisplayAmount($bssDataItem->term_loans_from_financial_istitution, $unit);
+
+						$term_deposits["values"][$i]["key"] = $periodItem["key"];
+						$term_deposits["values"][$i]["value"] =  DisplayAmount($bssDataItem->term_deposits, $unit);
+
+						$borrowings_from_subsidiaries["values"][$i]["key"] = $periodItem["key"];
+						$borrowings_from_subsidiaries["values"][$i]["value"] =  DisplayAmount($bssDataItem->borrowings_from_subsidiaries, $unit);
+
+						$unsecured_loans["values"][$i]["key"] = $periodItem["key"];
+						$unsecured_loans["values"][$i]["value"] =  DisplayAmount($bssDataItem->unsecured_loans, $unit);
+
+						$other_term_liabilities["values"][$i]["key"] = $periodItem["key"];
+						$other_term_liabilities["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_term_liabilities, $unit);
+
+						$total_term_liabilities["values"][$i]["key"] = $periodItem["key"];
+						$total_term_liabilities["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_term_liabilities, $unit);
+
+						$total_outside_liabilities["values"][$i]["key"] = $periodItem["key"];
+						$total_outside_liabilities["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_outside_liabilities, $unit);
+
+						$equity_share_capital["values"][$i]["key"] = $periodItem["key"];
+						$equity_share_capital["values"][$i]["value"] =  DisplayAmount($bssDataItem->equity_share_capital, $unit);
+
+						$share_capital_paid_up["values"][$i]["key"] = $periodItem["key"];
+						$share_capital_paid_up["values"][$i]["value"] =  DisplayAmount($bssDataItem->share_capital_paid_up, $unit);
+
+						$share_application_money["values"][$i]["key"] = $periodItem["key"];
+						$share_application_money["values"][$i]["value"] =  DisplayAmount($bssDataItem->share_application_money, $unit);
+
+						$general_reserve["values"][$i]["key"] = $periodItem["key"];
+						$general_reserve["values"][$i]["value"] =  DisplayAmount($bssDataItem->general_reserve, $unit);
+
+						$revaluation_reserve["values"][$i]["key"] = $periodItem["key"];
+						$revaluation_reserve["values"][$i]["value"] =  DisplayAmount($bssDataItem->revaluation_reserve, $unit);
+
+						$partners_capital["values"][$i]["key"] = $periodItem["key"];
+						$partners_capital["values"][$i]["value"] =  DisplayAmount($bssDataItem->partners_capital, $unit);
+
+						$balance_in_partners_current_ac["values"][$i]["key"] = $periodItem["key"];
+						$balance_in_partners_current_ac["values"][$i]["value"] =  DisplayAmount($bssDataItem->balance_in_partners_current_ac, $unit);
+
+						$share_premium["values"][$i]["key"] = $periodItem["key"];
+						$share_premium["values"][$i]["value"] =  DisplayAmount($bssDataItem->share_premium, $unit);
+
+						$capital_subsidy["values"][$i]["key"] = $periodItem["key"];
+						$capital_subsidy["values"][$i]["value"] =  DisplayAmount($bssDataItem->capital_subsidy, $unit);
+
+						$quasi_equity["values"][$i]["key"] = $periodItem["key"];
+						$quasi_equity["values"][$i]["value"] =  DisplayAmount($bssDataItem->quasi_equity, $unit);
+
+						$balance_in_pl_account["values"][$i]["key"] = $periodItem["key"];
+						$balance_in_pl_account["values"][$i]["value"] =  DisplayAmount($bssDataItem->balance_in_pl_account, $unit);
+
+						$net_worth["values"][$i]["key"] = $periodItem["key"];
+						$net_worth["values"][$i]["value"] =  DisplayAmount($bssDataItem->net_worth, $unit);
+
+						$cash_balances["values"][$i]["key"] = $periodItem["key"];
+						$cash_balances["values"][$i]["value"] =  DisplayAmount($bssDataItem->cash_balances, $unit);
+
+						$bank_balances["values"][$i]["key"] = $periodItem["key"];
+						$bank_balances["values"][$i]["value"] =  DisplayAmount($bssDataItem->bank_balances, $unit);
+
+						$investments["values"][$i]["key"] = $periodItem["key"];
+						$investments["values"][$i]["value"] =  DisplayAmount($bssDataItem->investments, $unit);
+
+						$govt_and_other_trustee_securities["values"][$i]["key"] = $periodItem["key"];
+						$govt_and_other_trustee_securities["values"][$i]["value"] =  DisplayAmount($bssDataItem->govt_and_other_trustee_securities, $unit);
+
+						$fixed_deposits_with_banks["values"][$i]["key"] = $periodItem["key"];
+						$fixed_deposits_with_banks["values"][$i]["value"] =  DisplayAmount($bssDataItem->fixed_deposits_with_banks, $unit);
+
+						$others_investments_in_subsidiaries["values"][$i]["key"] = $periodItem["key"];
+						$others_investments_in_subsidiaries["values"][$i]["value"] =  DisplayAmount($bssDataItem->others_investments_in_subsidiaries, $unit);
+
+						$receivables["values"][$i]["key"] = $periodItem["key"];
+						$receivables["values"][$i]["value"] =  DisplayAmount($bssDataItem->receivables, $unit);
+
+						$domestic_receivables["values"][$i]["key"] = $periodItem["key"];
+						$domestic_receivables["values"][$i]["value"] =  DisplayAmount($bssDataItem->domestic_receivables, $unit);
+
+						$export_receivables["values"][$i]["key"] = $periodItem["key"];
+						$export_receivables["values"][$i]["value"] =  DisplayAmount($bssDataItem->export_receivables, $unit);
+
+						$inventory["values"][$i]["key"] = $periodItem["key"];
+						$inventory["values"][$i]["value"] =  DisplayAmount($bssDataItem->inventory, $unit);
+
+						$raw_Materials_imported["values"][$i]["key"] = $periodItem["key"];
+						$raw_Materials_imported["values"][$i]["value"] =  DisplayAmount($bssDataItem->raw_Materials_imported, $unit);
+
+						$raw_materials_indigenous["values"][$i]["key"] = $periodItem["key"];
+						$raw_materials_indigenous["values"][$i]["value"] =  DisplayAmount($bssDataItem->raw_materials_indigenous, $unit);
+
+						$work_in_process["values"][$i]["key"] = $periodItem["key"];
+						$work_in_process["values"][$i]["value"] =  DisplayAmount($bssDataItem->work_in_process, $unit);
+
+						$finished_goods["values"][$i]["key"] = $periodItem["key"];
+						$finished_goods["values"][$i]["value"] =  DisplayAmount($bssDataItem->finished_goods, $unit);
+
+						$other_consumable_spares_imported["values"][$i]["key"] = $periodItem["key"];
+						$other_consumable_spares_imported["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_consumable_spares_imported, $unit);
+
+						$other_consumable_spares_indigenous["values"][$i]["key"] = $periodItem["key"];
+						$other_consumable_spares_indigenous["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_consumable_spares_indigenous, $unit);
+
+						$adv_to_suppliers_of_raw_materials["values"][$i]["key"] = $periodItem["key"];
+						$adv_to_suppliers_of_raw_materials["values"][$i]["value"] =  DisplayAmount($bssDataItem->adv_to_suppliers_of_raw_materials, $unit);
+						
+						$advance_payment_of_tax["values"][$i]["key"] = $periodItem["key"];
+						$advance_payment_of_tax["values"][$i]["value"] =  DisplayAmount($bssDataItem->adv_payment_of_tax, $unit);
+						
+						//$other_current_assets["values"][$i]["key"] = $periodItem["key"];
+						//$other_current_assets["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_current_assets, $unit);
+
+						$prepaid_expenses["values"][$i]["key"] = $periodItem["key"];
+						$prepaid_expenses["values"][$i]["value"] =  DisplayAmount($bssDataItem->prepaid_expenses, $unit);
+
+						$other_advances_current_asset["values"][$i]["key"] = $periodItem["key"];
+						$other_advances_current_asset["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_advances_current_asset, $unit);
+
+						$total_current_assets["values"][$i]["key"] = $periodItem["key"];
+						$total_current_assets["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_current_assets, $unit);
+
+						$gross_block["values"][$i]["key"] = $periodItem["key"];
+						$gross_block["values"][$i]["value"] =  DisplayAmount($bssDataItem->gross_block, $unit);
+
+						$accumulated_depreciation["values"][$i]["key"] = $periodItem["key"];
+						$accumulated_depreciation["values"][$i]["value"] =  DisplayAmount($bssDataItem->accumulated_depreciation, $unit);
+
+						$net_block["values"][$i]["key"] = $periodItem["key"];
+						$net_block["values"][$i]["value"] =  DisplayAmount($bssDataItem->net_block, $unit);
+						
+						$capital_wip["values"][$i]["key"] = $periodItem["key"];
+						$capital_wip["values"][$i]["value"] =  DisplayAmount($bssDataItem->capital_wip, $unit);
+						
+						$investments_in_group_concerns["values"][$i]["key"] = $periodItem["key"];
+						$investments_in_group_concerns["values"][$i]["value"] =  DisplayAmount($bssDataItem->investments_in_group_concerns, $unit);
+						
+						$loans_to_group_concerns["values"][$i]["key"] = $periodItem["key"];
+						$loans_to_group_concerns["values"][$i]["value"] =  DisplayAmount($bssDataItem->loans_to_group_concerns, $unit);
+						
+						$investments_in_others["values"][$i]["key"] = $periodItem["key"];
+						$investments_in_others["values"][$i]["value"] =  DisplayAmount($bssDataItem->investments_in_others, $unit);
+
+						$adv_to_suppliers_of_capital_goods["values"][$i]["key"] = $periodItem["key"];
+						$adv_to_suppliers_of_capital_goods["values"][$i]["value"] =  DisplayAmount($bssDataItem->adv_to_suppliers_of_capital_goods, $unit);
+
+						$deferred_receivables["values"][$i]["key"] = $periodItem["key"];
+						$deferred_receivables["values"][$i]["value"] =  DisplayAmount($bssDataItem->deferred_receivables, $unit);
+
+						$debtors_more_than_6_months["values"][$i]["key"] = $periodItem["key"];
+						$debtors_more_than_6_months["values"][$i]["value"] =  DisplayAmount($bssDataItem->debtors_more_than_6_months, $unit);
+
+						$others_loan_advances["values"][$i]["key"] = $periodItem["key"];
+						$others_loan_advances["values"][$i]["value"] =  DisplayAmount($bssDataItem->others_loan_advances, $unit);
+
+						$security_deposits["values"][$i]["key"] = $periodItem["key"];
+						$security_deposits["values"][$i]["value"] =  DisplayAmount($bssDataItem->security_deposits, $unit);
+
+						$deposits_with_government_dept["values"][$i]["key"] = $periodItem["key"];
+						$deposits_with_government_dept["values"][$i]["value"] =  DisplayAmount($bssDataItem->deposits_with_government_dept, $unit);
+
+						$deferred_tax_asset["values"][$i]["key"] = $periodItem["key"];
+						$deferred_tax_asset["values"][$i]["value"] =  DisplayAmount($bssDataItem->deferred_tax_asset, $unit);
+
+						$other_non_current_assets["values"][$i]["key"] = $periodItem["key"];
+						$other_non_current_assets["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_non_current_assets, $unit);
+
+						$total_non_current_assets["values"][$i]["key"] = $periodItem["key"];
+						$total_non_current_assets["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_non_current_assets, $unit);
+
+						$goodwill_patents_trademarks["values"][$i]["key"] = $periodItem["key"];
+						$goodwill_patents_trademarks["values"][$i]["value"] =  DisplayAmount($bssDataItem->goodwill_patents_trademarks, $unit);
+
+						$misc_exp_not_written_off["values"][$i]["key"] = $periodItem["key"];
+						$misc_exp_not_written_off["values"][$i]["value"] =  DisplayAmount($bssDataItem->misc_exp_not_written_off, $unit);
+
+						$other_deferred_revenue_exp["values"][$i]["key"] = $periodItem["key"];
+						$other_deferred_revenue_exp["values"][$i]["value"] =  DisplayAmount($bssDataItem->other_deferred_revenue_exp, $unit);
+
+						$total_intangible_assets["values"][$i]["key"] = $periodItem["key"];
+						$total_intangible_assets["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_intangible_assets, $unit);
+
+						$total_assets["values"][$i]["key"] = $periodItem["key"];
+						$total_assets["values"][$i]["value"] =  DisplayAmount($bssDataItem->total_assets, $unit);
+						
+		  
+					  }
+				  }
+				  
+			  }
+  
+			  $balanceSheet[] = $currentLiabilities;
+			  $balanceSheet[] = $stBorrowingsFromBanks;
+			  $balanceSheet[] = $bank_borrowings_from_applicant_bank ;
+			  $balanceSheet[] = $bank_borrowings_from_other_banks ;
+
+			  $balanceSheet[] = $borrowings_sub_total ;
+
+			  $balanceSheet[] = $st_borrowings_from_associates ;
+			  $balanceSheet[] = $st_borrowings_from_others ;
+			  $balanceSheet[] = $creditors_for_purchases_others ;
+			  $balanceSheet[] = $creditors_for_purchases_group_companies ;
+			  $balanceSheet[] = $creditors_for_expenses ;
+			  $balanceSheet[] = $advances_payments_from_customers ;
+			  $balanceSheet[] = $provisions;
+			  $balanceSheet[] = $provisions_for_tax ;
+			  $balanceSheet[] = $provisions_for_deferred_tax ;
+			  $balanceSheet[] = $others ;
+			  $balanceSheet[] = $dividends_payable ;
+			  $balanceSheet[] = $statutory_liabilities_due_within_one_year ;
+			  $balanceSheet[] = $installments_of_term_to_banks ;
+			  $balanceSheet[] = $installments_of_term_loans_to_others ;
+			  $balanceSheet[] = $deposits_due_payable_within_a_year ;
+			  $balanceSheet[] = $other_current_liabilities_due_within_one_year ;
+
+			  $balanceSheet[] = $total_current_liabilities ;
+			  $balanceSheet[] = $term_liabilities;
+
+			  $balanceSheet[] = $debentures_maturing_after_1_year ;
+			  $balanceSheet[] = $preference_share_capital_maturity_within_12_years ;
+			  $balanceSheet[] = $dealers_deposit ;
+			  $balanceSheet[] = $deferred_tax_liability ;
+			  $balanceSheet[] = $term_loans_from_banks ;
+			  $balanceSheet[] = $term_loans_from_financial_istitution ;
+			  $balanceSheet[] = $term_deposits ;
+			  $balanceSheet[] = $borrowings_from_subsidiaries ;
+			  $balanceSheet[] = $unsecured_loans ;
+			  $balanceSheet[] = $other_term_liabilities ;
+
+			  $balanceSheet[] = $total_term_liabilities ;
+			  $balanceSheet[] = $total_outside_liabilities ;
+
+			  
+			  $balanceSheet[] = $net_worth_title;
+			  $balanceSheet[] = $equity_share_capital ;
+			  $balanceSheet[] = $share_capital_paid_up ;
+			  $balanceSheet[] = $share_application_money ;
+			  $balanceSheet[] = $general_reserve ;
+			  $balanceSheet[] = $revaluation_reserve ;
+			  $balanceSheet[] = $partners_capital ;
+			  $balanceSheet[] = $balance_in_partners_current_ac ;
+			  
+			  $balanceSheet[] = $other_reserve_and_surplus;
+
+			  $balanceSheet[] = $share_premium ;
+			  $balanceSheet[] = $capital_subsidy ;
+			  $balanceSheet[] = $quasi_equity ;
+			  $balanceSheet[] = $balance_in_pl_account ;
+			  
+			  $balanceSheet[] = $net_worth ;
+			  $balanceSheet[] = $total_liabilities ;
+
+			  $balanceSheet[] = $balance_sheet_assets_input;
+			  $balanceSheet[] = $current_assets_title;
+
+			  $balanceSheet[] = $cash_balances ;
+			  $balanceSheet[] = $bank_balances ;
+
+			  $balanceSheet[] = $investments ;
+
+			  $balanceSheet[] = $govt_and_other_trustee_securities ;
+			  $balanceSheet[] = $fixed_deposits_with_banks ;
+			  $balanceSheet[] = $others_investments_in_subsidiaries ;
+
+			  $balanceSheet[] = $receivables ;
+
+			  $balanceSheet[] = $domestic_receivables ;
+			  $balanceSheet[] = $export_receivables ;
+
+			  $balanceSheet[] = $inventory ;
+
+			  $balanceSheet[] = $raw_Materials_imported ;
+			  $balanceSheet[] = $raw_materials_indigenous ;
+			  $balanceSheet[] = $work_in_process ;
+			  $balanceSheet[] = $finished_goods ;
+			  $balanceSheet[] = $other_consumable_spares_imported ;
+			  $balanceSheet[] = $other_consumable_spares_indigenous ;
+			  $balanceSheet[] = $adv_to_suppliers_of_raw_materials ;
+			  $balanceSheet[] = $advance_payment_of_tax ;
+			  $balanceSheet[] = $other_current_assets;
+			  
+			  $balanceSheet[] = $fixed_assets_title;
+
+			  $balanceSheet[] = $prepaid_expenses ;
+			  $balanceSheet[] = $other_advances_current_asset ;
+
+			  $balanceSheet[] = $total_current_assets ;
+
+			  $balanceSheet[] = $gross_block ;
+			  $balanceSheet[] = $accumulated_depreciation ;
+
+			  $balanceSheet[] = $net_block ;
+			  $balanceSheet[] = $non_current_assets_title;
+			  $balanceSheet[] = $investments_book_debts_title;
+
+			  $balanceSheet[] = $capital_wip ;
+			  $balanceSheet[] = $investments_in_group_concerns ;
+			  $balanceSheet[] = $loans_to_group_concerns ;
+			  $balanceSheet[] = $investments_in_others ;
+			  $balanceSheet[] = $adv_to_suppliers_of_capital_goods ;
+			  $balanceSheet[] = $deferred_receivables ;
+			  $balanceSheet[] = $debtors_more_than_6_months ;
+			  $balanceSheet[] = $others_loan_advances ;
+			  $balanceSheet[] = $security_deposits ;
+			  $balanceSheet[] = $deposits_with_government_dept ;
+			  $balanceSheet[] = $deferred_tax_asset ;
+			  $balanceSheet[] = $other_non_current_assets ;
+
+			  $balanceSheet[] = $total_non_current_assets ;
+
+			  $balanceSheet[] = $intangible_assets_title ;
+
+			  $balanceSheet[] = $goodwill_patents_trademarks ;
+			  $balanceSheet[] = $misc_exp_not_written_off ;
+			  $balanceSheet[] = $other_deferred_revenue_exp ;
+
+			  $balanceSheet[] = $total_intangible_assets ;
+			  $balanceSheet[] = $total_assets ;
+			  
+  
+  
+  
+			  return $balanceSheet;
+	  }
+  }
+
+  if(!function_exists('GetPLSourceFromDB')) 
+  {
+	  function GetPLSourceFromDB($plsPeriods, $plsDbData, $unit = "million")
+	  {
+		$profitAndLoss = null;
+		
+		
+		$sales = array("label" => "Sales", "values" => null);
+		$salesDomestic = array("label" => "- Domestic", "values" => null);
+		$salesExport = array("label" => "- Export", "values" => null);
+		$salesSubTotal = array("label" => "Sub Total", "values" => null, "type" => "sales");
+		$exciseDuty = array("label" => "Less Excise Duty (if applicable)", "values" => null);
+		$netSales = array("label" => "Net Sales", "values" => null);
+
+		$riseFallInNetSales = array("label" => "% wise rise/fall in net sales as compared to previous year", 
+			"values" => null);
+		$otherIncomes = array("label" => "Other Incomes", "values" => null);
+		$exportIncentives = array("label" => "Export Incentive", "values" => null);
+		$otherIncome = array("label" => "Other Income", "values" => null);
+		$totalOperatingIncome = array("label" => "Total Operating Income", "values" => null);
+
+		$costOfSales = array("label" => "Cost of Sales", "values" => null);
+		$rawMatConsumed = array("label" => "Raw materials consumed ", "values" => null);
+		$rawMatImported = array("label" => "                        i) Imported", "values" => null);
+		$rawMatIndigenous = array("label" => "                        ii) Indigenous", "values" => null);
+
+		$otherSparesConsumed = array("label" => "Other Spares consumed ", "values" => null);
+		$otherSparesImported = array("label" => "                        i) Other Spares Imported", "values" => null);
+		$otherSparesIndigenous = array("label" => "                        ii) Other Spares Indigenous", "values" => null);
+
+		$powerAndFuel = array("label" => "Power and fuel ", "values" => null);
+		$directLabourAndWages = array("label" => "Direct labour and wages", "values" => null);
+		$otherManfExp = array("label" => "Other manufacturing expenses", "values" => null);
+		$depriciation = array("label" => "Depreciation", "values" => null);
+		$costOfSalesSubTotal = array("label" => "Sub Total", "values" => null, "type" => "cost of sale");
+		
+		$opStockWIP = array("label" => "Add: Op. Stock of WIP", "values" => null);
+		$clStockWIP = array("label" => "Less: Cl. Stock of WIP", "values" => null);
+		$totalCostOfProd = array("label" => "Total Cost of Production", "values" => null);
+
+		$opStockOfFG = array("label" => "Add Opening Stock of Finished Goods", "values" => null);
+		$clStockOfFG = array("label" => "Less: Closing Stock  of Finished Goods", "values" => null);
+		$totalCostOfSales = array("label" => "Total Cost of Sales", "values" => null);
+		
+		$adnAndSellExp = array("label" => "Administrative and Selling expenses", "values" => null);
+		$salaryAndStaffExp = array("label" => "Salary & Staff Expenses", "values" => null);
+		$badDebts = array("label" => "Bad Debts", "values" => null);
+		$sellGenAdmExp = array("label" => "Selling, Gen. & Administration Exp", "values" => null);
+		$otherAdmExp = array("label" => "Other Administration Exp", "values" => null);
+		
+		$admSubTotal = array("label" => "Sub Total", "values" => null, "type" => "other admin exp");
+		$opBeforeInterest = array("label" => "Operating Profit before Interest", "values" => null);
+
+		
+		$financeCharges = array("label" => "Finance Charges", "values" => null);
+		$interestWCLoans = array("label" => "Interest - Working capital loans", "values" => null);
+		$interestTermLoans = array("label" => "Interest - Term Loans/Fixed loans", "values" => null);
+		$bankCharges = array("label" => "Bank Charges", "values" => null);
+		$totalInterest = array("label" => "Total Interest", "values" => null);
+		$opAfterInterest = array("label" => "Operating Profit after Interest", "values" => null);
+		
+		
+		$nonOpItems = array("label" => "Non Operating Items", "values" => null);
+		$addNonOpItem = array("label" => "Add Non Operating Income", "values" => null);
+		$interestIncome = array("label" => "Interest Income", "values" => null);
+		$profitOnSaleOfAssets = array("label" => "Profit on sale of assets/ investments", "values" => null);
+		$divRceived = array("label" => "Dividend received", "values" => null);
+		$forexGains = array("label" => "Forex gains", "values" => null);
+		$extraOrdIncome = array("label" => "Extraordinary Income", "values" => null);
+		$otherNonOpIncome = array("label" => "Other Non Operating Income", "values" => null);
+		$totalNonOpIncome = array("label" => "Total non-operating Income", "values" => null);
+
+		
+		$deductNonOpExp = array("label" => "Deduct Non Operating Expenses", "values" => null);
+		$lossOnSaleOfAsset = array("label" => "Loss on sale of assets", "values" => null);
+		$extraOrdExp = array("label" => "Extraordinary Expenses ", "values" => null);
+		$forexLoses = array("label" => "Forex losses", "values" => null);
+		$otherNonOpExp = array("label" => "Other Non- operating expenses", "values" => null);
+		$totalNonOpExp = array("label" => "Total Non-operating expenses", "values" => null);
+		$netNonOpIncomeExp = array("label" => "Net of Non-operating Income / Expenses", "values" => null);
+		$profitBeforeTax = array("label" => "Profit Before tax ", "values" => null);
+
+		
+		$provForTaxation = array("label" => "Provision for taxation:", "values" => null);
+		$currentProv = array("label" => "Current", "values" => null);
+		$deferredProv = array("label" => "Deferred", "values" => null);
+		$provSubTotal = array("label" => "Sub Total", "values" => null, "type" => "provision for tax");
+		$netProfitAfterTax = array("label" => "Net Profit After tax", "values" => null);
+		$dividendPaid = array("label" => "Dividend Paid", "values" => null);
+		$retainedProfit = array("label" => "Retained Profit ", "values" => null);
+		
+
+		for($i = 0 ; $i < count($plsPeriods); $i++)
+		{
+			$periodItem = $plsPeriods[$i];
+
+			foreach($plsDbData as $plsDataItem)
+			{
+				if($plsDataItem->year == $periodItem["year"] && $periodItem["ptype"] == $plsDataItem->period_type)
+				{
+				
+					$salesDomestic["values"][$i]["key"] = $periodItem["key"];
+					$salesDomestic["values"][$i]["value"] = DisplayAmount($plsDataItem->sales_domestic, $unit);
+
+					$salesExport["values"][$i]["key"] = $periodItem["key"];
+					$salesExport["values"][$i]["value"] = DisplayAmount($plsDataItem->sales_export, $unit);
+
+					$salesSubTotal["values"][$i]["key"] = $periodItem["key"];
+					$salesSubTotal["values"][$i]["value"] = DisplayAmount($plsDataItem->sales_total, $unit);
+
+					$exciseDuty["values"][$i]["key"] = $periodItem["key"];
+					$exciseDuty["values"][$i]["value"] =  DisplayAmount($plsDataItem->excise_duty, $unit);
+
+					$netSales["values"][$i]["key"] = $periodItem["key"];
+					$netSales["values"][$i]["value"] = DisplayAmount($plsDataItem->net_sales, $unit);
+					
+
+					$exportIncentives["values"][$i]["key"] = $periodItem["key"];
+					$exportIncentives["values"][$i]["value"] =  DisplayAmount($plsDataItem->export_incentive, $unit);
+					
+					$otherIncome["values"][$i]["key"] = $periodItem["key"];
+					$otherIncome["values"][$i]["value"] =  DisplayAmount($plsDataItem->other_income, $unit);
+
+					$totalOperatingIncome["values"][$i]["key"] = $periodItem["key"];
+					$totalOperatingIncome["values"][$i]["value"] = DisplayAmount($plsDataItem->total_operating_income, $unit);
+
+					$rawMatImported["values"][$i]["key"] = $periodItem["key"];
+					$rawMatImported["values"][$i]["value"] =  DisplayAmount($plsDataItem->raw_materials_imported, $unit);
+
+					$rawMatIndigenous["values"][$i]["key"] = $periodItem["key"];
+					$rawMatIndigenous["values"][$i]["value"] =  DisplayAmount($plsDataItem->raw_materials_indigenous, $unit);
+
+					$otherSparesImported["values"][$i]["key"] = $periodItem["key"];
+					$otherSparesImported["values"][$i]["value"] =  DisplayAmount($plsDataItem->other_spares_imported, $unit);
+
+					$otherSparesIndigenous["values"][$i]["key"] = $periodItem["key"];
+					$otherSparesIndigenous["values"][$i]["value"] =  DisplayAmount($plsDataItem->other_spares_indegenous, $unit);
+
+					$powerAndFuel["values"][$i]["key"] = $periodItem["key"];
+					$powerAndFuel["values"][$i]["value"] =  DisplayAmount($plsDataItem->power_and_fuel, $unit);
+					
+					$directLabourAndWages["values"][$i]["key"] = $periodItem["key"];
+					$directLabourAndWages["values"][$i]["value"] =  DisplayAmount($plsDataItem->direct_labour_and_wages, $unit);
+					
+					$otherManfExp["values"][$i]["key"] = $periodItem["key"];
+					$otherManfExp["values"][$i]["value"] = DisplayAmount($plsDataItem->other_manf_exp, $unit);
+
+					$depriciation["values"][$i]["key"] = $periodItem["key"];
+					$depriciation["values"][$i]["value"] =  DisplayAmount($plsDataItem->depreciation, $unit);
+
+					$costOfSalesSubTotal["values"][$i]["key"] = $periodItem["key"];
+					$costOfSalesSubTotal["values"][$i]["value"] =  DisplayAmount($plsDataItem->cos_sub_total, $unit);
+
+					$opStockWIP["values"][$i]["key"] = $periodItem["key"];
+					$opStockWIP["values"][$i]["value"] =  DisplayAmount($plsDataItem->op_stock_of_wip, $unit);
+					$clStockWIP["values"][$i]["key"] = $periodItem["key"];
+					$clStockWIP["values"][$i]["value"] =  DisplayAmount($plsDataItem->cl_stock_of_wip, $unit);
+					
+					$totalCostOfProd["values"][$i]["key"] = $periodItem["key"];
+					$totalCostOfProd["values"][$i]["value"] =  DisplayAmount($plsDataItem->total_cos_of_prod, $unit);
+
+					$opStockOfFG["values"][$i]["key"] = $periodItem["key"];
+					$opStockOfFG["values"][$i]["value"] =  DisplayAmount($plsDataItem->os_of_finished_goods, $unit);
+					$clStockOfFG["values"][$i]["key"] = $periodItem["key"];
+					$clStockOfFG["values"][$i]["value"] =  DisplayAmount($plsDataItem->cs_of_finished_goods, $unit);
+					$totalCostOfSales["values"][$i]["key"] = $periodItem["key"];
+					$totalCostOfSales["values"][$i]["value"] = DisplayAmount($plsDataItem->total_cost_of_sales, $unit);
+
+					
+					$salaryAndStaffExp["values"][$i]["key"] = $periodItem["key"];
+					$salaryAndStaffExp["values"][$i]["value"] =  DisplayAmount($plsDataItem->salary_staff_exp, $unit);
+					$badDebts["values"][$i]["key"] = $periodItem["key"];
+					$badDebts["values"][$i]["value"] =  DisplayAmount($plsDataItem->bad_debts, $unit);
+					$sellGenAdmExp["values"][$i]["key"] = $periodItem["key"];
+					$sellGenAdmExp["values"][$i]["value"] =  DisplayAmount($plsDataItem->selling_admin_exp, $unit);
+					$otherAdmExp["values"][$i]["key"] = $periodItem["key"];
+					$otherAdmExp["values"][$i]["value"] =  DisplayAmount($plsDataItem->other_admin_exp, $unit);
+					
+					$admSubTotal["values"][$i]["key"] = $periodItem["key"];
+					$admSubTotal["values"][$i]["value"] = DisplayAmount($plsDataItem->admin_sell_exp_sub_total, $unit);
+
+					$opBeforeInterest["values"][$i]["key"] = $periodItem["key"];
+					$opBeforeInterest["values"][$i]["value"] = DisplayAmount($plsDataItem->operating_profit_before_int, $unit);
+
+					
+					
+					$interestWCLoans["values"][$i]["key"] = $periodItem["key"];
+					$interestWCLoans["values"][$i]["value"] = DisplayAmount($plsDataItem->interest_wc_loans, $unit);
+					$interestTermLoans["values"][$i]["key"] = $periodItem["key"];
+					$interestTermLoans["values"][$i]["value"] = DisplayAmount($plsDataItem->interest_term_loans, $unit);
+					$bankCharges["values"][$i]["key"] = $periodItem["key"];
+					$bankCharges["values"][$i]["value"] = DisplayAmount($plsDataItem->bank_charges, $unit);
+					$totalInterest["values"][$i]["key"] = $periodItem["key"];
+					$totalInterest["values"][$i]["value"] = DisplayAmount($plsDataItem->total_interest, $unit);
+					$opAfterInterest["values"][$i]["key"] = $periodItem["key"];
+					$opAfterInterest["values"][$i]["value"] = DisplayAmount($plsDataItem->operating_profit_after_interest, $unit);
+
+
+					$interestIncome["values"][$i]["key"] = $periodItem["key"];
+					$interestIncome["values"][$i]["value"] = DisplayAmount($plsDataItem->interest_income, $unit);
+					$profitOnSaleOfAssets["values"][$i]["key"] = $periodItem["key"];
+					$profitOnSaleOfAssets["values"][$i]["value"] = DisplayAmount($plsDataItem->profit_on_sale_of_assets, $unit);
+					$divRceived["values"][$i]["key"] = $periodItem["key"];
+					$divRceived["values"][$i]["value"] = DisplayAmount($plsDataItem->dividend_received, $unit);
+					$forexGains["values"][$i]["key"] = $periodItem["key"];
+					$forexGains["values"][$i]["value"] = DisplayAmount($plsDataItem->forex_gains, $unit);
+					$extraOrdIncome["values"][$i]["key"] = $periodItem["key"];
+					$extraOrdIncome["values"][$i]["value"] = DisplayAmount($plsDataItem->extraordinary_income, $unit);
+					$otherNonOpIncome["values"][$i]["key"] = $periodItem["key"];
+					$otherNonOpIncome["values"][$i]["value"] = DisplayAmount($plsDataItem->other_non_op_income, $unit);
+					$totalNonOpIncome["values"][$i]["key"] = $periodItem["key"];
+					$totalNonOpIncome["values"][$i]["value"] = DisplayAmount($plsDataItem->total_non_op_income, $unit);
+					
+						
+					$lossOnSaleOfAsset["values"][$i]["key"] = $periodItem["key"];
+					$lossOnSaleOfAsset["values"][$i]["value"] = DisplayAmount($plsDataItem->loss_on_sale_of_assets, $unit);
+					$extraOrdExp["values"][$i]["key"] = $periodItem["key"];
+					$extraOrdExp["values"][$i]["value"] = DisplayAmount($plsDataItem->extra_ordinary_expenses, $unit);
+					$forexLoses["values"][$i]["key"] = $periodItem["key"];
+					$forexLoses["values"][$i]["value"] = DisplayAmount($plsDataItem->forex_loses, $unit);
+					$otherNonOpExp["values"][$i]["key"] = $periodItem["key"];
+					$otherNonOpExp["values"][$i]["value"] = DisplayAmount($plsDataItem->other_non_op_expenses, $unit);
+					
+					$totalNonOpExp["values"][$i]["key"] = $periodItem["key"];
+					$totalNonOpExp["values"][$i]["value"] = DisplayAmount($plsDataItem->total_non_op_exp, $unit);
+
+					$netNonOpIncomeExp["values"][$i]["key"] = $periodItem["key"];
+					$netNonOpIncomeExp["values"][$i]["value"] = DisplayAmount($plsDataItem->net_op_non_op_inc_exp, $unit);
+
+					$profitBeforeTax["values"][$i]["key"] = $periodItem["key"];
+					$profitBeforeTax ["values"][$i]["value"]= DisplayAmount($plsDataItem->profit_before_tax, $unit);
+
+					$currentProv["values"][$i]["key"] = $periodItem["key"];
+					$currentProv["values"][$i]["value"] = DisplayAmount($plsDataItem->prov_for_tax_current, $unit);
+					$deferredProv["values"][$i]["key"] = $periodItem["key"];
+					$deferredProv["values"][$i]["value"] = DisplayAmount($plsDataItem->prov_for_tax_deferred, $unit);
+					$provSubTotal["values"][$i]["key"] = $periodItem["key"];
+					$provSubTotal["values"][$i]["value"] = DisplayAmount($plsDataItem->prov_for_tax_subtotal, $unit);
+					$netProfitAfterTax["values"][$i]["key"] = $periodItem["key"];
+					$netProfitAfterTax["values"][$i]["value"] = DisplayAmount($plsDataItem->net_profit_after_tax, $unit);
+					$dividendPaid["values"][$i]["key"] = $periodItem["key"];
+					$dividendPaid["values"][$i]["value"] = DisplayAmount($plsDataItem->dividend_paid, $unit);
+					$retainedProfit["values"][$i]["key"] = $periodItem["key"];
+					$retainedProfit["values"][$i]["value"] = DisplayAmount($plsDataItem->retained_profit, $unit);
+				}
+			}	
+		}
+
+
+
+		$profitAndLoss[] = $sales;
+		$profitAndLoss[] = $salesDomestic;
+		$profitAndLoss[] = $salesExport;
+		$profitAndLoss[] = $salesSubTotal;
+		$profitAndLoss[] = $exciseDuty;
+		$profitAndLoss[] = $netSales;
+		$profitAndLoss[] = $riseFallInNetSales;
+		
+		
+		$profitAndLoss[] = $otherIncomes;
+		$profitAndLoss[] = $exportIncentives;
+		$profitAndLoss[] = $otherIncome;
+
+		$profitAndLoss[] = $totalOperatingIncome;
+		$profitAndLoss[] = $costOfSales;
+		$profitAndLoss[] = $rawMatConsumed;
+		$profitAndLoss[] = $rawMatImported;
+		$profitAndLoss[] = $rawMatIndigenous;
+
+		$profitAndLoss[] = $otherSparesConsumed;
+		$profitAndLoss[] = $otherSparesImported;
+		$profitAndLoss[] = $otherSparesIndigenous;
+
+		$profitAndLoss[] = $powerAndFuel;
+		$profitAndLoss[] = $directLabourAndWages;
+		$profitAndLoss[] = $otherManfExp;
+		$profitAndLoss[] = $depriciation;
+		$profitAndLoss[] = $costOfSalesSubTotal;
+
+	
+		$profitAndLoss[] = $opStockWIP;
+		$profitAndLoss[] = $clStockWIP;
+		$profitAndLoss[] = $totalCostOfProd;
+
+		$profitAndLoss[] = $opStockOfFG;
+		$profitAndLoss[] = $clStockOfFG;
+		$profitAndLoss[] = $totalCostOfSales;
+
+		$profitAndLoss[] = $adnAndSellExp;
+		$profitAndLoss[] = $salaryAndStaffExp;
+		$profitAndLoss[] = $badDebts;
+		$profitAndLoss[] = $sellGenAdmExp;
+		$profitAndLoss[] = $otherAdmExp;
+		$profitAndLoss[] = $admSubTotal;
+		$profitAndLoss[] = $opBeforeInterest;
+
+		
+		$profitAndLoss[] = $financeCharges;
+		$profitAndLoss[] = $interestWCLoans;
+		$profitAndLoss[] = $interestTermLoans;
+		$profitAndLoss[] = $bankCharges;
+		$profitAndLoss[] = $totalInterest;
+		$profitAndLoss[] = $opAfterInterest;
+
+
+		$profitAndLoss[] = $nonOpItems;
+		$profitAndLoss[] = $addNonOpItem;
+		$profitAndLoss[] = $interestIncome;
+		$profitAndLoss[] = $profitOnSaleOfAssets;
+		$profitAndLoss[] = $divRceived;
+		$profitAndLoss[] = $forexGains;
+		$profitAndLoss[] = $extraOrdIncome;
+		$profitAndLoss[] = $otherNonOpIncome;
+		$profitAndLoss[] = $totalNonOpIncome;
+
+		$profitAndLoss[] = $deductNonOpExp;
+		$profitAndLoss[] = $lossOnSaleOfAsset;
+		$profitAndLoss[] = $extraOrdExp;
+		$profitAndLoss[] = $forexLoses;
+		$profitAndLoss[] = $otherNonOpExp;
+		$profitAndLoss[] = $totalNonOpExp;
+		$profitAndLoss[] = $netNonOpIncomeExp;
+		$profitAndLoss[] = $profitBeforeTax;
+
+		$profitAndLoss[] = $provForTaxation;
+		$profitAndLoss[] = $currentProv;
+		$profitAndLoss[] = $deferredProv;
+		$profitAndLoss[] = $provSubTotal;
+		$profitAndLoss[] = $netProfitAfterTax;
+		$profitAndLoss[] = $dividendPaid;
+		$profitAndLoss[] = $retainedProfit;
+		
+
+        return $profitAndLoss;
+	  }
+  }
 
 ?>
