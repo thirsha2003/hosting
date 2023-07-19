@@ -1672,20 +1672,31 @@ class Admin_common extends CI_Controller
                     $branch = isset($params['data']['Branch']) ? $params['data']['Branch']:null;
 
                     $add_borrower = $this->db->insert("fp_lender_user_details", array('user_id' => $id, 'poc_name' => $name, 'email' => $email, 'mobile' => $phone, 'department_slug' => $department, 'location_id' => $location, 'lender_master_id' => $institution, 'designation' => $designation, 'branch' => $branch));
+
+                   
+
                     if ($add_user && $add_borrower) {
+
                         json_output(200, array('status' => 200, 'message' => 'successfully Added'));
+                     
+                        $institute_name=" select lender_name from fp_lender_master where id=".$institution;
+                        $lendermaster_name = $this->db->query($institute_name)->result();
+
+                        $lender_location = "select name from fp_city where id=".$location;
+                        $location_name = $this->db->query($lender_location)->result();
 
                         // Email Notification
                         $results = "SELECT email
                             FROM fpa_adminusers
                             WHERE role_slug = 'sa'";
                         $emailtest = $this->db->query($results)->result();
+
                         foreach ($emailtest as $row) {
 
                             $name = $params['data']['name'];
                             $created_by = isset($params['data']['created_by']) ? $params['data']['created_by']:null;
                             $subject = "Dear " . $created_by . ",";
-                            $message = "Dear " . $created_by . "," . "<br/>" . "<br/>" . "<br/>" . "A new Lender Partner " . $name . "  has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria." . "<br/>" . "<br/>" .
+                            $message = "Dear " . $created_by . "," . "<br/>" . "<br/>" . "<br/>" . "A new Lender Partner " . $name . "From,".$lendermaster_name[0]->lender_name.",".$location_name[0]->name.  "has been onboarded.<br/>Please visit the Lender's profile in detail to understand the product and the filtering criteria." . "<br/>" . "<br/>" .
                                 "Looking forward to building a portfolio with them.";
                             $email = new \SendGrid\Mail\Mail ();
                             $email->setSubject("$subject");
@@ -1981,9 +1992,9 @@ class Admin_common extends CI_Controller
                 $join = isset($params['key']) ? $params['key'] : "";
                 $where = isset($params['where']) ? $params['where'] : "";
 
-                $sql = "SELECT lud.id, lud.user_id, lud.lender_master_id, lud.poc_name as lendername, lud.email as lenderemail, lud.mobile as lendermobile, lud.designation as lenderdesignation, lud.location_id,fl.name as location, fd.name as designation 
-                FROM fp_lender_user_details lud,fp_departments fd, fp_city fl 
-                WHERE lud.department_slug=fd.slug AND fl.id=lud.location_id AND lud.lender_status='active' AND lud.lender_master_id =' $where'";
+                $sql = "SELECT lud.id, lud.user_id, lud.lender_master_id, lud.poc_name as lendername, lud.email as lenderemail, lud.mobile as lendermobile, lud.designation as lenderdesignation, lud.location_id,fl.name as location, fd.name as designation, fpu.is_email_verified, fpu.is_mobile_verified
+                FROM fp_lender_user_details lud,fp_departments fd, fp_city fl, fpa_users fpu 
+                WHERE lud.department_slug=fd.slug AND fl.id=lud.location_id AND fpu.id=lud.user_id AND lud.lender_status='active' AND lud.lender_master_id =' $where'";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());
                 return json_output($respStatus, $resp);
@@ -2536,8 +2547,8 @@ class Admin_common extends CI_Controller
                 $where = isset($params['where']) ? $params['where'] : "";
                 $id = isset($params['id']) ? $params['id'] : "";
 
-                $sql = "SELECT lud.id, lud.user_id, lud.lender_master_id, lud.poc_name, lud.email,lud.mobile, lud.location_id, lud.department_slug, fc.name as cityname, fd.name as departmentname  
-                FROM fp_lender_user_details lud, fp_city fc, fp_departments fd  
+                $sql = "SELECT lud.id, lud.user_id, lud.lender_master_id, lud.poc_name, lud.email,lud.mobile, lud.location_id, lud.department_slug, fc.name as cityname, fd.name as departmentname 
+                FROM fp_lender_user_details lud, fp_city fc, fp_departments fd 
                 WHERE fd.slug=lud.department_slug AND fc.id=lud.location_id and lud.user_id='$where'";
 
                 $resp = array('status' => 200, 'message' => 'Success', 'data' => $this->db->query($sql)->result());

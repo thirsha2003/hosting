@@ -53,6 +53,33 @@ class Lender extends CI_Controller
 		}
 	}
 
+	public function getlender_master()
+{
+  $method = $_SERVER['REQUEST_METHOD'];
+  if($method == 'POST')
+  {
+    
+    $response['status']=200;
+    $respStatus = $response['status'];
+    $params = json_decode(file_get_contents('php://input'), TRUE);
+      
+        $selectkey   = isset($params['selectkey']) ? $params['selectkey'] : "*"; 
+        $join     = isset($params['key']) ? $params['key'] : "";
+        $where = isset($params['where']) ? $params['where'] : "";
+    
+          $sql = "SELECT id, lender_name FROM fp_lender_master ORDER BY fp_lender_master.lender_name ASC ";
+        
+        
+        $resp = array('status' => 200,'message' =>  'Success','data' => $this->db->query($sql)->result());
+        json_output($respStatus,$resp);
+    
+  }
+  else
+  {
+         json_output(400,array('status' => 400,'message' => 'Bad request.'));
+  }
+}
+
 	private function log($message) {
 		print_r('----------------------------Sara-------------------------------------');
 		print_r($message);
