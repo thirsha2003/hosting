@@ -26,8 +26,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = "http://".$_SERVER['HTTP_HOST'];
+// $config['base_url'] = "http://".$_SERVER['HTTP_HOST'];
+$config['base_url'] = "http://52.0.171.182/CI/";
+  
 $config['base_url'] .= preg_replace('@/+$@','',dirname($_SERVER['SCRIPT_NAME'])).'/';
+
+
 
 
 define('define_auth_user','frontend-user');
